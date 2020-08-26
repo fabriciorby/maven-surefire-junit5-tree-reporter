@@ -43,14 +43,10 @@
                 </dependencies>
                 <configuration>
                     <reportFormat>plain</reportFormat>
-                    <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter">
+                    <consoleOutputReporter>
                         <disable>true</disable>
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-                        <disable>false</disable>
-                        <usePhrasedFileName>false</usePhrasedFileName>
-                        <usePhrasedClassNameInRunning>false</usePhrasedClassNameInRunning>
-                        <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
