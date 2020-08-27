@@ -23,6 +23,7 @@ class ExampleTest {
     class Teste {
 
         @Test
+        @Disabled("supposed to fail")
         @DisplayName("My first inner test should not pass")
         void test() {
             assertTrue(false);
