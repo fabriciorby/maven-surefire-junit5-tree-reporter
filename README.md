@@ -10,9 +10,9 @@ It's in WIP yet, but the output is something like this:
 
 ## Installation
 
-Since I couldn't get it to the Maven Central yet, for local test you can clone this repo and just ``mvn install -DskipTests`` it.
+The Maven Repository can be found [here](https://mvnrepository.com/artifact/me.fabriciorby/maven-surefire-junit5-tree-reporter).
 
-Then let your pom.xml be like this.
+Just let your pom.xml be like this.
 
 ```xml
 <plugin>
