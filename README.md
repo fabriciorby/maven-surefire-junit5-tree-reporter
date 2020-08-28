@@ -17,12 +17,12 @@ Just let your pom.xml be like this.
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>${maven.surefire.version}</version>
+    <version>3.0.0-M5</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
         </dependency>
     </dependencies>
     <configuration>
