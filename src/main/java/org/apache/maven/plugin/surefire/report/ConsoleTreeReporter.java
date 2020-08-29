@@ -24,6 +24,7 @@ import org.apache.maven.surefire.api.report.TestSetReportEntry;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.util.List;
+import java.util.stream.LongStream;
 
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
@@ -47,10 +48,13 @@ public class ConsoleTreeReporter extends ConsoleReporter
     @Override
     public void testSetStarting( TestSetReportEntry report )
     {
-        getConsoleLogger()
-            .info( "|" );
+        StringBuilder stringBuilder = new StringBuilder();
+        LongStream.rangeClosed( 0, getTreeLenght(report) - 1 ).forEach( i -> stringBuilder.append( "| " ));
+        getConsoleLogger().info( stringBuilder.toString() );
 
-        MessageBuilder builder = buffer().a( TEST_SET_STARTING_PREFIX );
+        MessageBuilder builder = buffer();
+        LongStream.rangeClosed( 0, getTreeLenght(report) - 1 ).forEach( i -> builder.a( "| " ));
+        builder.a( TEST_SET_STARTING_PREFIX );
 
         String runningTestCase =
             concatenateWithTestGroup( builder, report, !isBlank( report.getReportNameWithGroup() ) );
@@ -65,7 +69,10 @@ public class ConsoleTreeReporter extends ConsoleReporter
 
         for ( WrappedReportEntry testResult : testSetStats.getReportEntries() )
         {
-            final  MessageBuilder builder = buffer().a( "| " + TEST_SET_STARTING_PREFIX );
+            final  MessageBuilder builder = buffer().a( "| " );
+            LongStream.rangeClosed( 0, getTreeLenght(testResult) - 1 )
+                    .forEach( i -> builder.a( "| " ));
+            builder.a( TEST_SET_STARTING_PREFIX );
             if ( testResult.isErrorOrFailure() )
             {
                 println( builder.failure( "[XX] " + testResult.getReportName() )
@@ -102,8 +109,15 @@ public class ConsoleTreeReporter extends ConsoleReporter
 
     }
 
+    private long getTreeLenght(TestSetReportEntry entry) {
+        return entry.getSourceName()
+                .chars()
+                .filter( c -> c == 36 )
+                .count();
+    }
+
     private void println(String message) {
-                this.getConsoleLogger().info(message);
+                this.getConsoleLogger().info( message );
     }
 
 }
