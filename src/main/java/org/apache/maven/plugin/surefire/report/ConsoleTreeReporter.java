@@ -21,6 +21,7 @@ package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.TestSetReportEntry;
+import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.util.List;
@@ -62,21 +63,21 @@ public class ConsoleTreeReporter extends ConsoleReporter
     @Override
     public void testSetCompleted( WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults )
     {
-
         for ( WrappedReportEntry testResult : testSetStats.getReportEntries() )
         {
             final  MessageBuilder builder = buffer().a( "| " + TEST_SET_STARTING_PREFIX );
+            String testResultShort = StringUtils.abbreviate(StringUtils.normalizeSpace(testResult.getReportName()), "\u2026", 180);
             if ( testResult.isErrorOrFailure() )
             {
-                println( builder.failure( "[XX] " + testResult.getReportName() )
+                println( builder.failure( "[XX] " + testResultShort )
                             .a( " - " + testResult.elapsedTimeAsString() + "s" )
                             .toString());
             }
             else if ( testResult.isSkipped() )
             {
-                if ( !isBlank( testResult.getReportName() ) )
+                if ( !isBlank( testResultShort ) )
                 {
-                    builder.warning( "[??] " + testResult.getReportName() );
+                    builder.warning( "[??] " + testResultShort );
                 }
                 else
                 {
@@ -94,7 +95,7 @@ public class ConsoleTreeReporter extends ConsoleReporter
             }
             else if ( testResult.isSucceeded() )
             {
-                println( builder.success( "[OK] " + testResult.getReportName() )
+                println( builder.success( "[OK] " + testResultShort )
                                 .a( " - " + testResult.elapsedTimeAsString() + "s" )
                                 .toString());
             }
