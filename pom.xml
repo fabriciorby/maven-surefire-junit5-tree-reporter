@@ -6,8 +6,7 @@
 
     <groupId>me.fabriciorby</groupId>
     <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-    <version>0.1.0</version>
-    <packaging>jar</packaging>
+    <version>0.2.0-SNAPSHOT</version>
 
     <name>maven-surefire-junit5-tree-reporter</name>
     <description>Tree view reports for Maven Surefire JUnit5 plugin. :^)</description>
@@ -16,7 +15,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+        <maven.surefire.version>3.0.0-M6</maven.surefire.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -24,7 +23,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.6.2</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
