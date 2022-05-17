@@ -22,7 +22,7 @@ Just let your pom.xml be like this.
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
         </dependency>
     </dependencies>
     <configuration>
