@@ -17,7 +17,7 @@ Just let your pom.xml be like this.
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.0.0-M6</version>
+    <version>3.0.0-M7</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
