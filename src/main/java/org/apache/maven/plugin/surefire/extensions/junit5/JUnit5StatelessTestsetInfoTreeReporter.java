@@ -81,7 +81,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     @Override
     public String toString()
     {
-        return "JUnit5StatelessTestsetInfoReporterCustom{"
+        return "JUnit5StatelessTestsetInfoTreeReporter{"
                 + "disable=" + isDisable()
                 + ", usePhrasedFileName=" + isUsePhrasedFileName()
                 + ", usePhrasedClassNameInRunning=" + isUsePhrasedClassNameInRunning()
