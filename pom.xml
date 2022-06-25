@@ -14,7 +14,7 @@
     <url>https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter</url>
 
     <properties>
-        <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
+        <junit-jupiter.version>5.9.0-M1</junit-jupiter.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.surefire.version>3.0.0-M6</maven.surefire.version>
@@ -28,8 +28,8 @@
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit-jupiter-api.version}</version>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

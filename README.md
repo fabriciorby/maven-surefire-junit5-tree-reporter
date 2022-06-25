@@ -38,6 +38,14 @@ Just let your pom.xml be like this.
 
 The important thing here is to set ``reportFormat`` as ``plain``, disable the console output and use our new class ``JUnit5StatelessTestsetInfoTreeReporter`` to print the results.
 
+## Debugging
+
+If you want to contribute and need to debug the code, please use the following command
+```
+mvnDebug -DforkCount=0 test
+```
+Then attach a remote JVM debugger on port 8000
+
 ## Known bugs
 
 The maven-sunfire-plugin doesn't handle ``@Nested`` tests in the desired order so our result tree is not perfect yet. I've forked the maven-sunfire project and debugged it but still couldn't figure out how to solve this my myself...
