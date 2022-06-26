@@ -37,13 +37,10 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
 public class ConsoleTreeReporter extends ConsoleReporter {
+
     private static final int $ = 36;
-    public static final String PREFIX_MID = "├─ ";
-    public static final String PREFIX_END = "└─ ";
-    public static final String PREFIX_PIPE = "|  ";
-    public static final String PREFIX_DOWN = "┬─ ";
-    public static final String PREFIX_DASH = "── ";
-    public static final String SPACE = "   ";
+    private static final Tokens tokens = Tokens.ASCII;
+
     private final Map<String, TestSetReportEntry> testBuffer = new HashMap<>();
 
     public ConsoleTreeReporter(ConsoleLogger logger,
@@ -58,98 +55,102 @@ public class ConsoleTreeReporter extends ConsoleReporter {
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
+        List<String> sourceNames = getSourceNames(testSetStats);
+        for (WrappedReportEntry testResult : testSetStats.getReportEntries()) {
+            MessageBuilder builder = createMessageBuilderWithPrefix(testResult, sourceNames);
+            if (testResult.isErrorOrFailure()) {
+                printFailure(testResult, builder);
+            } else if (testResult.isSkipped()) {
+                printSkipped(testResult, builder);
+            } else if (testResult.isSucceeded()) {
+                printSuccess(testResult, builder);
+            }
+        }
+    }
 
-        List<String> sourceNames = testSetStats.getReportEntries()
+    private List<String> getSourceNames(TestSetStats testSetStats) {
+        return testSetStats.getReportEntries()
                 .stream()
                 .map(WrappedReportEntry::getSourceName)
                 .collect(toList());
+    }
 
-        for (WrappedReportEntry testResult : testSetStats.getReportEntries()) {
+    private void printSuccess(WrappedReportEntry testResult, MessageBuilder builder) {
+        println(builder.success(tokens.successful() + testResult.getReportName())
+                .a(" - " + testResult.elapsedTimeAsString() + "s")
+                .toString());
+    }
 
-            MessageBuilder builder = createMessageBuilderWithPrefix(testResult, sourceNames);
-
-            if (testResult.isErrorOrFailure()) {
-                println(builder.failure("[XX] " + testResult.getReportName())
-                        .a(" - " + testResult.elapsedTimeAsString() + "s")
-                        .toString());
-            } else if (testResult.isSkipped()) {
-                if (!isBlank(testResult.getReportName())) {
-                    builder.warning("[??] " + testResult.getReportName());
-                } else {
-                    builder.warning("[??] " + testResult.getReportSourceName());
-                }
-
-                if (!isBlank(testResult.getMessage())) {
-                    builder.warning(" (" + testResult.getMessage() + ")");
-                }
-
-                println(builder
-                        .a(" - " + testResult.elapsedTimeAsString() + "s")
-                        .toString());
-
-            } else if (testResult.isSucceeded()) {
-                println(builder.success("[OK] " + testResult.getReportName())
-                        .a(" - " + testResult.elapsedTimeAsString() + "s")
-                        .toString());
-            }
+    private void printSkipped(WrappedReportEntry testResult, MessageBuilder builder) {
+        if (!isBlank(testResult.getReportName())) {
+            builder.warning(tokens.skipped() + testResult.getReportName());
+        } else {
+            builder.warning(tokens.skipped() + testResult.getReportSourceName());
         }
+        if (!isBlank(testResult.getMessage())) {
+            builder.warning(" (" + testResult.getMessage() + ")");
+        }
+        println(builder
+                .a(" - " + testResult.elapsedTimeAsString() + "s")
+                .toString());
+    }
 
+    private void printFailure(WrappedReportEntry testResult, MessageBuilder builder) {
+        println(builder.failure(tokens.failed() + testResult.getReportName())
+                .a(" - " + testResult.elapsedTimeAsString() + "s")
+                .toString());
     }
 
     private MessageBuilder createMessageBuilderWithPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
-
         if(testBuffer.containsKey(testResult.getSourceName())) {
             printClassPrefix(testResult, sourceNames);
             testBuffer.remove(testResult.getSourceName());
         }
+        return printTestPrefix(testResult, sourceNames);
+    }
 
-        MessageBuilder builder = buffer().a(PREFIX_PIPE);
-
+    private MessageBuilder printTestPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
+        MessageBuilder builder = buffer().a(tokens.pipe());
         if (getTreeLength(testResult) > 0) {
             LongStream.rangeClosed(0, getTreeLength(testResult) - 2)
-                    .forEach(i -> builder.a(SPACE));
+                    .forEach(i -> builder.a(tokens.blank()));
             if (sourceNames.stream().distinct().count() > 1) {
-                builder.a(PREFIX_PIPE);
+                builder.a(tokens.pipe());
             } else {
-                builder.a(SPACE);
+                builder.a(tokens.blank());
             }
         }
-
         sourceNames.remove(testResult.getSourceName());
         if (sourceNames.contains(testResult.getSourceName())) {
-            builder.a(PREFIX_MID);
+            builder.a(tokens.entry());
         } else {
-            builder.a(PREFIX_END);
+            builder.a(tokens.end());
         }
         return builder;
     }
 
     private void printClassPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
         MessageBuilder builder = buffer();
-
         if (getTreeLength(testResult) > 0) {
-
             if (getTreeLength(testResult) > 1) {
-                builder.a(PREFIX_PIPE);
+                builder.a(tokens.pipe());
                 LongStream.rangeClosed(0, getTreeLength(testResult) - 3)
-                        .forEach(i -> builder.a(SPACE));
-                builder.a(PREFIX_END);
+                        .forEach(i -> builder.a(tokens.blank()));
+                builder.a(tokens.end());
             } else {
-                builder.a(PREFIX_MID);
+                builder.a(tokens.entry());
             }
-
             if (sourceNames.stream().distinct().count() > 1) {
-                builder.a(PREFIX_DOWN);
+                builder.a(tokens.down());
             } else {
-                builder.a(PREFIX_DASH);
+                builder.a(tokens.dash());
             }
         } else {
-            builder.a(PREFIX_MID);
+            builder.a(tokens.entry());
         }
         String runningTestCase =
                 concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
-        getConsoleLogger()
-                .info(runningTestCase);
+        println(runningTestCase);
     }
 
     private long getTreeLength(TestSetReportEntry entry) {
