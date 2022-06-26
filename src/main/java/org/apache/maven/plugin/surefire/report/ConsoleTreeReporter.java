@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
@@ -39,11 +38,13 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
  */
 public class ConsoleTreeReporter extends ConsoleReporter {
     private static final int $ = 36;
-    public static final String PREFIX_MIDDLE = "├─ ";
+    public static final String PREFIX_MID = "├─ ";
     public static final String PREFIX_END = "└─ ";
     public static final String PREFIX_PIPE = "|  ";
+    public static final String PREFIX_DOWN = "┬─ ";
+    public static final String PREFIX_DASH = "── ";
     public static final String SPACE = "   ";
-    private final Map<String, TestSetReportEntry> testBuffer = new Hashtable<>();
+    private final Map<String, TestSetReportEntry> testBuffer = new HashMap<>();
 
     public ConsoleTreeReporter(ConsoleLogger logger,
                                boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
@@ -98,33 +99,52 @@ public class ConsoleTreeReporter extends ConsoleReporter {
     private MessageBuilder createMessageBuilderWithPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
 
         if(testBuffer.containsKey(testResult.getSourceName())) {
-            printClassPrefix(testResult);
+            printClassPrefix(testResult, sourceNames);
             testBuffer.remove(testResult.getSourceName());
         }
 
         MessageBuilder builder = buffer().a(PREFIX_PIPE);
-        LongStream.rangeClosed(0, getTreeLength(testResult) - 1)
-                .forEach(i -> builder.a(SPACE));
+
+        if (getTreeLength(testResult) > 0) {
+            LongStream.rangeClosed(0, getTreeLength(testResult) - 2)
+                    .forEach(i -> builder.a(SPACE));
+            if (sourceNames.stream().distinct().count() > 1) {
+                builder.a(PREFIX_PIPE);
+            } else {
+                builder.a(SPACE);
+            }
+        }
 
         sourceNames.remove(testResult.getSourceName());
         if (sourceNames.contains(testResult.getSourceName())) {
-            builder.a(PREFIX_MIDDLE);
+            builder.a(PREFIX_MID);
         } else {
             builder.a(PREFIX_END);
         }
         return builder;
     }
 
-    private void printClassPrefix(WrappedReportEntry testResult) {
+    private void printClassPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
         MessageBuilder builder = buffer();
 
         if (getTreeLength(testResult) > 0) {
-            builder.a(PREFIX_MIDDLE);
-            LongStream.rangeClosed(0, getTreeLength(testResult) - 2)
-                    .forEach(i -> builder.a(SPACE));
-            builder.a(PREFIX_END);
+
+            if (getTreeLength(testResult) > 1) {
+                builder.a(PREFIX_PIPE);
+                LongStream.rangeClosed(0, getTreeLength(testResult) - 3)
+                        .forEach(i -> builder.a(SPACE));
+                builder.a(PREFIX_END);
+            } else {
+                builder.a(PREFIX_MID);
+            }
+
+            if (sourceNames.stream().distinct().count() > 1) {
+                builder.a(PREFIX_DOWN);
+            } else {
+                builder.a(PREFIX_DASH);
+            }
         } else {
-            builder.a(PREFIX_MIDDLE);
+            builder.a(PREFIX_MID);
         }
         String runningTestCase =
                 concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
