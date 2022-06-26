@@ -23,9 +23,11 @@ import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.TestSetReportEntry;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.LongStream;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
@@ -35,89 +37,110 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
-public class ConsoleTreeReporter extends ConsoleReporter
-{
-    private static final String TEST_SET_STARTING_PREFIX = "+-- ";
+public class ConsoleTreeReporter extends ConsoleReporter {
+    private static final int $ = 36;
+    public static final String PREFIX_MIDDLE = "├─ ";
+    public static final String PREFIX_END = "└─ ";
+    public static final String PREFIX_PIPE = "|  ";
+    public static final String SPACE = "   ";
+    private final Map<String, TestSetReportEntry> testBuffer = new Hashtable<>();
 
     public ConsoleTreeReporter(ConsoleLogger logger,
-                               boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary )
-    {
-        super( logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary );
+                               boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
+        super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 
     @Override
-    public void testSetStarting( TestSetReportEntry report )
-    {
-        StringBuilder stringBuilder = new StringBuilder();
-        LongStream.rangeClosed( 0, getTreeLenght(report) - 1 ).forEach( i -> stringBuilder.append( "| " ));
-        getConsoleLogger().info( stringBuilder.toString() );
-
-        MessageBuilder builder = buffer();
-        LongStream.rangeClosed( 0, getTreeLenght(report) - 1 ).forEach( i -> builder.a( "| " ));
-        builder.a( TEST_SET_STARTING_PREFIX );
-
-        String runningTestCase =
-            concatenateWithTestGroup( builder, report, !isBlank( report.getReportNameWithGroup() ) );
-
-        getConsoleLogger()
-                .info( runningTestCase );
+    public void testSetStarting(TestSetReportEntry report) {
+        testBuffer.put(report.getSourceName(), report);
     }
 
     @Override
-    public void testSetCompleted( WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults )
-    {
+    public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
 
-        for ( WrappedReportEntry testResult : testSetStats.getReportEntries() )
-        {
-            final  MessageBuilder builder = buffer().a( "| " );
-            LongStream.rangeClosed( 0, getTreeLenght(testResult) - 1 )
-                    .forEach( i -> builder.a( "| " ));
-            builder.a( TEST_SET_STARTING_PREFIX );
-            if ( testResult.isErrorOrFailure() )
-            {
-                println( builder.failure( "[XX] " + testResult.getReportName() )
-                            .a( " - " + testResult.elapsedTimeAsString() + "s" )
-                            .toString());
-            }
-            else if ( testResult.isSkipped() )
-            {
-                if ( !isBlank( testResult.getReportName() ) )
-                {
-                    builder.warning( "[??] " + testResult.getReportName() );
-                }
-                else
-                {
-                    builder.warning( "[??] " + testResult.getReportSourceName() );
+        List<String> sourceNames = testSetStats.getReportEntries()
+                .stream()
+                .map(WrappedReportEntry::getSourceName)
+                .collect(toList());
+
+        for (WrappedReportEntry testResult : testSetStats.getReportEntries()) {
+
+            MessageBuilder builder = createMessageBuilderWithPrefix(testResult, sourceNames);
+
+            if (testResult.isErrorOrFailure()) {
+                println(builder.failure("[XX] " + testResult.getReportName())
+                        .a(" - " + testResult.elapsedTimeAsString() + "s")
+                        .toString());
+            } else if (testResult.isSkipped()) {
+                if (!isBlank(testResult.getReportName())) {
+                    builder.warning("[??] " + testResult.getReportName());
+                } else {
+                    builder.warning("[??] " + testResult.getReportSourceName());
                 }
 
-                if ( !isBlank( testResult.getMessage() ) )
-                {
-                    builder.warning( " (" + testResult.getMessage() + ")" );
+                if (!isBlank(testResult.getMessage())) {
+                    builder.warning(" (" + testResult.getMessage() + ")");
                 }
 
-                println( builder
-                            .a( " - " + testResult.elapsedTimeAsString() + "s" )
-                            .toString());
-            }
-            else if ( testResult.isSucceeded() )
-            {
-                println( builder.success( "[OK] " + testResult.getReportName() )
-                                .a( " - " + testResult.elapsedTimeAsString() + "s" )
-                                .toString());
+                println(builder
+                        .a(" - " + testResult.elapsedTimeAsString() + "s")
+                        .toString());
+
+            } else if (testResult.isSucceeded()) {
+                println(builder.success("[OK] " + testResult.getReportName())
+                        .a(" - " + testResult.elapsedTimeAsString() + "s")
+                        .toString());
             }
         }
 
     }
 
-    private long getTreeLenght(TestSetReportEntry entry) {
+    private MessageBuilder createMessageBuilderWithPrefix(WrappedReportEntry testResult, List<String> sourceNames) {
+
+        if(testBuffer.containsKey(testResult.getSourceName())) {
+            printClassPrefix(testResult);
+            testBuffer.remove(testResult.getSourceName());
+        }
+
+        MessageBuilder builder = buffer().a(PREFIX_PIPE);
+        LongStream.rangeClosed(0, getTreeLength(testResult) - 1)
+                .forEach(i -> builder.a(SPACE));
+
+        sourceNames.remove(testResult.getSourceName());
+        if (sourceNames.contains(testResult.getSourceName())) {
+            builder.a(PREFIX_MIDDLE);
+        } else {
+            builder.a(PREFIX_END);
+        }
+        return builder;
+    }
+
+    private void printClassPrefix(WrappedReportEntry testResult) {
+        MessageBuilder builder = buffer();
+
+        if (getTreeLength(testResult) > 0) {
+            builder.a(PREFIX_MIDDLE);
+            LongStream.rangeClosed(0, getTreeLength(testResult) - 2)
+                    .forEach(i -> builder.a(SPACE));
+            builder.a(PREFIX_END);
+        } else {
+            builder.a(PREFIX_MIDDLE);
+        }
+        String runningTestCase =
+                concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
+        getConsoleLogger()
+                .info(runningTestCase);
+    }
+
+    private long getTreeLength(TestSetReportEntry entry) {
         return entry.getSourceName()
                 .chars()
-                .filter( c -> c == 36 )
+                .filter(c -> c == $)
                 .count();
     }
 
     private void println(String message) {
-                this.getConsoleLogger().info( message );
+        this.getConsoleLogger().info(message);
     }
 
 }
