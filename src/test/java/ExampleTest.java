@@ -20,7 +20,7 @@ class ExampleTest {
 
     @Nested
     @DisplayName("My inner test class")
-    class Teste {
+    class InnerTest {
 
         @Test
         @Disabled("supposed to fail")
