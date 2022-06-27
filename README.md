@@ -72,6 +72,14 @@ Configure your POM like the following
 </plugin>
 ```
 
+
+## Requirements
+
+To use this project you need these minimum versions:
+
+- Java 1.8
+- JUnit 5.9.0-M1
+
 ## Contribute
 
 You are welcome to contribute to the project, for this just open an issue or issue + PR to ``develop`` branch.
