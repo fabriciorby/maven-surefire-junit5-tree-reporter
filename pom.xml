@@ -6,7 +6,7 @@
 
     <groupId>me.fabriciorby</groupId>
     <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>maven-surefire-junit5-tree-reporter</name>
@@ -26,6 +26,7 @@
         <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <mockito.version>4.6.1</mockito.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -166,8 +167,25 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>maven-central</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
         </plugins>
     </build>
