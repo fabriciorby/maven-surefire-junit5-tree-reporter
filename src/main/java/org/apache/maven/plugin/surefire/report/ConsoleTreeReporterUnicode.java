@@ -22,27 +22,23 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.TestSetReportEntry;
 
-import java.util.*;
+import java.util.List;
 
 /**
- * Tree view class for console reporters.
+ * Tree view class for console reporters using UNICODE theme.
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
-public class ConsoleTreeReporter extends ConsoleReporter {
+public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
 
-    public ConsoleTreeReporter(ConsoleLogger logger,
-                               boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
+    public ConsoleTreeReporterUnicode(ConsoleLogger logger,
+                                      boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
         super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 
     @Override
-    public void testSetStarting(TestSetReportEntry report) {
-    }
-
-    @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TreePrinter(getConsoleLogger(), testSetStats)
+        new TreePrinter(getConsoleLogger(), testSetStats, Theme.UNICODE)
                 .printTests();
     }
 

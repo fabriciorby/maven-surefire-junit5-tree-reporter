@@ -20,9 +20,7 @@ package org.apache.maven.plugin.surefire.extensions.junit5;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.plugin.surefire.report.ConsoleTreeReporter;
-import org.apache.maven.plugin.surefire.report.TestSetStats;
-import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
+import org.apache.maven.plugin.surefire.report.*;
 import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEventListener;
 
 /**
@@ -30,21 +28,21 @@ import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEve
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>
  */
-public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTestsetInfoReporter
+public class JUnit5StatelessTestsetInfoTreeReporterUnicode extends JUnit5StatelessTestsetInfoTreeReporter
 {
 
     @Override
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             ConsoleLogger logger )
     {
-        return new ConsoleTreeReporter( logger, isUsePhrasedClassNameInRunning(),
+        return new ConsoleTreeReporterUnicode( logger, isUsePhrasedClassNameInRunning(),
                 isUsePhrasedClassNameInTestCaseSummary() );
     }
 
     @Override
     public String toString()
     {
-        return "JUnit5StatelessTestsetInfoTreeReporter{"
+        return "JUnit5StatelessTestsetInfoTreeReporterUnicode{"
                 + "disable=" + isDisable()
                 + ", usePhrasedFileName=" + isUsePhrasedFileName()
                 + ", usePhrasedClassNameInRunning=" + isUsePhrasedClassNameInRunning()
