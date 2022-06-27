@@ -43,14 +43,19 @@ public class TreePrinter {
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
     private final TestSetStats testSetStats;
-    private final Theme theme = Theme.ASCII;
+    private final Theme theme;
     private static final int $ = 36;
 
-    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats) {
+    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats, Theme theme) {
         this.consoleLogger = consoleLogger;
         this.sourceNames = getSourceNames(testSetStats);
         this.distinctSourceName = getDistinctSourceNames(testSetStats);
         this.testSetStats = testSetStats;
+        this.theme = theme;
+    }
+
+    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats) {
+        this(consoleLogger, testSetStats, Theme.ASCII);
     }
 
     private List<String> getSourceNames(TestSetStats testSetStats) {
