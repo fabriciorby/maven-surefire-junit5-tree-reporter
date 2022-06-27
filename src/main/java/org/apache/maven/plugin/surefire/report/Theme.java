@@ -60,6 +60,7 @@ public enum Theme {
         return ASCII;
     }
 
+    @SuppressWarnings("ImmutableEnumChecker")
     private final String[] tiles;
 
     Theme(String... tiles) {
