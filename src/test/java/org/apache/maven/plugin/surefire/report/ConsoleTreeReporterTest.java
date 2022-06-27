@@ -1,7 +1,6 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
-import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -68,6 +67,7 @@ class ConsoleTreeReporterTest {
         consoleTreeReporter.testSetStarting(simpleReportEntry3);
         consoleTreeReporter.testSetStarting(simpleReportEntry4);
         consoleTreeReporter.testSetCompleted(null, testSetStats, null);
+        //TODO see how to unit test this
     }
 
 }
