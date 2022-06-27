@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 //Thanks to https://github.com/junit-team/junit5/blob/main/junit-platform-console/src/main/java/org/junit/platform/console/options/Theme.java
 
-public enum Tokens {
+public enum Theme {
 
     /**
      * ASCII 7-bit characters form the tree branch.
@@ -53,7 +53,7 @@ public enum Tokens {
      */
     UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ");
 
-    public static Tokens valueOf(Charset charset) {
+    public static Theme valueOf(Charset charset) {
         if (StandardCharsets.UTF_8.equals(charset)) {
             return UNICODE;
         }
@@ -62,7 +62,7 @@ public enum Tokens {
 
     private final String[] tiles;
 
-    Tokens(String... tiles) {
+    Theme(String... tiles) {
         this.tiles = tiles;
     }
 

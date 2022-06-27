@@ -24,16 +24,12 @@ import org.apache.maven.surefire.api.report.TestSetReportEntry;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Tree view class for console reporters.
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
 public class ConsoleTreeReporter extends ConsoleReporter {
-
-    private final Map<String, TestSetReportEntry> testBuffer = new HashMap<>();
 
     public ConsoleTreeReporter(ConsoleLogger logger,
                                boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
@@ -42,27 +38,12 @@ public class ConsoleTreeReporter extends ConsoleReporter {
 
     @Override
     public void testSetStarting(TestSetReportEntry report) {
-        testBuffer.put(report.getSourceName(), report);
     }
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        TreePrinter treePrinter = new TreePrinter(getConsoleLogger(), getSourceNames(testSetStats));
-        for (WrappedReportEntry testResult : testSetStats.getReportEntries()) {
-            if(testBuffer.containsKey(testResult.getSourceName())) {
-                treePrinter.printClass(testResult);
-                testBuffer.remove(testResult.getSourceName());
-            }
-            treePrinter.printTest(testResult);
-        }
-        testBuffer.clear();
-    }
-
-    private List<String> getSourceNames(TestSetStats testSetStats) {
-        return testSetStats.getReportEntries()
-                .stream()
-                .map(WrappedReportEntry::getSourceName)
-                .collect(toList());
+        new TreePrinter(getConsoleLogger(), testSetStats)
+                .printTests();
     }
 
 }
