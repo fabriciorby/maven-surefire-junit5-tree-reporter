@@ -25,7 +25,7 @@ import org.apache.maven.surefire.api.report.TestSetReportEntry;
 import java.util.List;
 
 /**
- * Tree view class for console reporters.
+ * Tree view class for console reporters using UNICODE theme.
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */

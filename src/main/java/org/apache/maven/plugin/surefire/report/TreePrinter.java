@@ -20,6 +20,7 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
+import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.util.List;
@@ -29,6 +30,9 @@ import java.util.stream.LongStream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
+import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
+import static org.apache.maven.surefire.shared.lang3.StringUtils.abbreviate;
+import static org.apache.maven.surefire.shared.lang3.StringUtils.normalizeSpace;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
 
@@ -102,7 +106,7 @@ public class TreePrinter {
 
         private void printSuccess() {
             println(buffer()
-                    .success(theme.successful() + testResult.getReportName()));
+                    .success(theme.successful() + abbreviateName(testResult.getReportName())));
         }
 
         private void printSkipped() {
@@ -113,7 +117,7 @@ public class TreePrinter {
 
         private String getSkippedReport() {
             if (!isBlank(testResult.getReportName())) {
-                return testResult.getReportName();
+                return abbreviateName(testResult.getReportName());
             } else {
                 return testResult.getReportSourceName();
             }
@@ -129,7 +133,7 @@ public class TreePrinter {
 
         private void printFailure() {
             println(buffer()
-                    .failure(theme.failed() + testResult.getReportName()));
+                    .failure(theme.failed() + abbreviateName(testResult.getReportName())));
         }
 
         private void printClass() {

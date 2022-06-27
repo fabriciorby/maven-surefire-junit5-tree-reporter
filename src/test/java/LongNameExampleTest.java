@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Long Name Sample Test")
 public class LongNameExampleTest {
@@ -72,6 +73,6 @@ public class LongNameExampleTest {
     @MethodSource
     @DisplayName("Test normalization and abbreviation of test report")
     void shakespeare(String[] sonnets) {
-        assertEquals(true, true);
+        assertTrue(true);
     }
 }
