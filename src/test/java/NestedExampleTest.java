@@ -43,4 +43,9 @@ public class NestedExampleTest {
 
     }
 
+    @Test
+    @DisplayName("Should pass2")
+    void test2() {
+    }
+
 }
