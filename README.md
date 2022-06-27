@@ -76,11 +76,11 @@ Configure your POM like the following
 
 You are welcome to contribute to the project, for this just open an issue or issue + PR to ``develop`` branch.
 
-If you want to create your own output based on the [Theme](src/main/java/report/Theme.java) Enum, feel free to open a PR.
+If you want to create your own output based on the [Theme](src/main/java/org/apache/maven/plugin/surefire/report/Theme.java) Enum, feel free to open a PR.
 
-## Debugging
+### Debugging
 
-If you want to contribute and need to debug the code, please use the following command
+If you ever want to debug the code, please use the following command
 ```
 mvnDebug test
 ```
