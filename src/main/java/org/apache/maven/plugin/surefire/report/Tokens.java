@@ -28,7 +28,7 @@ public enum Tokens {
      * [INFO] |  '-- [OK] Should pass for the 4th time - 0s
      * </pre>
      */
-    ASCII("|  ", "+--", "'--", ",--", "---", " [OK] ", " [XX] ", " [??] "),
+    ASCII("|  ", "+--", "'--", ".--", "---", " [OK] ", " [XX] ", " [??] "),
 
     /**
      * Unicode (extended ASCII) characters are used to display the test execution tree.
