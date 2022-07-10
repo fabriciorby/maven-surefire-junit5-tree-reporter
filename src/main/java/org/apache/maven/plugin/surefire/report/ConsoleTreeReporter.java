@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class ConsoleTreeReporter extends ConsoleReporter {
 
-    public ConsoleTreeReporter(ConsoleLogger logger,
-                               boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
+    public ConsoleTreeReporter(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
+                               boolean usePhrasedClassNameInTestCaseSummary) {
         super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 

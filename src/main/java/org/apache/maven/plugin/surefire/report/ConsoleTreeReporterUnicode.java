@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
 
-    public ConsoleTreeReporterUnicode(ConsoleLogger logger,
-                                      boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
+    public ConsoleTreeReporterUnicode(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
+                                      boolean usePhrasedClassNameInTestCaseSummary) {
         super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 
