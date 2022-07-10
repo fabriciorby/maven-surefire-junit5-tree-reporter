@@ -22,7 +22,7 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.TestSetReportEntry;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Tree view class for console reporters.
