@@ -62,7 +62,7 @@ public class SurefireClassLoaderModifier {
         return Stream.of(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs());
     }
 
-    private boolean isMavenSurefireTreeReporterJar(URL i) {
-        return i.getFile().contains(MAVEN_SUREFIRE_JUNIT_5_TREE_REPORTER);
+    private boolean isMavenSurefireTreeReporterJar(URL url) {
+        return url.getFile().contains(MAVEN_SUREFIRE_JUNIT_5_TREE_REPORTER);
     }
 }
