@@ -30,7 +30,7 @@ import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEve
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>
  */
-public class JUnit5StatelessTestsetInfoTreeReporterUnicode extends JUnit5StatelessTestsetInfoTreeReporterBase {
+public class JUnit5StatelessTestsetInfoTreeReporterUnicode extends JUnit5StatelessTestsetInfoReporterBase {
 
     @Override
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(

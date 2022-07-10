@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.surefire.loader;
 
-import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterBase;
+import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporterBase;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 /**
  * Class created to modify the Surefire ClassLoader during Runtime.
- * Needed for {@link JUnit5StatelessTestsetInfoTreeReporterBase#clone()} method,
+ * Needed for {@link JUnit5StatelessTestsetInfoReporterBase#clone()} method,
  * which is used when the unit tests are running using multiple threads.
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>

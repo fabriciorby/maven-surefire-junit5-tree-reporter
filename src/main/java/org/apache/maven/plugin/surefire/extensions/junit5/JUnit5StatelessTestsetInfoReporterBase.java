@@ -7,7 +7,7 @@ import org.apache.maven.plugin.surefire.loader.SurefireClassLoaderModifier;
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>
  */
-public abstract class JUnit5StatelessTestsetInfoTreeReporterBase extends JUnit5StatelessTestsetInfoReporter {
+public abstract class JUnit5StatelessTestsetInfoReporterBase extends JUnit5StatelessTestsetInfoReporter {
 
     @Override
     public Object clone(ClassLoader target) {
