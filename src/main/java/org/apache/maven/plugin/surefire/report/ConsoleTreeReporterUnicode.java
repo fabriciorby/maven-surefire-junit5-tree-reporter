@@ -20,7 +20,6 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.surefire.api.report.TestSetReportEntry;
 
 import java.util.List;
 
@@ -31,8 +30,8 @@ import java.util.List;
  */
 public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
 
-    public ConsoleTreeReporterUnicode(ConsoleLogger logger,
-                                      boolean usePhrasedClassNameInRunning, boolean usePhrasedClassNameInTestCaseSummary) {
+    public ConsoleTreeReporterUnicode(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
+                                      boolean usePhrasedClassNameInTestCaseSummary) {
         super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 

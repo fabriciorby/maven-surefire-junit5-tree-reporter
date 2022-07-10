@@ -20,7 +20,6 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.util.List;
@@ -31,8 +30,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
 import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
-import static org.apache.maven.surefire.shared.lang3.StringUtils.abbreviate;
-import static org.apache.maven.surefire.shared.lang3.StringUtils.normalizeSpace;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
 
@@ -82,9 +79,9 @@ public class TreePrinter {
                 .map(TestPrinter::new)
                 .forEach(TestPrinter::printTest);
     }
-    
+
     private class TestPrinter {
-        
+
         private final WrappedReportEntry testResult;
         private final long treeLength;
 
@@ -137,7 +134,7 @@ public class TreePrinter {
         }
 
         private void printClass() {
-            if(!distinctSourceName.contains(testResult.getSourceName())) return;
+            if (!distinctSourceName.contains(testResult.getSourceName())) return;
             distinctSourceName.remove(testResult.getSourceName());
 
             MessageBuilder builder = buffer();
@@ -198,7 +195,7 @@ public class TreePrinter {
         private void println(String message) {
             consoleLogger.info(message);
         }
-        
+
     }
 
 }

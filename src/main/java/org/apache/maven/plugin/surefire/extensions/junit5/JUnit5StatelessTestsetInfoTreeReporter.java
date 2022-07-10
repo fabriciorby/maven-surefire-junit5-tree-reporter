@@ -30,25 +30,13 @@ import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEve
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>
  */
-public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTestsetInfoReporter
-{
+public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTestsetInfoReporterBase {
 
     @Override
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(
-            ConsoleLogger logger )
-    {
-        return new ConsoleTreeReporter( logger, isUsePhrasedClassNameInRunning(),
-                isUsePhrasedClassNameInTestCaseSummary() );
+            ConsoleLogger logger) {
+        return new ConsoleTreeReporter(logger, isUsePhrasedClassNameInRunning(),
+                isUsePhrasedClassNameInTestCaseSummary());
     }
 
-    @Override
-    public String toString()
-    {
-        return "JUnit5StatelessTestsetInfoTreeReporter{"
-                + "disable=" + isDisable()
-                + ", usePhrasedFileName=" + isUsePhrasedFileName()
-                + ", usePhrasedClassNameInRunning=" + isUsePhrasedClassNameInRunning()
-                + ", usePhrasedClassNameInTestCaseSummary=" + isUsePhrasedClassNameInTestCaseSummary()
-                + "}";
-    }
 }
