@@ -41,22 +41,24 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
 public class TreePrinter {
 
     private final ConsoleLogger consoleLogger;
+    private final WrappedReportEntry classResult;
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
     private final TestSetStats testSetStats;
     private final Theme theme;
     private static final int $ = 36;
 
-    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats, Theme theme) {
+    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats, Theme theme) {
         this.consoleLogger = consoleLogger;
+        this.classResult = classResult;
         this.sourceNames = getSourceNames(testSetStats);
         this.distinctSourceName = getDistinctSourceNames(testSetStats);
         this.testSetStats = testSetStats;
         this.theme = theme;
     }
 
-    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats) {
-        this(consoleLogger, testSetStats, Theme.ASCII);
+    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats) {
+        this(consoleLogger, classResult, testSetStats, Theme.ASCII);
     }
 
     private List<String> getSourceNames(TestSetStats testSetStats) {
@@ -77,7 +79,7 @@ public class TreePrinter {
         testSetStats.getReportEntries()
                 .stream()
                 .map(TestPrinter::new)
-                .forEach(TestPrinter::printTest);
+                .forEach(testPrinter -> testPrinter.printTest(classResult));
     }
 
     private class TestPrinter {
@@ -90,8 +92,8 @@ public class TreePrinter {
             this.treeLength = getTreeLength();
         }
 
-        private void printTest() {
-            printClass();
+        private void printTest(WrappedReportEntry classResult) {
+            printClass(classResult);
             if (testResult.isErrorOrFailure()) {
                 printFailure();
             } else if (testResult.isSkipped()) {
@@ -133,7 +135,7 @@ public class TreePrinter {
                     .failure(theme.failed() + abbreviateName(testResult.getReportName())));
         }
 
-        private void printClass() {
+        private void printClass(WrappedReportEntry classResult) {
             if (!distinctSourceName.contains(testResult.getSourceName())) return;
             distinctSourceName.remove(testResult.getSourceName());
 
@@ -155,7 +157,8 @@ public class TreePrinter {
             } else {
                 builder.a(theme.entry());
             }
-            println(concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup())));
+            String message = concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
+            println(message + " - " + classResult.elapsedTimeAsString() + "s");
         }
 
         private MessageBuilder getTestPrefix() {
