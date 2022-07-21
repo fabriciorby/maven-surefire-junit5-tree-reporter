@@ -37,7 +37,7 @@ public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TreePrinter(getConsoleLogger(),report, testSetStats, Theme.UNICODE)
+        new TreePrinter(getConsoleLogger(), report, testSetStats, Theme.UNICODE)
                 .printTests();
     }
 

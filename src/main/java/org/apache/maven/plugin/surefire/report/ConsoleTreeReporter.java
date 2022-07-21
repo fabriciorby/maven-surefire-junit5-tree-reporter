@@ -42,7 +42,7 @@ public class ConsoleTreeReporter extends ConsoleReporter {
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TreePrinter(getConsoleLogger(),report, testSetStats)
+        new TreePrinter(getConsoleLogger(), report, testSetStats)
                 .printTests();
     }
 
