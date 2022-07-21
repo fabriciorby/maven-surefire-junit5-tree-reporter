@@ -20,7 +20,7 @@ package org.apache.maven.plugin.surefire.extensions.junit5;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.plugin.surefire.report.ConsoleTreeReporter;
+import org.apache.maven.plugin.surefire.report.ConsoleTreeReporterAscii;
 import org.apache.maven.plugin.surefire.report.TestSetStats;
 import org.apache.maven.plugin.surefire.report.WrappedReportEntry;
 import org.apache.maven.surefire.extensions.StatelessTestsetInfoConsoleReportEventListener;
@@ -35,7 +35,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     @Override
     public StatelessTestsetInfoConsoleReportEventListener<WrappedReportEntry, TestSetStats> createListener(
             ConsoleLogger logger) {
-        return new ConsoleTreeReporter(logger, isUsePhrasedClassNameInRunning(),
+        return new ConsoleTreeReporterAscii(logger, isUsePhrasedClassNameInRunning(),
                 isUsePhrasedClassNameInTestCaseSummary());
     }
 

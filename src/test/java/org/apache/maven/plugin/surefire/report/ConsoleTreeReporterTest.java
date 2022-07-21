@@ -5,6 +5,8 @@ import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.logging.Logger;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,9 +15,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ConsoleTreeReporterTest {
 
     //Test for NestedExampleTest
-
     Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
+
+    static DefaultPlexusContainer container;
+    static Logger logger;
+
+    @BeforeAll
+    static void setupContainer() throws PlexusContainerException {
+        container = new DefaultPlexusContainer();
+        logger = container.getLogger();
+    }
 
     @Test
     void testSetStarting() {
@@ -24,10 +34,16 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry simpleReportEntry2 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest", "Inner Test", null, null);
         SimpleReportEntry simpleReportEntry3 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest", "Inner Inner Test", null, null);
         SimpleReportEntry simpleReportEntry4 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Inner Inner Inner Test", null, null);
+
+        ConsoleTreeReporterAscii consoleTreeReporter = new ConsoleTreeReporterAscii(new PluginConsoleLogger(logger), false, false);
+        consoleTreeReporter.testSetStarting(simpleReportEntry1);
+        consoleTreeReporter.testSetStarting(simpleReportEntry2);
+        consoleTreeReporter.testSetStarting(simpleReportEntry3);
+        consoleTreeReporter.testSetStarting(simpleReportEntry4);
     }
 
     @Test
-    void testSetCompleted() throws PlexusContainerException {
+    void testSetCompleted() {
 
         //TestStarting parameters
         SimpleReportEntry simpleReportEntry1 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest", "Nested Sample", null, null);
@@ -56,19 +72,18 @@ class ConsoleTreeReporterTest {
         testSetStats.testSucceeded(wrappedReportEntry4);
         testSetStats.testSucceeded(wrappedReportEntry5);
 
-        SimpleReportEntry classEntry = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "source", "sourceTest", "name", "nameTest");
-        WrappedReportEntry classReportEntry = new WrappedReportEntry(classEntry, ReportEntryType.SUCCESS, 112, stdout, stderr);
+        TestSetStats testSetStatsForClass = new TestSetStats(false, true);
 
-        DefaultPlexusContainer container = new DefaultPlexusContainer();
-        container.getLogger();
-
-        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(container.getLogger()), false, false);
-        consoleTreeReporter.testSetStarting(classReportEntry);
+        ConsoleTreeReporterAscii consoleTreeReporter = new ConsoleTreeReporterAscii(new PluginConsoleLogger(logger), false, false);
         consoleTreeReporter.testSetStarting(simpleReportEntry1);
         consoleTreeReporter.testSetStarting(simpleReportEntry2);
         consoleTreeReporter.testSetStarting(simpleReportEntry3);
         consoleTreeReporter.testSetStarting(simpleReportEntry4);
-        consoleTreeReporter.testSetCompleted(classReportEntry, testSetStats, null);
+        consoleTreeReporter.testSetCompleted(wrappedReportEntry5, testSetStats, null);
+        consoleTreeReporter.testSetCompleted(wrappedReportEntry4, testSetStatsForClass, null);
+        consoleTreeReporter.testSetCompleted(wrappedReportEntry3, testSetStatsForClass, null);
+        consoleTreeReporter.testSetCompleted(wrappedReportEntry2, testSetStatsForClass, null);
+
         //TODO see how to unit test this
     }
 

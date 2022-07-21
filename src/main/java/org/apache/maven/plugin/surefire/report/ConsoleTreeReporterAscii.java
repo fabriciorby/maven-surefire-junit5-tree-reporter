@@ -20,8 +20,8 @@ package org.apache.maven.plugin.surefire.report;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.surefire.api.report.TestSetReportEntry;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,21 +29,16 @@ import java.util.List;
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
-public class ConsoleTreeReporter extends ConsoleReporter {
+public class ConsoleTreeReporterAscii extends ConsoleTreeReporterBase {
 
-    public ConsoleTreeReporter(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
-                               boolean usePhrasedClassNameInTestCaseSummary) {
+    public ConsoleTreeReporterAscii(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
+                                    boolean usePhrasedClassNameInTestCaseSummary) {
         super(logger, usePhrasedClassNameInRunning, usePhrasedClassNameInTestCaseSummary);
     }
 
     @Override
-    public void testSetStarting(TestSetReportEntry report) {
-    }
-
-    @Override
-    public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TreePrinter(getConsoleLogger(), report, testSetStats)
-                .printTests();
+    TreePrinter getTreePrinter(List<WrappedReportEntry> classEntries, Collection<WrappedReportEntry> testEntries) {
+        return new TreePrinter(getConsoleLogger(), classEntries, testEntries);
     }
 
 }
