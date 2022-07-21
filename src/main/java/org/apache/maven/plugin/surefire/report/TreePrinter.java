@@ -22,7 +22,6 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.LongStream;
@@ -43,13 +42,13 @@ public class TreePrinter {
 
     private final ConsoleLogger consoleLogger;
     private final List<WrappedReportEntry> classResults;
+    private final List<WrappedReportEntry> testSetStats;
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
-    private final Collection<WrappedReportEntry> testSetStats;
     private final Theme theme;
     private static final int $ = 36;
 
-    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, Collection<WrappedReportEntry> testSetStats, Theme theme) {
+    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, List<WrappedReportEntry> testSetStats, Theme theme) {
         this.consoleLogger = consoleLogger;
         this.classResults = classResults;
         this.testSetStats = testSetStats;
@@ -58,7 +57,7 @@ public class TreePrinter {
         this.theme = theme;
     }
 
-    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, Collection<WrappedReportEntry> testSetStats) {
+    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, List<WrappedReportEntry> testSetStats) {
         this(consoleLogger, classResults, testSetStats, Theme.ASCII);
     }
 
