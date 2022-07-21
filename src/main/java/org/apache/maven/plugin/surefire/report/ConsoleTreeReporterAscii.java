@@ -37,7 +37,7 @@ public class ConsoleTreeReporterAscii extends ConsoleTreeReporterBase {
     }
 
     @Override
-    TreePrinter getTreePrinter(List<WrappedReportEntry> classEntries, Collection<WrappedReportEntry> testEntries) {
+    TreePrinter getTreePrinter(List<WrappedReportEntry> classEntries, List<WrappedReportEntry> testEntries) {
         return new TreePrinter(getConsoleLogger(), classEntries, testEntries);
     }
 
