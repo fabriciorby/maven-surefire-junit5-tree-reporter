@@ -16,13 +16,13 @@ abstract class ConsoleTreeReporterBase extends ConsoleReporter {
 
     @Override
     public void testSetStarting(TestSetReportEntry report) {
-        new TestHandler(report)
+        new TestReportHandler(report)
                 .prepare();
     }
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TestHandler(report, testSetStats)
+        new TestReportHandler(report, testSetStats)
                 .print(this::getTreePrinter);
     }
 

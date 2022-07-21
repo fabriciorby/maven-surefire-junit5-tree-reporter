@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 
 import static java.util.Collections.*;
 
-public class TestHandler {
+public class TestReportHandler {
 
     protected static final Map<String, Set<String>> classNames = synchronizedMap(new HashMap<>());
     protected static final Map<String, List<WrappedReportEntry>> classEntries = synchronizedMap(new HashMap<>());
@@ -18,13 +18,13 @@ public class TestHandler {
     private final TestSetStats testSetStats;
     private final String sourceRootName;
 
-    public TestHandler(ReportEntry report, TestSetStats testSetStats) {
+    public TestReportHandler(ReportEntry report, TestSetStats testSetStats) {
         this.report = report;
         this.testSetStats = testSetStats;
         this.sourceRootName = getSourceRootName();
     }
 
-    public TestHandler(ReportEntry report) {
+    public TestReportHandler(ReportEntry report) {
         this(report, null);
     }
 
