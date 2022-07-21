@@ -98,7 +98,7 @@ abstract class ConsoleTreeReporterBase extends ConsoleReporter {
     }
 
     protected String getRootSourceName(ReportEntry reportEntry) {
-        return reportEntry.getSourceName().split("\\$")[0];
+        return reportEntry.getSourceName().split("\\$", -1)[0];
     }
 
     protected boolean hasNestedTests(TestSetStats testSetStats) {
