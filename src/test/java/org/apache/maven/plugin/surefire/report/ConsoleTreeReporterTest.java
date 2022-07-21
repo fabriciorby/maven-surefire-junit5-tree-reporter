@@ -56,15 +56,19 @@ class ConsoleTreeReporterTest {
         testSetStats.testSucceeded(wrappedReportEntry4);
         testSetStats.testSucceeded(wrappedReportEntry5);
 
+        SimpleReportEntry classEntry = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "source", "sourceTest", "name", "nameTest");
+        WrappedReportEntry classReportEntry = new WrappedReportEntry(classEntry, ReportEntryType.SUCCESS, 112, stdout, stderr);
+
         DefaultPlexusContainer container = new DefaultPlexusContainer();
         container.getLogger();
 
         ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(container.getLogger()), false, false);
+        consoleTreeReporter.testSetStarting(classReportEntry);
         consoleTreeReporter.testSetStarting(simpleReportEntry1);
         consoleTreeReporter.testSetStarting(simpleReportEntry2);
         consoleTreeReporter.testSetStarting(simpleReportEntry3);
         consoleTreeReporter.testSetStarting(simpleReportEntry4);
-        consoleTreeReporter.testSetCompleted(null, testSetStats, null);
+        consoleTreeReporter.testSetCompleted(classReportEntry, testSetStats, null);
         //TODO see how to unit test this
     }
 

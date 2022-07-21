@@ -41,22 +41,24 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
 public class TreePrinter {
 
     private final ConsoleLogger consoleLogger;
+    private final WrappedReportEntry classResult;
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
     private final TestSetStats testSetStats;
     private final Theme theme;
     private static final int $ = 36;
 
-    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats, Theme theme) {
+    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats, Theme theme) {
         this.consoleLogger = consoleLogger;
+        this.classResult = classResult;
         this.sourceNames = getSourceNames(testSetStats);
         this.distinctSourceName = getDistinctSourceNames(testSetStats);
         this.testSetStats = testSetStats;
         this.theme = theme;
     }
 
-    public TreePrinter(ConsoleLogger consoleLogger, TestSetStats testSetStats) {
-        this(consoleLogger, testSetStats, Theme.ASCII);
+    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats) {
+        this(consoleLogger, classResult, testSetStats, Theme.ASCII);
     }
 
     private List<String> getSourceNames(TestSetStats testSetStats) {
@@ -155,7 +157,11 @@ public class TreePrinter {
             } else {
                 builder.a(theme.entry());
             }
-            println(concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup())));
+            concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
+            if (treeLength == 0L) {
+                builder.a(" - " + classResult.elapsedTimeAsString() + "s");
+            }
+            println(builder.toString());
         }
 
         private MessageBuilder getTestPrefix() {
