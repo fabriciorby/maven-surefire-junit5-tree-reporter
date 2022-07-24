@@ -41,42 +41,42 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
 public class TreePrinter {
 
     private final ConsoleLogger consoleLogger;
-    private final WrappedReportEntry classResult;
+    private final List<WrappedReportEntry> classResults;
+    private final List<WrappedReportEntry> testSetStats;
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
-    private final TestSetStats testSetStats;
     private final Theme theme;
     private static final int $ = 36;
 
-    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats, Theme theme) {
+    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, List<WrappedReportEntry> testSetStats, Theme theme) {
         this.consoleLogger = consoleLogger;
-        this.classResult = classResult;
-        this.sourceNames = getSourceNames(testSetStats);
-        this.distinctSourceName = getDistinctSourceNames(testSetStats);
+        this.classResults = classResults;
         this.testSetStats = testSetStats;
+        this.sourceNames = getSourceNames();
+        this.distinctSourceName = getDistinctSourceNames();
         this.theme = theme;
     }
 
-    public TreePrinter(ConsoleLogger consoleLogger, WrappedReportEntry classResult, TestSetStats testSetStats) {
-        this(consoleLogger, classResult, testSetStats, Theme.ASCII);
+    public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, List<WrappedReportEntry> testSetStats) {
+        this(consoleLogger, classResults, testSetStats, Theme.ASCII);
     }
 
-    private List<String> getSourceNames(TestSetStats testSetStats) {
-        return testSetStats.getReportEntries()
+    private List<String> getSourceNames() {
+        return testSetStats
                 .stream()
                 .map(WrappedReportEntry::getSourceName)
                 .collect(toList());
     }
 
-    private Set<String> getDistinctSourceNames(TestSetStats testSetStats) {
-        return testSetStats.getReportEntries()
+    private Set<String> getDistinctSourceNames() {
+        return testSetStats
                 .stream()
                 .map(WrappedReportEntry::getSourceName)
                 .collect(toSet());
     }
 
     public void printTests() {
-        testSetStats.getReportEntries()
+        testSetStats
                 .stream()
                 .map(TestPrinter::new)
                 .forEach(TestPrinter::printTest);
@@ -85,7 +85,7 @@ public class TreePrinter {
     private class TestPrinter {
 
         private final WrappedReportEntry testResult;
-        private final long treeLength;
+        private final int treeLength;
 
         public TestPrinter(WrappedReportEntry testResult) {
             this.testResult = testResult;
@@ -157,10 +157,10 @@ public class TreePrinter {
             } else {
                 builder.a(theme.entry());
             }
+
             concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
-            if (treeLength == 0L) {
-                builder.a(" - " + classResult.elapsedTimeAsString() + "s");
-            }
+            builder.a(" - " + classResults.get(treeLength).elapsedTimeAsString() + "s");
+
             println(builder.toString());
         }
 
@@ -184,8 +184,8 @@ public class TreePrinter {
             return builder;
         }
 
-        private long getTreeLength() {
-            return testResult.getSourceName()
+        private int getTreeLength() {
+            return (int) testResult.getSourceName()
                     .chars()
                     .filter(c -> c == $)
                     .count();

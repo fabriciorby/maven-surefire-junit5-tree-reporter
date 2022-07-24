@@ -7,7 +7,8 @@ public class NestedExampleTest {
 
     @Test
     @DisplayName("Should pass")
-    void test() {
+    void test() throws InterruptedException {
+        Thread.sleep(100);
     }
 
     @Nested
@@ -16,7 +17,8 @@ public class NestedExampleTest {
 
         @Test
         @DisplayName("Inner test should pass")
-        void test() {
+        void test() throws InterruptedException {
+            Thread.sleep(200);
         }
 
         @Nested
@@ -25,7 +27,8 @@ public class NestedExampleTest {
 
             @Test
             @DisplayName("Inner Inner Test should pass")
-            void test() {
+            void test() throws InterruptedException {
+                Thread.sleep(300);
             }
 
             @Nested
@@ -34,7 +37,8 @@ public class NestedExampleTest {
 
                 @Test
                 @DisplayName("Inner Inner Inner Test should pass")
-                void test() {
+                void test() throws InterruptedException {
+                    Thread.sleep(400);
                 }
 
             }
@@ -45,7 +49,8 @@ public class NestedExampleTest {
 
     @Test
     @DisplayName("Should pass2")
-    void test2() {
+    void test2() throws InterruptedException {
+        Thread.sleep(500);
     }
 
 }

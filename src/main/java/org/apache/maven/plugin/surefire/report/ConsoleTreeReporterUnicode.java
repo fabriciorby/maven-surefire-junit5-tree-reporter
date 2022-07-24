@@ -21,6 +21,7 @@ package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ import java.util.List;
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto</a>
  */
-public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
+public class ConsoleTreeReporterUnicode extends ConsoleTreeReporterBase {
 
     public ConsoleTreeReporterUnicode(ConsoleLogger logger, boolean usePhrasedClassNameInRunning,
                                       boolean usePhrasedClassNameInTestCaseSummary) {
@@ -36,9 +37,8 @@ public class ConsoleTreeReporterUnicode extends ConsoleTreeReporter {
     }
 
     @Override
-    public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TreePrinter(getConsoleLogger(), report, testSetStats, Theme.UNICODE)
-                .printTests();
+    TreePrinter getTreePrinter(List<WrappedReportEntry> classEntries, List<WrappedReportEntry> testEntries) {
+        return new TreePrinter(getConsoleLogger(), classEntries, testEntries, Theme.UNICODE);
     }
 
 }
