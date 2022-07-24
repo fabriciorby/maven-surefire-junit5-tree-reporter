@@ -4,16 +4,19 @@ If you are a Maven Surefire user and ever wanted a fancy tree output for your te
 
 This is a dependency for [maven-surefire-plugin](https://maven.apache.org/surefire/maven-surefire-plugin/), it adds a tree view for the unit tests executed using JUnit5.
 
+[![Maven Central](https://img.shields.io/maven-central/v/me.fabriciorby/maven-surefire-junit5-tree-reporter?style=for-the-badge)](https://search.maven.org/artifact/me.fabriciorby/maven-surefire-junit5-tree-reporter)
+[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License&style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
+
 ## Output
 
 The output can be printed in two ways.
 
 ### UNICODE
-![Imgur](https://i.imgur.com/tgV2mse.png "UNICODE Output")
+![Imgur](https://i.imgur.com/JdrP2QN.png "UNICODE Output")
 ``org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode``
 
 ### ASCII
-![Imgur](https://imgur.com/nwo1C0F.png "ASCII Output")
+![Imgur](https://i.imgur.com/FzcIWwe.png "ASCII Output")
 ``org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter``
 
 ## Installation
@@ -32,7 +35,7 @@ Configure your POM like the following
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
     <configuration>
@@ -57,7 +60,7 @@ Configure your POM like the following
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
     <configuration>
