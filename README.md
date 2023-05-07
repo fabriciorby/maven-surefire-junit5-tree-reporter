@@ -81,7 +81,6 @@ Configure your POM like the following
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:
 
-```
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
@@ -111,7 +110,6 @@ By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReport
         </statelessTestsetInfoReporter>
     </configuration>
 </plugin>
-```
 ```
 
 ## Contribute
