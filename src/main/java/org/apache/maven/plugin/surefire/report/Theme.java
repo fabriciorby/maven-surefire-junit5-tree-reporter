@@ -38,6 +38,7 @@ public enum Theme {
      * [INFO] +--Nested Sample
      * [INFO] |  +-- [OK] Should pass - 0.03s
      * [INFO] |  '-- [OK] Should pass2 - 0.002s
+     * [INFO] |  '-- [XX] Should fail - 0.005s
      * [INFO] +--,--Inner Test
      * [INFO] |  |  '-- [OK] Inner test should pass - 0.001s
      * [INFO] |  '--,--Inner Inner Test
@@ -49,9 +50,16 @@ public enum Theme {
      * [INFO] |  +-- [OK] Should pass again - 0.001s
      * [INFO] |  +-- [OK] Should pass for the 3rd time - 0.001s
      * [INFO] |  '-- [OK] Should pass for the 4th time - 0s
+     * [INFO] [*] Should fail
+     * [INFO] Stack trace
+     * ...
+     * [INFO] Standard out
+     * ...
+     * [INFO] Standard error
+     * ...
      * </pre>
      */
-    ASCII("|  ", "+--", "'--", ".--", "---", " [OK] ", " [XX] ", " [??] "),
+    ASCII("|  ", "+--", "'--", ".--", "---", " [OK] ", " [XX] ", " [??] ", "[*] "),
 
     /**
      * Unicode (extended ASCII) characters are used to display the test execution tree.
@@ -61,6 +69,7 @@ public enum Theme {
      * [INFO] ├─ Nested Sample
      * [INFO] │  ├─ ✔ Should pass - 0.013s
      * [INFO] │  └─ ✔ Should pass2 - 0.001s
+     * [INFO] │  └─ ✘ Should fail - 0.003s
      * [INFO] ├─ ┬─ Inner Test
      * [INFO] │  │  └─ ✔ Inner test should pass - 0.001s
      * [INFO] │  └─ ┬─ Inner Inner Test
@@ -72,9 +81,16 @@ public enum Theme {
      * [INFO] │  ├─ ✔ Should pass again - 0.001s
      * [INFO] │  ├─ ✔ Should pass for the 3rd time - 0s
      * [INFO] │  └─ ✔ Should pass for the 4th time - 0s
+     * [INFO] ● Should fail
+     * [INFO] Stack trace
+     * ...
+     * [INFO] Standard out
+     * ...
+     * [INFO] Standard error
+     * ...
      * </pre>
      */
-    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ");
+    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ", "● ");
 
     public static Theme valueOf(Charset charset) {
         if (StandardCharsets.UTF_8.equals(charset)) {
@@ -126,6 +142,10 @@ public enum Theme {
         return tiles[7];
     }
 
+    public final String details() {
+        return tiles[8];
+    }
+
     /**
      * Return lower case {@link #name()} for easier usage in help text for
      * available options.
@@ -134,4 +154,5 @@ public enum Theme {
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.surefire.loader;
 
-import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporterBase;
-
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
