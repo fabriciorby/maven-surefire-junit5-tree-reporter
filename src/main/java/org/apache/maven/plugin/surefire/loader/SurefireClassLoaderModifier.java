@@ -5,6 +5,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.stream.Stream;
 
+import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
 
 /**
  * Class created to modify the Surefire ClassLoader during Runtime.
- * Needed for {@link JUnit5StatelessTestsetInfoReporterBase#clone()} method,
+ * Needed for {@link JUnit5StatelessTestsetInfoReporter#clone()} method,
  * which is used when the unit tests are running using multiple threads.
  *
  * @author <a href="mailto:fabriciorby@hotmail.com">Fabrício Yamamoto (fabriciorby)</a>
