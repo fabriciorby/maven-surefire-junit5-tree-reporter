@@ -68,7 +68,7 @@ public class TestReportHandler {
     }
 
     private void prepareTestEntriesForNestedTest() {
-        testEntries.putIfAbsent(sourceRootName, new ArrayList<>(testSetStats.getReportEntries()));
+        testEntries.computeIfAbsent(sourceRootName, $ -> new ArrayList<>()).addAll(testSetStats.getReportEntries());
     }
 
     private List<WrappedReportEntry> getTestEntryList() {
