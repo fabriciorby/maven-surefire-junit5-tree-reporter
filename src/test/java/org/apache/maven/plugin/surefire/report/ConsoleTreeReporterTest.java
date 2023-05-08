@@ -58,12 +58,14 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry thirdTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest", "Inner Test", "test", "Inner test should pass");
         SimpleReportEntry fourthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest", "Inner Inner Test", "test", "Inner Inner Test should pass");
         SimpleReportEntry fifthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Inner Inner Inner Test", "test", "Inner Inner Inner Test should pass");
+        SimpleReportEntry sixthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$FirstInnerTest", "First Inner Test", "test", "FirstInnerTest should show up");
 
         WrappedReportEntry wrappedReportEntry1 = new WrappedReportEntry(firstTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
         WrappedReportEntry wrappedReportEntry2 = new WrappedReportEntry(secondTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
         WrappedReportEntry wrappedReportEntry3 = new WrappedReportEntry(thirdTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
         WrappedReportEntry wrappedReportEntry4 = new WrappedReportEntry(fourthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
         WrappedReportEntry wrappedReportEntry5 = new WrappedReportEntry(fifthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry6 = new WrappedReportEntry(sixthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
 
         TestSetStats testSetStats = new TestSetStats(false, true);
         testSetStats.testSucceeded(wrappedReportEntry1);
@@ -71,6 +73,7 @@ class ConsoleTreeReporterTest {
         testSetStats.testSucceeded(wrappedReportEntry3);
         testSetStats.testSucceeded(wrappedReportEntry4);
         testSetStats.testSucceeded(wrappedReportEntry5);
+        testSetStats.testSucceeded(wrappedReportEntry6);
 
         TestSetStats testSetStatsForClass = new TestSetStats(false, true);
 
