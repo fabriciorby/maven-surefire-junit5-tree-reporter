@@ -128,7 +128,7 @@
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter
                             implementation="${maven-surefire.testsetInfoReporter}">
-                        <theme>ASCII</theme>
+                        <theme>UNICODE</theme>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
