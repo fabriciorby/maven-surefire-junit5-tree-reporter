@@ -32,6 +32,7 @@ import java.util.stream.LongStream;
  */
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
+import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 /**
@@ -191,7 +192,7 @@ public class TreePrinter {
             println("");
             println(buffer().strong("Stack trace").toString());
             String stackTrace = testResult.getStackTrace(false);
-            if (stackTrace != null && !stackTrace.isBlank()) {
+            if (stackTrace != null && !StringUtils.isBlank(stackTrace)) {
                 println(testResult.getStackTrace(false));
             }
             else {

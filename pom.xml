@@ -16,9 +16,9 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.surefire.version>3.0.0-M8</maven.surefire.version>
+        <maven.surefire.version>3.1.0</maven.surefire.version>
         <maven-surefire.testsetInfoReporter>
-            org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode
+            org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter
         </maven-surefire.testsetInfoReporter>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
@@ -26,6 +26,8 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mockito-bom.version>5.3.1</mockito-bom.version>
+        <junit-bom.version>5.9.3</junit-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -33,14 +35,14 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-bom</artifactId>
-                <version>4.11.0</version>
+                <version>${mockito-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.9.2</version>
+                <version>${junit-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -126,6 +128,7 @@
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter
                             implementation="${maven-surefire.testsetInfoReporter}">
+                        <theme>UNICODE</theme>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
