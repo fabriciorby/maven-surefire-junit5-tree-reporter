@@ -31,7 +31,6 @@ Configure your POM like the following
         </consoleOutputReporter>
         <statelessTestsetInfoReporter
                 implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-          <theme>UNICODE</theme>
         </statelessTestsetInfoReporter>
     </configuration>
 </plugin>
@@ -39,7 +38,7 @@ Configure your POM like the following
 
 ## Output Theme
 
-The output can be printed using two Themes: UNICODE and ASCII.
+The output can be printed using two Themes: UNICODE and ASCII (by default).
 
 ### UNICODE
 ```xml
