@@ -14,10 +14,9 @@
     <url>https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter</url>
 
     <properties>
-        <junit-jupiter.version>5.9.0-M1</junit-jupiter.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.surefire.version>3.0.0-M7</maven.surefire.version>
+        <maven.surefire.version>3.0.0-M8</maven.surefire.version>
         <maven-surefire.testsetInfoReporter>
             org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode
         </maven-surefire.testsetInfoReporter>
@@ -38,13 +37,19 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.9.2</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

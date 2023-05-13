@@ -30,7 +30,7 @@ Configure your POM like the following
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.0.0-M7</version>
+    <version>3.0.0-M8</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
@@ -55,7 +55,7 @@ Configure your POM like the following
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.0.0-M7</version>
+    <version>3.0.0-M8</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
