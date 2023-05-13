@@ -12,6 +12,16 @@ public class NestedExampleTest {
     }
 
     @Nested
+    @DisplayName("First Inner Test")
+    class FirstInnerTest {
+        @Test
+        @DisplayName("FirstInnerTest should show up")
+        void test() throws InterruptedException {
+            Thread.sleep(100);
+        }
+    }
+
+    @Nested
     @DisplayName("Inner Test")
     class InnerTest {
 
