@@ -35,7 +35,7 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry simpleReportEntry3 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest", "Inner Inner Test", null, null);
         SimpleReportEntry simpleReportEntry4 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Inner Inner Inner Test", null, null);
 
-        ConsoleTreeReporterAscii consoleTreeReporter = new ConsoleTreeReporterAscii(new PluginConsoleLogger(logger), false, false);
+        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), ReporterOptions.builder().build());
         consoleTreeReporter.testSetStarting(simpleReportEntry1);
         consoleTreeReporter.testSetStarting(simpleReportEntry2);
         consoleTreeReporter.testSetStarting(simpleReportEntry3);
@@ -74,7 +74,7 @@ class ConsoleTreeReporterTest {
 
         TestSetStats testSetStatsForClass = new TestSetStats(false, true);
 
-        ConsoleTreeReporterAscii consoleTreeReporter = new ConsoleTreeReporterAscii(new PluginConsoleLogger(logger), false, false);
+        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), ReporterOptions.builder().build());
         consoleTreeReporter.testSetStarting(simpleReportEntry1);
         consoleTreeReporter.testSetStarting(simpleReportEntry2);
         consoleTreeReporter.testSetStarting(simpleReportEntry3);

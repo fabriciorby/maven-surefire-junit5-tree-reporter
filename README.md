@@ -44,7 +44,8 @@ Configure your POM like the following
             <disable>true</disable>
         </consoleOutputReporter>
         <statelessTestsetInfoReporter
-                implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+                implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+            <theme>UNICODE</theme>
         </statelessTestsetInfoReporter>
     </configuration>
 </plugin>
@@ -70,6 +71,42 @@ Configure your POM like the following
         </consoleOutputReporter>
         <statelessTestsetInfoReporter
                 implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+            <theme>ASCII</theme>
+        </statelessTestsetInfoReporter>
+    </configuration>
+</plugin>
+```
+
+## Failure details
+
+By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:
+
+```xml
+<plugin>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.0.0-M7</version>
+    <dependencies>
+        <dependency>
+            <groupId>me.fabriciorby</groupId>
+            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+    </dependencies>
+    <configuration>
+        <reportFormat>plain</reportFormat>
+        <consoleOutputReporter>
+            <disable>true</disable>
+        </consoleOutputReporter>
+        <statelessTestsetInfoReporter
+                implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+            <printStacktrackeOnError>true</printStacktrackeOnError>
+            <printStacktrackeOnFailure>true</printStacktrackeOnFailure>
+            <printStdoutOnError>true</printStdoutOnError>
+            <printStdoutOnFailure>true</printStdoutOnFailure>
+            <printStdoutOnSuccess>false</printStdoutOnSuccess>
+            <printStderrOnError>true</printStderrOnError>
+            <printStderrOnFailure>true</printStderrOnFailure>
+            <printStderrOnSuccess>false</printStderrOnSuccess>
         </statelessTestsetInfoReporter>
     </configuration>
 </plugin>
