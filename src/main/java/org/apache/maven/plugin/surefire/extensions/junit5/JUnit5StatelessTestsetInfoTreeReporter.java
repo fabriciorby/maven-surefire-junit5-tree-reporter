@@ -35,6 +35,11 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             Object clone = super.clone(target);
 
             Class<?> cls = clone.getClass();
+
+            Class<?> themeClass = target.loadClass(Theme.class.getName());
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            Object clonedTheme = Enum.valueOf((Class) themeClass, getTheme().name());
+
             cls.getMethod("setPrintStacktraceOnError", boolean.class).invoke(clone, isPrintStacktraceOnError());
             cls.getMethod("setPrintStacktraceOnFailure", boolean.class).invoke(clone, isPrintStacktraceOnFailure());
             cls.getMethod("setPrintStderrOnError", boolean.class).invoke(clone, isPrintStderrOnError());
@@ -43,11 +48,11 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnError", boolean.class).invoke(clone, isPrintStdoutOnError());
             cls.getMethod("setPrintStdoutOnFailure", boolean.class).invoke(clone, isPrintStdoutOnFailure());
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
-            cls.getMethod("setTheme", Theme.class).invoke(clone, getTheme());
+            cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
         } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(e.getLocalizedMessage());
+            throw new IllegalStateException(e.getLocalizedMessage(), e);
         }
     }
 
