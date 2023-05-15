@@ -67,8 +67,8 @@ By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReport
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-    <printStacktrackeOnError>true</printStacktrackeOnError>
-    <printStacktrackeOnFailure>true</printStacktrackeOnFailure>
+    <printStacktraceOnError>true</printStacktraceOnError>
+    <printStacktraceOnFailure>true</printStacktraceOnFailure>
     <printStdoutOnError>true</printStdoutOnError>
     <printStdoutOnFailure>true</printStdoutOnFailure>
     <printStdoutOnSuccess>false</printStdoutOnSuccess>
