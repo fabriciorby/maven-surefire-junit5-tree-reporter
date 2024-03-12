@@ -229,7 +229,7 @@ public class TreePrinter {
             }
 
             concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
-            builder.a(" - " + classResults.get(treeLength).elapsedTimeAsString() + "s");
+            builder.a(" - " + classResults.get(treeLength).elapsedTimeAsString());
 
             println(builder.toString());
         }
@@ -264,7 +264,7 @@ public class TreePrinter {
         private void println(MessageBuilder builder) {
             println(getTestPrefix()
                     .a(builder)
-                    .a(" - " + testResult.elapsedTimeAsString() + "s")
+                    .a(" - " + testResult.elapsedTimeAsString())
                     .toString());
         }
 
