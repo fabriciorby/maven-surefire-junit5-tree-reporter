@@ -84,13 +84,6 @@
             <version>${maven.surefire.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Without we got compile errors, mavens-surefire-common 3.3.0 stopped providing transitiv dependencies ?! -->
-        <dependency>
-	    <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-            <version>2.1.1</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
