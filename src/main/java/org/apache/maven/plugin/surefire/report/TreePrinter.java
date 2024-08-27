@@ -1,17 +1,3 @@
-package org.apache.maven.plugin.surefire.report;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
-import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
-import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
-import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.LongStream;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,9 +17,23 @@ import java.util.stream.LongStream;
  * under the License.
  */
 
+package org.apache.maven.plugin.surefire.report;
+
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.LongStream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
+import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
+import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
+import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Tree view printer.
@@ -77,22 +77,22 @@ public class TreePrinter {
         testSetStats
                 .stream()
                 .map(TestPrinter::new)
-                .forEach(TestPrinter::printTest);
-        testSetStats
-            .stream()
-            .map(TestPrinter::new)
-            .forEach(TestPrinter::printDetails);
+                .forEach(printer -> {
+                    printer.printTest();
+                    printer.printDetails();
+                });
     }
 
     private class TestPrinter {
 
         private final WrappedReportEntry testResult;
         private final int treeLength;
-        private final Theme theme = options.getTheme();
+        private final Theme theme;
 
         public TestPrinter(WrappedReportEntry testResult) {
             this.testResult = testResult;
             this.treeLength = getTreeLength();
+            this.theme = options.getTheme();
         }
 
         private void printDetails() {
@@ -138,7 +138,7 @@ public class TreePrinter {
             println(buffer()
                     .success(theme.successful() + abbreviateName(testResult.getReportName())));
         }
-        
+
         private void printSkipped() {
             println(buffer()
                     .warning(theme.skipped() + getSkippedReport())
@@ -175,8 +175,8 @@ public class TreePrinter {
             println(buffer().strong("Standard out").toString());
             try {
                 testResult.getStdout().writeTo(System.out);
+            } catch (final IOException ignored) {
             }
-            catch (final IOException ignored) {}
         }
 
         private void printStdErr() {
@@ -184,18 +184,17 @@ public class TreePrinter {
             println(buffer().strong("Standard error").toString());
             try {
                 testResult.getStdErr().writeTo(System.err);
+            } catch (final IOException ignored) {
             }
-            catch (final IOException ignored) {}
         }
-        
+
         private void printStackTrace() {
             println("");
             println(buffer().strong("Stack trace").toString());
             String stackTrace = testResult.getStackTrace(false);
             if (stackTrace != null && !StringUtils.isBlank(stackTrace)) {
                 println(testResult.getStackTrace(false));
-            }
-            else {
+            } else {
                 println("[No stack trace available]");
             }
         }
