@@ -2,16 +2,24 @@ package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.api.report.ReportEntry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 
 public class TestReportHandler {
 
-    protected static final Map<String, Set<String>> classNames = synchronizedMap(new HashMap<>());
-    protected static final Map<String, List<WrappedReportEntry>> classEntries = synchronizedMap(new HashMap<>());
-    protected static final Map<String, List<WrappedReportEntry>> testEntries = synchronizedMap(new HashMap<>());
+    protected static final Map<String, Set<String>> classNames = new ConcurrentHashMap<>();
+    protected static final Map<String, List<WrappedReportEntry>> classEntries = new ConcurrentHashMap<>();
+    protected static final Map<String, List<WrappedReportEntry>> testEntries = new ConcurrentHashMap<>();
     protected static final int $ = 36;
 
     private final ReportEntry report;
@@ -34,7 +42,7 @@ public class TestReportHandler {
         }
     }
 
-    public void print(BiFunction<List<WrappedReportEntry>,List<WrappedReportEntry>, TreePrinter> getTreePrinter) {
+    public void print(BiFunction<List<WrappedReportEntry>, List<WrappedReportEntry>, TreePrinter> getTreePrinter) {
         if (isMarkedAsNestedTest()) {
             prepareEntriesForNestedTests();
             if (isNestedTestReadyToPrint()) {
@@ -50,8 +58,7 @@ public class TestReportHandler {
     }
 
     private void prepareClassEntriesForNestedTest() {
-        classEntries.putIfAbsent(sourceRootName, new ArrayList<>());
-        classEntries.computeIfPresent(sourceRootName, addToCollection((WrappedReportEntry) report));
+        classEntries.computeIfAbsent(sourceRootName, k -> new ArrayList<>()).add((WrappedReportEntry) report);
     }
 
     private List<WrappedReportEntry> getClassEntryList() {
@@ -137,9 +144,6 @@ public class TestReportHandler {
     }
 
     private boolean hasNestedTests(ReportEntry reportEntry) {
-        return reportEntry.getSourceName()
-                .chars()
-                .filter(c -> c == $)
-                .count() > 0;
+        return reportEntry.getSourceName().chars().anyMatch(c -> c == $);
     }
 }
