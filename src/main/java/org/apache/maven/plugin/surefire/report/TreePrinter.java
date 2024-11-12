@@ -228,7 +228,7 @@ public class TreePrinter {
             }
 
             concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
-            builder.a(" - " + classResults.get(treeLength).elapsedTimeAsString());
+            builder.a(" - " + testResult.elapsedTimeAsString());
 
             println(builder.toString());
         }
