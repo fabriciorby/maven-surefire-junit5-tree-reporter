@@ -9,6 +9,7 @@ public class ReporterOptions {
     private final boolean printStdoutOnError;
     private final boolean printStdoutOnFailure;
     private final boolean printStdoutOnSuccess;
+    private final boolean hideResultsOnSuccess;
     private final Theme theme;
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
@@ -22,6 +23,7 @@ public class ReporterOptions {
         this.printStdoutOnError = builder.printStdoutOnError;
         this.printStdoutOnFailure = builder.printStdoutOnFailure;
         this.printStdoutOnSuccess = builder.printStdoutOnSuccess;
+        this.hideResultsOnSuccess = builder.hideResultsOnSuccess;
         this.usePhrasedClassNameInRunning = builder.usePhrasedClassNameInRunning;
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
@@ -63,6 +65,10 @@ public class ReporterOptions {
         return printStdoutOnSuccess;
     }
 
+    public boolean isHIdeResultsOnSuccess() {
+        return hideResultsOnSuccess;
+    }
+
     public boolean isUsePhrasedClassNameInRunning() {
         return usePhrasedClassNameInRunning;
     }
@@ -84,6 +90,7 @@ public class ReporterOptions {
         private boolean printStdoutOnError;
         private boolean printStdoutOnFailure;
         private boolean printStdoutOnSuccess;
+        private boolean hideResultsOnSuccess;
         private Theme theme;
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
@@ -132,6 +139,11 @@ public class ReporterOptions {
 
         public Builder printStdoutOnSuccess(boolean printStdoutOnSuccess) {
             this.printStdoutOnSuccess = printStdoutOnSuccess;
+            return this;
+        }
+
+        public Builder hideResultsOnSuccess(boolean hideResultsOnSuccess) {
+            this.hideResultsOnSuccess = hideResultsOnSuccess;
             return this;
         }
 

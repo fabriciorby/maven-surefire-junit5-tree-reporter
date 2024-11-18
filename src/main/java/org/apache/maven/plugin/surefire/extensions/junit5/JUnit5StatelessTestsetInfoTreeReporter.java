@@ -25,6 +25,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printStdoutOnError;
     private boolean printStdoutOnFailure;
     private boolean printStdoutOnSuccess;
+    private boolean hideResultsOnSuccess;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -48,6 +49,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnError", boolean.class).invoke(clone, isPrintStdoutOnError());
             cls.getMethod("setPrintStdoutOnFailure", boolean.class).invoke(clone, isPrintStdoutOnFailure());
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
+            cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -98,6 +100,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return printStdoutOnSuccess;
     }
 
+    public boolean isHideResultsOnSuccess() {
+        return hideResultsOnSuccess;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -130,6 +136,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.printStdoutOnSuccess = printStdoutOnSuccess;
     }
 
+    public void setHideResultsOnSuccess(boolean hideResultsOnSuccess) {
+        this.hideResultsOnSuccess = hideResultsOnSuccess;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -154,6 +164,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .printStdoutOnError(isPrintStdoutOnError())
                 .printStdoutOnFailure(isPrintStdoutOnFailure())
                 .printStdoutOnSuccess(isPrintStdoutOnSuccess())
+                .hideResultsOnSuccess(isHideResultsOnSuccess())
                 .usePhrasedClassNameInRunning(isUsePhrasedClassNameInRunning())
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
                 .theme(getTheme())

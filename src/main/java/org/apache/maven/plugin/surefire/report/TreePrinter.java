@@ -78,9 +78,13 @@ public class TreePrinter {
                 .stream()
                 .map(TestPrinter::new)
                 .forEach(printer -> {
-                    printer.printTest();
+                    printer.printTest(isSuccessPrintAllowed());
                     printer.printDetails();
                 });
+    }
+
+    private boolean isSuccessPrintAllowed() {
+       return !options.isHIdeResultsOnSuccess();
     }
 
     private class TestPrinter {
@@ -123,13 +127,13 @@ public class TreePrinter {
             }
         }
 
-        private void printTest() {
+        private void printTest(boolean isPrintSuccessAllowed) {
             printClass();
             if (testResult.isErrorOrFailure()) {
                 printFailure();
             } else if (testResult.isSkipped()) {
                 printSkipped();
-            } else if (testResult.isSucceeded()) {
+            } else if (isPrintSuccessAllowed && testResult.isSucceeded()) {
                 printSuccess();
             }
         }
