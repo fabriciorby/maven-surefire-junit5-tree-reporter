@@ -22,13 +22,16 @@ import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
 public class SurefireEmulator {
 
-    private final ReporterOptions reportOptions;
+    private final Class<?> clazz;
+    private final ConsoleTreeReporter consoleTreeReporter;
 
-    public SurefireEmulator() {
-        this.reportOptions = ReporterOptions.builder().build();
+    public SurefireEmulator(Class<?> clazz) {
+        this(ReporterOptions.builder().build(), clazz);
     }
-    public SurefireEmulator(ReporterOptions reporterOptions) {
-        this.reportOptions = reporterOptions;
+
+    public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz) {
+        this.clazz = clazz;
+        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), reporterOptions);
     }
 
     Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
@@ -48,7 +51,28 @@ public class SurefireEmulator {
         }
     }
 
-    public <T> void run(Class<T> clazz) {
+    public void run() {
+        testsStarting();
+        testsCompleted(testsSucceeded());
+    }
+
+    private void testsCompleted(TestSetStats testSetStats) {
+        List<WrappedReportEntry> completedWrappedEntries =
+                getAllInnerClasses(clazz).stream()
+                        .map(this::simpleReportEntryGenerator)
+                        .map(this::wrappedReportEntryGenerator)
+                        .collect(toList());
+
+        //List's head needs to be with complete testSetStats
+        completedWrappedEntries.stream().findFirst()
+                .ifPresent(i -> consoleTreeReporter.testSetCompleted(i, testSetStats, null));
+
+        //List's tail goes with empty testSetStats
+        completedWrappedEntries.stream().skip(1)
+                .forEachOrdered(i -> consoleTreeReporter.testSetCompleted(i, new TestSetStats(false, false), null));
+    }
+
+    private TestSetStats testsSucceeded() {
         TestSetStats testSetStats = new TestSetStats(false, true);
         getAllMethods(getAllInnerClasses(clazz))
                 .entrySet().stream()
@@ -56,25 +80,14 @@ public class SurefireEmulator {
                         .map(i -> this.simpleReportEntryGenerator(k.getKey(), i))
                         .map(this::wrappedReportEntryGenerator))
                 .forEachOrdered(testSetStats::testSucceeded);
+        return testSetStats;
+    }
 
-        TestSetStats testSetStatsForClass = new TestSetStats(false, true);
-        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), reportOptions);
+    private void testsStarting() {
         getAllInnerClasses(clazz).stream()
                 .map(this::simpleReportEntryGenerator)
+                .peek(System.out::println)
                 .forEachOrdered(consoleTreeReporter::testSetStarting);
-
-        List<WrappedReportEntry> completedWrappedEntries =
-                getAllInnerClasses(clazz).stream()
-                        .map(this::simpleReportEntryGenerator)
-                        .map(this::wrappedReportEntryGenerator)
-                        .collect(toList());
-
-        completedWrappedEntries.stream()
-                .findFirst()
-                .ifPresent(i -> consoleTreeReporter.testSetCompleted(i, testSetStats, null));
-        completedWrappedEntries.stream()
-                .skip(1)
-                .forEachOrdered(i -> consoleTreeReporter.testSetCompleted(i, testSetStatsForClass, null));
     }
 
     private <T> SimpleReportEntry simpleReportEntryGenerator(Class<T> clazz) {
@@ -112,6 +125,7 @@ public class SurefireEmulator {
                         (x, y) -> y, LinkedHashMap::new));
     }
 
+    // Got the methods below from JUnit Jupiter codebase DisplayNameUtils.java
     private String getDisplayName(AnnotatedElement element, Supplier<String> displayNameSupplier) {
         Optional<DisplayName> displayNameAnnotation = findAnnotation(element, DisplayName.class);
         if (displayNameAnnotation.isPresent()) {

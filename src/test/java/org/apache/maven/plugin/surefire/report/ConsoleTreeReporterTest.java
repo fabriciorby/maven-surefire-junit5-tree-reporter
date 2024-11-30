@@ -33,7 +33,7 @@ class ConsoleTreeReporterTest {
         // Now we can check the output of any Test class using this
         // TODO: Add some proxy before the logger or something so we can assert the output
         // TODO: Add some objects with relevant information inside the emulator
-        new SurefireEmulator().run(NestedExampleTest.class);
+        new SurefireEmulator(NestedExampleTest.class).run();
     }
 
     @Test
@@ -59,6 +59,7 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry simpleReportEntry2 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$InnerTest", "Inner Test", null, null);
         SimpleReportEntry simpleReportEntry3 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$InnerTest$InnerInnerTest", "Inner Inner Test", null, null);
         SimpleReportEntry simpleReportEntry4 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Inner Inner Inner Test", null, null);
+        SimpleReportEntry simpleReportEntry5 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$FirstInnerTest", "First Inner Test", null, null);
 
         //Runs 1 time with all the information
         //Gets all SingleReportEntries with test names and add on a list of WrapperReportEntries to create a TestSetStats
@@ -92,11 +93,13 @@ class ConsoleTreeReporterTest {
         consoleTreeReporter.testSetStarting(simpleReportEntry2);
         consoleTreeReporter.testSetStarting(simpleReportEntry3);
         consoleTreeReporter.testSetStarting(simpleReportEntry4);
+        consoleTreeReporter.testSetStarting(simpleReportEntry5);
         //As soon as it finished to add tests for all the nested classes that were prepared, then it prints
         consoleTreeReporter.testSetCompleted(wrappedReportEntry5, testSetStats, null);
         consoleTreeReporter.testSetCompleted(wrappedReportEntry4, testSetStatsForClass, null);
         consoleTreeReporter.testSetCompleted(wrappedReportEntry3, testSetStatsForClass, null);
         consoleTreeReporter.testSetCompleted(wrappedReportEntry2, testSetStatsForClass, null);
+        consoleTreeReporter.testSetCompleted(wrappedReportEntry6, testSetStatsForClass, null);
 
         //TODO see how to unit test this
     }
