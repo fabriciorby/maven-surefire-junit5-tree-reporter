@@ -17,7 +17,7 @@ public class NestedExampleTest {
         @Test
         @DisplayName("FirstInnerTest should show up")
         void test() throws InterruptedException {
-            Thread.sleep(100);
+            Thread.sleep(600);
         }
     }
 
