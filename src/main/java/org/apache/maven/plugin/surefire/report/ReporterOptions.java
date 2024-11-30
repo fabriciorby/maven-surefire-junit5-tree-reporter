@@ -29,6 +29,10 @@ public class ReporterOptions {
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public Theme getTheme() {
         return theme;
     }
@@ -65,7 +69,7 @@ public class ReporterOptions {
         return printStdoutOnSuccess;
     }
 
-    public boolean isHIdeResultsOnSuccess() {
+    public boolean isHideResultsOnSuccess() {
         return hideResultsOnSuccess;
     }
 
@@ -75,10 +79,6 @@ public class ReporterOptions {
 
     public boolean isUsePhrasedClassNameInTestCaseSummary() {
         return usePhrasedClassNameInTestCaseSummary;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static final class Builder {
