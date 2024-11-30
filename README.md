@@ -60,6 +60,18 @@ The output can be printed using two Themes: UNICODE and ASCII (by default).
 ![Imgur](https://i.imgur.com/FzcIWwe.png "ASCII Output")
 
 
+## Reduce verbosity
+
+Output in large projects could become too verbose, making failures or errors difficult to find inside the printed trees.
+To reduce verbosity, you can a _hide successful results_ option can be configured as follows:
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <hideResultsOnSuccess>true</hideResultsOnSuccess>
+</statelessTestsetInfoReporter>
+```
+
 ## Failure details
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:

@@ -42,13 +42,13 @@ import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer
  */
 public class TreePrinter {
 
+    private static final int $ = 36;
     private final ConsoleLogger consoleLogger;
     private final List<WrappedReportEntry> classResults;
     private final List<WrappedReportEntry> testSetStats;
     private final List<String> sourceNames;
     private final Set<String> distinctSourceName;
     private final ReporterOptions options;
-    private static final int $ = 36;
 
     public TreePrinter(ConsoleLogger consoleLogger, List<WrappedReportEntry> classResults, List<WrappedReportEntry> testSetStats, ReporterOptions options) {
         this.consoleLogger = consoleLogger;
@@ -78,9 +78,13 @@ public class TreePrinter {
                 .stream()
                 .map(TestPrinter::new)
                 .forEach(printer -> {
-                    printer.printTest();
+                    printer.printTest(isSuccessPrintAllowed());
                     printer.printDetails();
                 });
+    }
+
+    private boolean isSuccessPrintAllowed() {
+        return !options.isHideResultsOnSuccess();
     }
 
     private class TestPrinter {
@@ -123,13 +127,13 @@ public class TreePrinter {
             }
         }
 
-        private void printTest() {
+        private void printTest(boolean isPrintSuccessAllowed) {
             printClass();
             if (testResult.isErrorOrFailure()) {
                 printFailure();
             } else if (testResult.isSkipped()) {
                 printSkipped();
-            } else if (testResult.isSucceeded()) {
+            } else if (isPrintSuccessAllowed && testResult.isSucceeded()) {
                 printSuccess();
             }
         }
