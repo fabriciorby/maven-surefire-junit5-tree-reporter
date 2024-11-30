@@ -22,6 +22,15 @@ import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
 public class SurefireEmulator {
 
+    private final ReporterOptions reportOptions;
+
+    public SurefireEmulator() {
+        this.reportOptions = ReporterOptions.builder().build();
+    }
+    public SurefireEmulator(ReporterOptions reporterOptions) {
+        this.reportOptions = reporterOptions;
+    }
+
     Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
 
@@ -49,7 +58,7 @@ public class SurefireEmulator {
                 .forEachOrdered(testSetStats::testSucceeded);
 
         TestSetStats testSetStatsForClass = new TestSetStats(false, true);
-        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), ReporterOptions.builder().build());
+        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), reportOptions);
         getAllInnerClasses(clazz).stream()
                 .map(this::simpleReportEntryGenerator)
                 .forEachOrdered(consoleTreeReporter::testSetStarting);
