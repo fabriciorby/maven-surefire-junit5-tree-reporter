@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.surefire;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,7 @@ public class NestedExampleTest {
         @Test
         @DisplayName("FirstInnerTest should show up")
         void test() throws InterruptedException {
-            Thread.sleep(100);
+            Thread.sleep(600);
         }
     }
 

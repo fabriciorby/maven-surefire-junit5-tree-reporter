@@ -1,8 +1,9 @@
+package org.apache.maven.plugin.surefire;
+
 import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
