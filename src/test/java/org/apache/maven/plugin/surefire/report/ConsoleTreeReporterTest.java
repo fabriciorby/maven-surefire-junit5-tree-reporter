@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.surefire.report;
 
+import org.apache.maven.plugin.surefire.AppTest;
 import org.apache.maven.plugin.surefire.NestedExampleTest;
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
@@ -9,10 +10,11 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ConsoleTreeReporterTest {
 
     //Test for org.apache.maven.plugin.surefire.NestedExampleTest
@@ -33,7 +35,9 @@ class ConsoleTreeReporterTest {
         // Now we can check the output of any Test class using this
         // TODO: Add some proxy before the logger or something so we can assert the output
         // TODO: Add some objects with relevant information inside the emulator
-        new SurefireEmulator(NestedExampleTest.class).run();
+        SurefireEmulator surefireEmulator = new SurefireEmulator(NestedExampleTest.class);
+        List<String> logs = surefireEmulator.run();
+        assertThat(logs).isNotEmpty();
     }
 
     @Test

@@ -3,9 +3,6 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.logging.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.platform.commons.util.StringUtils;
@@ -18,10 +15,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.DisplayNameGenerator.getDisplayNameGenerator;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
 public class SurefireEmulator {
 
+    private final EmulatorLogger emulatorLogger = new EmulatorLogger();
+    private final DisplayNameGenerator displayNameGenerator = getDisplayNameGenerator(DisplayNameGenerator.Standard.class);
+    private final Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
+    private final Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
     private final Class<?> clazz;
     private final ConsoleTreeReporter consoleTreeReporter;
 
@@ -31,29 +33,13 @@ public class SurefireEmulator {
 
     public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz) {
         this.clazz = clazz;
-        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(logger), reporterOptions);
+        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(emulatorLogger), reporterOptions);
     }
 
-    Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
-    Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
-
-    static DefaultPlexusContainer container;
-    static Logger logger;
-    static DisplayNameGenerator displayNameGenerator;
-
-    static {
-        try {
-            container = new DefaultPlexusContainer();
-            logger = container.getLogger();
-            displayNameGenerator = DisplayNameGenerator.getDisplayNameGenerator(DisplayNameGenerator.Standard.class);
-        } catch (PlexusContainerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void run() {
+    public List<String> run() {
         testsStarting();
         testsCompleted(testsSucceeded());
+        return emulatorLogger.getLogList();
     }
 
     private void testsCompleted(TestSetStats testSetStats) {
@@ -86,7 +72,6 @@ public class SurefireEmulator {
     private void testsStarting() {
         getAllInnerClasses(clazz).stream()
                 .map(this::simpleReportEntryGenerator)
-                .peek(System.out::println)
                 .forEachOrdered(consoleTreeReporter::testSetStarting);
     }
 

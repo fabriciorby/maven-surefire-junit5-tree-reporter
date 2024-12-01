@@ -103,3 +103,15 @@ If you ever want to debug the code, please use the following command
 mvnDebug test
 ```
 Then attach a remote JVM debugger on port 8000
+
+### Using SurefireEmulator
+
+This SurefireEmulator class was developed so it's easier to debug the code.
+
+```java
+new SurefireEmulator(NestedExampleTest.class).run();
+```
+
+By running this command it's possible to debug the code almost as the actual
+Surefire was running. And it also returns a List with all the lines that were
+printed during the test execution.
