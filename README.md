@@ -21,7 +21,7 @@ Configure your POM like the following
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>1.3.0</version>
+            <version>1.4.0</version>
         </dependency>
     </dependencies>
     <configuration>
