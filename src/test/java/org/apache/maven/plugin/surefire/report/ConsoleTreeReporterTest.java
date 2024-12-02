@@ -1,6 +1,5 @@
 package org.apache.maven.plugin.surefire.report;
 
-import org.apache.maven.plugin.surefire.AppTest;
 import org.apache.maven.plugin.surefire.NestedExampleTest;
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
