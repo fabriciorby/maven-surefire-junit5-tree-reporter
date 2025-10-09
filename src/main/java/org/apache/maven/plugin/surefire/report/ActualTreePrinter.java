@@ -25,8 +25,9 @@ public class ActualTreePrinter {
     }
 
     public void print() {
+        if (options.isPrintBlankLineBetweenTests()) println("");
         print(tree.branches.get(0));
-        Node.getRoot().clearTree();
+        Node.clearTree();
     }
 
     private void print(Node node) {
@@ -63,11 +64,10 @@ public class ActualTreePrinter {
 
     private void println(String message) {
         consoleLogger.info(message);
-        //System.out.println(message);
     }
 
     private boolean isLastMissingBranch(Node node) {
-        Node rootChild = Node.getRoot().branches.get(0); // first after ROOT
+        Node rootChild = tree.branches.get(0); // first after ROOT
         if (rootChild.hasBranches()) {
             Node rootChildLastChild = getLastItem(rootChild.branches); // last branch in root child
             return node.getParent(rootChildLastChild.getName()).isPresent() || node == rootChildLastChild;
@@ -76,7 +76,7 @@ public class ActualTreePrinter {
         }
     }
 
-    private <T> T getLastItem(List<T> list) {
+    private static <T> T getLastItem(List<T> list) {
         return list.get(list.size() - 1);
     }
 
@@ -121,23 +121,26 @@ public class ActualTreePrinter {
                 if (isLastMissingBranch(node)) builder.a(theme.end());
                 else builder.a(theme.entry());
             }
-            if (node.hasBranches()) {
-                builder.a(theme.down());
-            } else {
-                builder.a(theme.dash());
-            }
+        }
+        if (node.hasBranches()) {
+            builder.a(theme.down());
         } else {
-            if (node.hasBranches()) builder.a(theme.down());
-            else builder.a(theme.dash());
+            builder.a(theme.dash());
         }
 
-        builder.a(node.getName());
-
-//TODO: Fix this, compare with the timing from the other printer (for nested class names)
-//        concatenateWithTestGroup(builder, testResult, !isBlank(testResult.getReportNameWithGroup()));
-//        builder.a(" - " + classResults.get(treeLength).elapsedTimeAsString());
+        builder.strong(cleanReportName(node));
+        builder.a(" - " + node.getClassReportEntry().elapsedTimeAsString());
 
         println(builder.toString());
+    }
+
+    private String cleanReportName(Node node) {
+        if (node.getParent().getClassReportEntry() != null) {
+            int stringSizeToRemove = node.getParent().getClassReportEntry().getReportNameWithGroup().length() + 1;
+            return node.getClassReportEntry().getReportNameWithGroup().substring(stringSizeToRemove);
+        } else {
+            return node.getClassReportEntry().getReportNameWithGroup();
+        }
     }
 
     private void printDetails(WrappedReportEntry testResult) {
@@ -185,7 +188,6 @@ public class ActualTreePrinter {
     }
 
     private void printPreambleDetails(WrappedReportEntry testResult) {
-        println("");
         if (testResult.isSucceeded()) {
             println(buffer().success(theme.details()).success(abbreviateName(testResult.getReportName())).toString());
         } else {

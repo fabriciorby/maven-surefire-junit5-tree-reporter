@@ -59,6 +59,14 @@ The output can be printed using two Themes: UNICODE and ASCII (by default).
 ```
 ![Imgur](https://i.imgur.com/FzcIWwe.png "ASCII Output")
 
+## Blank line between tests
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <printBlankLineBetweenTests>true</printBlankLineBetweenTests>
+</statelessTestsetInfoReporter>
+```
+
 
 ## Reduce verbosity
 

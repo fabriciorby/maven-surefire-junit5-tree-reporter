@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.api.report.ReportEntry;
+import org.apache.maven.surefire.api.report.SimpleReportEntry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +44,9 @@ public class TestReportHandler {
         if (testSetStats != null) {
             testSetStats.getReportEntries()
                     .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName())).get().wrappedReportEntries.add(entry));
+        }
+        if (report != null) {
+            Node.getBranchNode(node, getTestClassPath(report.getSourceName())).get().setClassReportEntry((WrappedReportEntry) report);
         }
         if (isMarkedAsNestedTest()) {
             prepareEntriesForNestedTests();

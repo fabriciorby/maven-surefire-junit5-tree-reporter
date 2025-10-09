@@ -13,6 +13,7 @@ public class ReporterOptions {
     private final Theme theme;
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
+    private final boolean printBlankLineBetweenTests;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -27,6 +28,7 @@ public class ReporterOptions {
         this.usePhrasedClassNameInRunning = builder.usePhrasedClassNameInRunning;
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
+        this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
     }
 
     public static Builder builder() {
@@ -81,6 +83,10 @@ public class ReporterOptions {
         return usePhrasedClassNameInTestCaseSummary;
     }
 
+    public boolean isPrintBlankLineBetweenTests() {
+        return printBlankLineBetweenTests;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -94,6 +100,7 @@ public class ReporterOptions {
         private Theme theme;
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
+        private boolean printBlankLineBetweenTests;
 
         private Builder() {
         }
@@ -159,6 +166,11 @@ public class ReporterOptions {
 
         public Builder usePhrasedClassNameInTestCaseSummary(boolean usePhrasedClassNameInTestCaseSummary) {
             this.usePhrasedClassNameInTestCaseSummary = usePhrasedClassNameInTestCaseSummary;
+            return this;
+        }
+
+        public Builder printBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
+            this.printBlankLineBetweenTests = printBlankLineBetweenTests;
             return this;
         }
     }

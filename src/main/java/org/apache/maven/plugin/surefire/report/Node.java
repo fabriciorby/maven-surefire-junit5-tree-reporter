@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.api.report.ReportEntry;
+import org.apache.maven.surefire.api.report.SimpleReportEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +16,9 @@ public class Node {
     private final String name;
     private final int depth;
     public final List<WrappedReportEntry> wrappedReportEntries = new ArrayList<>();
+    private WrappedReportEntry classReportEntry;
 
-    public void clearTree() {
+    public static void clearTree() {
         ROOT.branches.clear();
     }
 
@@ -117,5 +119,13 @@ public class Node {
 
     public Node getParent() {
         return this.parent;
+    }
+
+    public WrappedReportEntry getClassReportEntry() {
+        return classReportEntry;
+    }
+
+    public void setClassReportEntry(WrappedReportEntry classReportEntry) {
+        this.classReportEntry = classReportEntry;
     }
 }

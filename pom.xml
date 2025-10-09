@@ -160,6 +160,7 @@
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter
                             implementation="${maven-surefire.testsetInfoReporter}">
+                        <printBlankLineBetweenTests>true</printBlankLineBetweenTests>
                         <theme>UNICODE</theme>
                     </statelessTestsetInfoReporter>
                 </configuration>

@@ -10,7 +10,7 @@ class NodeTest {
 
     @BeforeEach
     void setup() {
-       Node.getRoot().clearTree();
+       Node.clearTree();
     }
 
     @Test

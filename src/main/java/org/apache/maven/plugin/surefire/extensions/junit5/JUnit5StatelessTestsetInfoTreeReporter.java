@@ -26,6 +26,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printStdoutOnFailure;
     private boolean printStdoutOnSuccess;
     private boolean hideResultsOnSuccess;
+    private boolean printBlankLineBetweenTests;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -104,6 +105,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return hideResultsOnSuccess;
     }
 
+    public boolean isPrintBlankLineBetweenTests() {
+        return printBlankLineBetweenTests;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -140,6 +145,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.hideResultsOnSuccess = hideResultsOnSuccess;
     }
 
+    public void setPrintBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
+        this.printBlankLineBetweenTests = printBlankLineBetweenTests;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -167,7 +176,9 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .hideResultsOnSuccess(isHideResultsOnSuccess())
                 .usePhrasedClassNameInRunning(isUsePhrasedClassNameInRunning())
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
+                .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
                 .theme(getTheme())
                 .build();
     }
+
 }

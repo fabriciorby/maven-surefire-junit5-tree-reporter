@@ -11,7 +11,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -75,11 +74,11 @@ public class SurefireEmulator {
                 .forEachOrdered(consoleTreeReporter::testSetStarting);
     }
 
-    private <T> SimpleReportEntry simpleReportEntryGenerator(Class<T> clazz) {
+    private SimpleReportEntry simpleReportEntryGenerator(Class<?> clazz) {
         return new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, clazz.getName(), getClassDisplayName(clazz), null, null);
     }
 
-    private <T> SimpleReportEntry simpleReportEntryGenerator(Class<T> clazz, Method method) {
+    private SimpleReportEntry simpleReportEntryGenerator(Class<?> clazz, Method method) {
         return new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, clazz.getName(), getClassDisplayName(clazz), method.getName(), getMethodDisplayName(clazz, method));
     }
 
@@ -111,24 +110,26 @@ public class SurefireEmulator {
     }
 
     // Got the methods below from JUnit Jupiter codebase DisplayNameUtils.java
-    private String getDisplayName(AnnotatedElement element, Supplier<String> displayNameSupplier) {
+    private String getDisplayName(AnnotatedElement element, Function<Class<?>, String> displayNameSupplier) {
         Optional<DisplayName> displayNameAnnotation = findAnnotation(element, DisplayName.class);
         if (displayNameAnnotation.isPresent()) {
             String displayName = displayNameAnnotation.get().value().trim();
             if (!StringUtils.isBlank(displayName)) return displayName;
         }
-        return displayNameSupplier.get();
+        return displayNameSupplier.apply(element.getClass());
     }
 
-    private <T> String getClassDisplayName(Class<T> clazz) {
+    private String getClassDisplayName(Class<?> clazz) {
         if (clazz.getEnclosingClass() == null) {
-            return getDisplayName(clazz, () -> displayNameGenerator.generateDisplayNameForClass(clazz));
+            return getDisplayName(clazz, displayNameGenerator::generateDisplayNameForClass);
         } else {
-            return getDisplayName(clazz, () -> displayNameGenerator.generateDisplayNameForNestedClass(clazz));
+            return getClassDisplayName(clazz.getEnclosingClass())
+                    .concat(" ")
+                    .concat(getDisplayName(clazz, displayNameGenerator::generateDisplayNameForNestedClass));
         }
     }
 
-    private <T> String getMethodDisplayName(Class<T> clazz, Method method) {
-        return getDisplayName(method, () -> displayNameGenerator.generateDisplayNameForMethod(clazz, method));
+    private String getMethodDisplayName(Class<?> clazz, Method method) {
+        return getDisplayName(method, (ignored) -> displayNameGenerator.generateDisplayNameForMethod(clazz, method));
     }
 }
