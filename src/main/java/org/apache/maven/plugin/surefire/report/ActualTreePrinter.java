@@ -13,7 +13,7 @@ import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
 
 public class ActualTreePrinter {
-    private final Theme theme = Theme.UNICODE;
+    private final Theme theme;
     private final Node tree;
     private final ConsoleLogger consoleLogger;
     private final ReporterOptions options;
@@ -22,6 +22,7 @@ public class ActualTreePrinter {
         this.tree = node;
         this.consoleLogger = consoleLogger;
         this.options = options;
+        this.theme = options.getTheme();
     }
 
     public void print() {

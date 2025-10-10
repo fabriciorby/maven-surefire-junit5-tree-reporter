@@ -54,7 +54,7 @@ The output can be printed using two Themes: UNICODE and ASCII (by default).
     <theme>UNICODE</theme>
 </statelessTestsetInfoReporter>
 ```
-![Imgur](https://i.imgur.com/JdrP2QN.png "UNICODE Output")
+![Imgur](https://i.imgur.com/wBSQnin.png "UNICODE Output")
 
 
 ### ASCII
@@ -64,7 +64,7 @@ The output can be printed using two Themes: UNICODE and ASCII (by default).
     <theme>ASCII</theme>
 </statelessTestsetInfoReporter>
 ```
-![Imgur](https://i.imgur.com/FzcIWwe.png "ASCII Output")
+![Imgur](https://i.imgur.com/g6OkbqU.png "ASCII Output")
 
 ## Blank line between tests
 ```xml
