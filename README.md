@@ -45,7 +45,19 @@ For that version on I plan to continue with `maven-surefire-junit5-tree-reporter
 
 ## Output Theme
 
-The output can be printed using two Themes: UNICODE and ASCII (by default).
+The output can be printed using Themes:
+- ASCII (default).
+- UNICODE
+- EMOJI
+
+### EMOJI
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <theme>EMOJI</theme>
+</statelessTestsetInfoReporter>
+```
+![Imgur](https://i.imgur.com/8JuxGRO.png "EMOJI Output")
 
 ### UNICODE
 ```xml
@@ -55,7 +67,6 @@ The output can be printed using two Themes: UNICODE and ASCII (by default).
 </statelessTestsetInfoReporter>
 ```
 ![Imgur](https://i.imgur.com/wBSQnin.png "UNICODE Output")
-
 
 ### ASCII
 ```xml

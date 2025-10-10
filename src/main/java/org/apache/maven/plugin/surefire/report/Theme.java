@@ -90,7 +90,9 @@ public enum Theme {
      * ...
      * </pre>
      */
-    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ", "● ");
+    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ", "● "),
+
+    EMOJI("│  ", "├─ ", "└─ ", "┬─ ", "── ", "🟢 ", "🔴 ", "🟡 ", "📘 ");
 
     public static Theme valueOf(Charset charset) {
         if (StandardCharsets.UTF_8.equals(charset)) {
