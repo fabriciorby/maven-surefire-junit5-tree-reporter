@@ -16,12 +16,12 @@ Configure your POM like the following
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.3.1</version>
+    <version>3.5.3</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
         </dependency>
     </dependencies>
     <configuration>
@@ -35,6 +35,13 @@ Configure your POM like the following
     </configuration>
 </plugin>
 ```
+
+### Important
+Until `maven-surefire-plugin:3.5.3` you should use `maven-surefire-junit5-tree-reporter:1.5.0`.
+
+There was a breaking change in `maven-surefire-plugin:3.5.4`, and this plugin won't work anymore.
+
+For that version on I plan to continue with `maven-surefire-junit5-tree-reporter:2.x.x`.
 
 ## Output Theme
 

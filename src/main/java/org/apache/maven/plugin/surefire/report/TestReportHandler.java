@@ -1,7 +1,6 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.api.report.ReportEntry;
-import org.apache.maven.surefire.api.report.SimpleReportEntry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +8,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 
 public class TestReportHandler {
 
@@ -40,7 +38,7 @@ public class TestReportHandler {
         }
     }
 
-    public void print(BiFunction<List<WrappedReportEntry>, List<WrappedReportEntry>, TreePrinter> getTreePrinter) {
+    public void print(TreePrinter treePrinter) {
         if (testSetStats != null) {
             testSetStats.getReportEntries()
                     .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName())).get().wrappedReportEntries.add(entry));
@@ -51,10 +49,10 @@ public class TestReportHandler {
         if (isMarkedAsNestedTest()) {
             prepareEntriesForNestedTests();
             if (isNestedTestReadyToPrint()) {
-                printNestedTests(getTreePrinter);
+                printNestedTests(treePrinter);
             }
         } else {
-            printTests(getTreePrinter);
+            printTests(treePrinter);
         }
     }
 
@@ -97,11 +95,6 @@ public class TestReportHandler {
         testEntries.remove(sourceRootName);
     }
 
-    private void sortClassEntryList() {
-        getClassEntryList()
-                .sort(Comparator.comparing(ReportEntry::getSourceName));
-    }
-
     private void prepareEntriesForNestedTests() {
         if (hasNestedTests()) {
             prepareTestEntriesForNestedTest();
@@ -113,18 +106,13 @@ public class TestReportHandler {
         return getClassEntryList().size() == getClassNameList().size();
     }
 
-    private void printNestedTests(BiFunction<List<WrappedReportEntry>, List<WrappedReportEntry>, TreePrinter> getTreePrinter) {
-        sortClassEntryList();
-        getTreePrinter
-                .apply(getClassEntryList(), getTestEntryList())
-                .printTests();
+    private void printNestedTests(TreePrinter treePrinter) {
+        treePrinter.printTests();
         cleanEntries();
     }
 
-    private void printTests(BiFunction<List<WrappedReportEntry>, List<WrappedReportEntry>, TreePrinter> getTreePrinter) {
-        getTreePrinter
-                .apply(singletonList((WrappedReportEntry) report), new ArrayList<>(testSetStats.getReportEntries()))
-                .printTests();
+    private void printTests(TreePrinter treePrinter) {
+        treePrinter.printTests();
     }
 
     private <J, K, V extends Collection<K>> BiFunction<J, V, V> addToCollection(K obj) {

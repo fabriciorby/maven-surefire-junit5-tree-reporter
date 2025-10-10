@@ -6,7 +6,7 @@
 
     <groupId>me.fabriciorby</groupId>
     <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
 
     <name>maven-surefire-junit5-tree-reporter</name>
@@ -16,7 +16,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.surefire.version>3.3.1</maven.surefire.version>
+        <maven.surefire.version>3.5.3</maven.surefire.version>
         <maven-surefire.testsetInfoReporter>
             org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter
         </maven-surefire.testsetInfoReporter>
@@ -88,12 +88,6 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>5.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.sisu</groupId>
-            <artifactId>org.eclipse.sisu.plexus</artifactId>
-            <version>0.3.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>

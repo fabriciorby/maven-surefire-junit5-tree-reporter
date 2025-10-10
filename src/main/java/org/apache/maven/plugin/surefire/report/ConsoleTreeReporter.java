@@ -20,10 +20,10 @@ public class ConsoleTreeReporter extends ConsoleReporter {
 
     @Override
     public void testSetCompleted(WrappedReportEntry report, TestSetStats testSetStats, List<String> testResults) {
-        new TestReportHandler(report, testSetStats).print(this::getTreePrinter);
+        new TestReportHandler(report, testSetStats).print(getTreePrinter());
     }
 
-    private TreePrinter getTreePrinter(List<WrappedReportEntry> classEntries, List<WrappedReportEntry> testEntries) {
-        return new TreePrinter(getConsoleLogger(), classEntries, testEntries, options);
+    private TreePrinter getTreePrinter() {
+        return new TreePrinter(getConsoleLogger(), options);
     }
 }

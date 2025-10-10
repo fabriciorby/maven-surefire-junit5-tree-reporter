@@ -4,12 +4,10 @@ import org.apache.maven.plugin.surefire.VeryNestedExampleTest;
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.logging.Logger;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,14 +19,7 @@ class ConsoleTreeReporterTest {
     Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
 
-    static DefaultPlexusContainer container;
-    static Logger logger;
-
-    @BeforeAll
-    static void setupContainer() throws PlexusContainerException {
-        container = new DefaultPlexusContainer();
-        logger = container.getLogger();
-    }
+    static Logger logger = LoggerFactory.getLogger(ConsoleTreeReporterTest.class);
 
     @BeforeEach
     void cleanNode() {

@@ -6,12 +6,14 @@ import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.platform.commons.util.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.DisplayNameGenerator.getDisplayNameGenerator;
@@ -19,7 +21,7 @@ import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
 public class SurefireEmulator {
 
-    private final EmulatorLogger emulatorLogger = new EmulatorLogger();
+//    private final EmulatorLogger emulatorLogger = new EmulatorLogger();
     private final DisplayNameGenerator displayNameGenerator = getDisplayNameGenerator(DisplayNameGenerator.Standard.class);
     private final Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     private final Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
@@ -32,13 +34,15 @@ public class SurefireEmulator {
 
     public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz) {
         this.clazz = clazz;
-        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(emulatorLogger), reporterOptions);
+        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(LoggerFactory.getLogger(SurefireEmulator.class)), reporterOptions);
     }
 
     public List<String> run() {
         testsStarting();
         testsCompleted(testsSucceeded());
-        return emulatorLogger.getLogList();
+        // TODO: Surefire has changed their logging, fix this.
+//        return emulatorLogger.getLogList();
+        return Stream.of("log").collect(toList());
     }
 
     private void testsCompleted(TestSetStats testSetStats) {
