@@ -27,7 +27,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mockito-bom.version>4.11.0</mockito-bom.version>
-        <junit-bom.version>5.9.3</junit-bom.version>
+        <junit-bom.version>6.0.0</junit-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -87,13 +87,13 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>5.1.0</version>
+            <version>7.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.26.0</version>
+            <version>3.27.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -155,7 +155,7 @@
                     <statelessTestsetInfoReporter
                             implementation="${maven-surefire.testsetInfoReporter}">
                         <printBlankLineBetweenTests>true</printBlankLineBetweenTests>
-                        <theme>UNICODE</theme>
+                        <theme>EMOJI</theme>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
