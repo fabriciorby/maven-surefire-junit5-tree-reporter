@@ -43,16 +43,18 @@ public class TestReportHandler {
             testSetStats.getReportEntries()
                     .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName())).get().wrappedReportEntries.add(entry));
         }
-        if (report != null) {
-            Node.getBranchNode(node, getTestClassPath(report.getSourceName())).get().setClassReportEntry((WrappedReportEntry) report);
-        }
+
+        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(report.getSourceName())).get();
+        classToBeTested.setClassReportEntry((WrappedReportEntry) report);
+
         if (isMarkedAsNestedTest()) {
             prepareEntriesForNestedTests();
             if (isNestedTestReadyToPrint()) {
-                printNestedTests(treePrinter);
+                treePrinter.printTests(classToBeTested);
+                cleanEntries();
             }
         } else {
-            printTests(treePrinter);
+            treePrinter.printTests(classToBeTested);
         }
     }
 
@@ -106,14 +108,14 @@ public class TestReportHandler {
         return getClassEntryList().size() == getClassNameList().size();
     }
 
-    private void printNestedTests(TreePrinter treePrinter) {
-        treePrinter.printTests();
-        cleanEntries();
-    }
-
-    private void printTests(TreePrinter treePrinter) {
-        treePrinter.printTests();
-    }
+//    private void printNestedTests(TreePrinter treePrinter) {
+//        treePrinter.printTests();
+//        cleanEntries();
+//    }
+//
+//    private void printTests(TreePrinter treePrinter) {
+//        treePrinter.printTests();
+//    }
 
     private <J, K, V extends Collection<K>> BiFunction<J, V, V> addToCollection(K obj) {
         return (k, v) -> {

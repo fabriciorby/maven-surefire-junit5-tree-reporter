@@ -25,10 +25,18 @@ public class ActualTreePrinter {
         this.theme = options.getTheme();
     }
 
-    public void print() {
+    public void printAndRemoveChild() {
         if (options.isPrintBlankLineBetweenTests()) println("");
-        print(tree.branches.get(0));
-        Node.clearTree();
+        print();
+        removeChild();
+    }
+
+    public void print() {
+        print(tree);
+    }
+
+    public void removeChild() {
+        tree.getParent().branches.remove(tree);
     }
 
     private void print(Node node) {
@@ -68,7 +76,7 @@ public class ActualTreePrinter {
     }
 
     private boolean isLastMissingBranch(Node node) {
-        Node rootChild = tree.branches.get(0); // first after ROOT
+        Node rootChild = Node.getRoot().branches.get(0); // first after ROOT
         if (rootChild.hasBranches()) {
             Node rootChildLastChild = getLastItem(rootChild.branches); // last branch in root child
             return node.getParent(rootChildLastChild.getName()).isPresent() || node == rootChildLastChild;

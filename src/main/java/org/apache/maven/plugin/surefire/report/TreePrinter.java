@@ -20,22 +20,7 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
-import org.apache.maven.surefire.shared.lang3.ArrayUtils;
-import org.apache.maven.surefire.shared.lang3.StringUtils;
-import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.maven.plugin.surefire.report.TestSetStats.concatenateWithTestGroup;
-import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
-import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
 import static org.apache.maven.surefire.shared.utils.logging.MessageUtils.buffer;
 
 /**
@@ -54,7 +39,7 @@ public class TreePrinter {
         this.options = options;
     }
 
-    public void printTests() {
-        new ActualTreePrinter(Node.getRoot(), consoleLogger, options).print();
+    public void printTests(Node node) {
+        new ActualTreePrinter(node, consoleLogger, options).printAndRemoveChild();
     }
 }
