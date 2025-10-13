@@ -50,11 +50,10 @@ public class TestReportHandler {
         if (isMarkedAsNestedTest()) {
             prepareEntriesForNestedTests();
             if (isNestedTestReadyToPrint()) {
-                treePrinter.printTests(classToBeTested);
-                cleanEntries();
+                printNestedTests(treePrinter, classToBeTested);
             }
         } else {
-            treePrinter.printTests(classToBeTested);
+            printTests(treePrinter, classToBeTested);
         }
     }
 
@@ -108,14 +107,14 @@ public class TestReportHandler {
         return getClassEntryList().size() == getClassNameList().size();
     }
 
-//    private void printNestedTests(TreePrinter treePrinter) {
-//        treePrinter.printTests();
-//        cleanEntries();
-//    }
-//
-//    private void printTests(TreePrinter treePrinter) {
-//        treePrinter.printTests();
-//    }
+    private void printNestedTests(TreePrinter treePrinter, Node classToBeTested) {
+        treePrinter.printTests(classToBeTested);
+        cleanEntries();
+    }
+
+    private void printTests(TreePrinter treePrinter, Node classToBeTested) {
+        treePrinter.printTests(classToBeTested);
+    }
 
     private <J, K, V extends Collection<K>> BiFunction<J, V, V> addToCollection(K obj) {
         return (k, v) -> {
