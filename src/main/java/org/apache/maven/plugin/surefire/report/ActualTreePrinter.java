@@ -144,7 +144,9 @@ public class ActualTreePrinter {
     }
 
     private String cleanReportName(Node node) {
-        if (node.getParent().getClassReportEntry() != null) {
+        if (node.getParent().getClassReportEntry() != null &&
+                node.getClassReportEntry().getReportNameWithGroup().startsWith(node.getParent().getClassReportEntry().getReportNameWithGroup())
+        ) {
             int stringSizeToRemove = node.getParent().getClassReportEntry().getReportNameWithGroup().length() + 1;
             return node.getClassReportEntry().getReportNameWithGroup().substring(stringSizeToRemove);
         } else {
