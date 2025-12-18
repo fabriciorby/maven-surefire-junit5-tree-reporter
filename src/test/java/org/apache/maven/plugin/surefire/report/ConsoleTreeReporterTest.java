@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 class ConsoleTreeReporterTest {
 
@@ -154,6 +155,57 @@ class ConsoleTreeReporterTest {
         consoleTreeReporter.testSetCompleted(wrappedReportEntry2, testSetStatsForClass, null);
         consoleTreeReporter.testSetCompleted(wrappedReportEntry6, testSetStatsForClass, null);
 
+    }
+
+    /**
+     * Reproduces bug: NoSuchElementException in TestReportHandler.print() when TestSetStats
+     * contains entries with source names that were never registered via testSetStarting().
+     *
+     * This occurs with @Disabled tests + @TestFactory dynamic tests when Surefire reports
+     * entries for classes/tests that don't have corresponding nodes in the tree.
+     *
+     * @see <a href="https://github.com/david-waltermire/maven-surefire-junit5-tree-reporter/issues/XX">Issue #XX</a>
+     */
+    @Test
+    void testSetCompletedWithUnregisteredSourceName_shouldNotThrow() {
+        // Register only the main test class - simulate a class with @TestFactory
+        SimpleReportEntry mainClassEntry = new SimpleReportEntry(
+                RunMode.NORMAL_RUN, 123L,
+                "com.example.ExampleTest", "Example Test",
+                null, null);
+
+        // Test entry for the registered class
+        SimpleReportEntry registeredTest = new SimpleReportEntry(
+                RunMode.NORMAL_RUN, 123L,
+                "com.example.ExampleTest", "Example Test",
+                "dynamicTestsWithCollection", "Dynamic Tests");
+        WrappedReportEntry wrappedRegisteredTest = new WrappedReportEntry(
+                registeredTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+
+        // Test entry for an UNREGISTERED source name - simulates dynamic container or disabled test
+        // that got reported with a different source name than what was registered
+        SimpleReportEntry unregisteredTest = new SimpleReportEntry(
+                RunMode.NORMAL_RUN, 123L,
+                "com.example.UnregisteredClass", "Unregistered Class",
+                "someTest", "Some Test");
+        WrappedReportEntry wrappedUnregisteredTest = new WrappedReportEntry(
+                unregisteredTest, ReportEntryType.SKIPPED, 1, stdout, stderr);
+
+        // TestSetStats contains both registered and unregistered entries
+        TestSetStats testSetStats = new TestSetStats(false, true);
+        testSetStats.testSucceeded(wrappedRegisteredTest);
+        testSetStats.testSkipped(wrappedUnregisteredTest);
+
+        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(
+                new PluginConsoleLogger(logger), ReporterOptions.builder().build());
+
+        // Only register the main class
+        consoleTreeReporter.testSetStarting(mainClassEntry);
+
+        // This should NOT throw NoSuchElementException even though testSetStats
+        // contains entries with unregistered source names
+        assertThatNoException().isThrownBy(() ->
+                consoleTreeReporter.testSetCompleted(wrappedRegisteredTest, testSetStats, null));
     }
 
 
