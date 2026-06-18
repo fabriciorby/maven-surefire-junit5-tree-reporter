@@ -31,6 +31,13 @@ public class TestReportHandler {
         this(report, null);
     }
 
+    public String getQualifiedName(ReportEntry reportEntry) {
+        if (reportEntry instanceof WrappedReportEntry) {
+            return ((WrappedReportEntry) reportEntry).getSourceQualifiedName("");
+        }
+        return reportEntry.getSourceQualifiedName();
+    }
+
     public void prepare() {
         node.addNode(report);
         if (hasNestedTests()) {
@@ -41,10 +48,10 @@ public class TestReportHandler {
     public void print(TreePrinter treePrinter) {
         if (testSetStats != null) {
             testSetStats.getReportEntries()
-                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName())).get().wrappedReportEntries.add(entry));
+                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(getQualifiedName(entry))).get().wrappedReportEntries.add(entry));
         }
 
-        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(report.getSourceName())).get();
+        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(getQualifiedName(report))).get();
         classToBeTested.setClassReportEntry((WrappedReportEntry) report);
 
         if (isMarkedAsNestedTest()) {
@@ -75,7 +82,7 @@ public class TestReportHandler {
 
     private void markClassNamesForNestedTests() {
         classNames.putIfAbsent(sourceRootName, new HashSet<>(singleton(sourceRootName)));
-        classNames.computeIfPresent(sourceRootName, addToCollection(report.getSourceName()));
+        classNames.computeIfPresent(sourceRootName, addToCollection(getQualifiedName(report)));
     }
 
     private Set<String> getClassNameList() {
@@ -124,7 +131,7 @@ public class TestReportHandler {
     }
 
     private String getSourceRootName() {
-        return report.getSourceName().split("\\$", -1)[0];
+        return getQualifiedName(report).split("\\$", -1)[0];
     }
 
     private boolean hasNestedTests() {
@@ -142,6 +149,6 @@ public class TestReportHandler {
     }
 
     private boolean hasNestedTests(ReportEntry reportEntry) {
-        return reportEntry.getSourceName().chars().anyMatch(c -> c == $);
+        return getQualifiedName(reportEntry).chars().anyMatch(c -> c == $);
     }
 }

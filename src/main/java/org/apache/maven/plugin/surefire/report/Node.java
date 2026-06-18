@@ -55,7 +55,7 @@ public class Node {
     }
 
     public Node addNode(ReportEntry reportEntry) {
-        String[] nodes = reportEntry.getSourceName().split("\\$", -1);
+        String[] nodes = reportEntry.getSourceQualifiedName().split("\\$", -1);
         return addChildren(nodes);
     }
 

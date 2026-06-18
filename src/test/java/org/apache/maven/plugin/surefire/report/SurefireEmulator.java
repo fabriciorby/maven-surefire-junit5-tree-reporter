@@ -87,7 +87,7 @@ public class SurefireEmulator {
     }
 
     private WrappedReportEntry wrappedReportEntryGenerator(SimpleReportEntry simpleReportEntry) {
-        return new WrappedReportEntry(simpleReportEntry, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        return new WrappedReportEntry(simpleReportEntry, ReportEntryType.SUCCESS, 1, 2, stdout, stderr);
     }
 
     private List<Class<?>> getAllInnerClasses(Class<?> clazz) {
