@@ -1,0 +1,12 @@
+┬─ Nested Sample - <time>
+├─ ── First Inner Test - <time>
+└─ ┬─ Second Inner Test - <time>
+   └─ ┬─ Inner Inner Test - <time>
+      └─ ── Inner Inner Inner Test - <time>
+
+┬─ Results Sample - <time>
+│  ├─ 🔴 Should fail - <time>
+│  ├─ 🔴 Should be an error - <time>
+│  └─ 🟡 Should be skipped (for demonstration purposes) - <time>
+└─ ── Inner Results - <time>
+      └─ 🔴 Inner test should fail - <time>

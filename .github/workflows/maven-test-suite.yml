@@ -15,21 +15,56 @@ on:
     branches: [ "master" ]
 
 jobs:
+  surefire-versions:
+    # Builds the list of maven-surefire-plugin versions the integration tests in src/it run with, see Compatibility in
+    # README.md: the older versions below plus maven.surefire.version from pom.xml, so a version bump in the pom is
+    # tested without changing this workflow and the jobs are named after the real version.
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.versions.outputs.versions }}
+    env:
+      OLDER_VERSIONS: '["3.0.0", "3.2.5", "3.5.3"]'
+    steps:
+    - uses: actions/checkout@v4
+    - id: versions
+      run: |
+        current=$(sed -n 's:.*<maven.surefire.version>\(.*\)</maven.surefire.version>.*:\1:p' pom.xml)
+        test -n "$current" || { echo "maven.surefire.version not found in pom.xml"; exit 1; }
+        echo "versions=$(jq -c --arg v "$current" '. + [$v] | unique' <<< "$OLDER_VERSIONS")" >> "$GITHUB_OUTPUT"
+
   build:
+    name: surefire ${{ matrix.surefire }}
+    needs: surefire-versions
 
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        surefire: ${{ fromJSON(needs.surefire-versions.outputs.versions) }}
+
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
         java-version: '8'
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B integration-test --file pom.xml -Dit.surefire.version=${{ matrix.surefire }}
 
+  dependency-graph:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+        cache: maven
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6

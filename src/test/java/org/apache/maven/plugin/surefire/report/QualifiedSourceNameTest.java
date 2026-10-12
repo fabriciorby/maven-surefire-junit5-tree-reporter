@@ -1,14 +1,11 @@
 package org.apache.maven.plugin.surefire.report;
 
-import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,6 +89,25 @@ class QualifiedSourceNameTest {
         assertThat(logger.lines.get(9)).contains("Inner Inner Inner Test");
         assertThat(logger.lines.get(10)).contains("Inner Inner Inner Test should pass");
         assertThat(Node.getRoot().hasBranches()).isFalse();
+        Snapshot.assertMatches("reporter/nested-tree-with-qualified-names", logger.lines);
+    }
+
+    @Test
+    void printsSimpleNameOfSkippedClassThatNeverStarted() {
+        ConsoleTreeReporter reporter = new ConsoleTreeReporter(logger, ReporterOptions.builder().build());
+        WrappedReportEntry outer = wrap(classEntry("", "Disabled Sample"));
+        // Events maven-surefire-plugin 3.6.0 sends for the @Nested class of a @Disabled class
+        WrappedReportEntry inner = new WrappedReportEntry(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER,
+                OUTER + "$InnerTest", OUTER + "$InnerTest", null, null, null, null, "whole class disabled",
+                Collections.emptyMap()), ReportEntryType.SKIPPED, 0L, 0, stdout, stderr);
+        TestSetStats stats = new TestSetStats(false, true);
+        stats.testSkipped(inner);
+
+        reporter.testSetStarting(outer);
+        reporter.testSetCompleted(outer, stats, null);
+
+        assertThat(logger.lines).hasSize(2);
+        assertThat(logger.lines.get(1)).contains("InnerTest (whole class disabled)").doesNotContain("$");
     }
 
     private static SimpleReportEntry classEntry(String nestedPath, String displayName) {
@@ -114,58 +130,5 @@ class QualifiedSourceNameTest {
             testSetStats.testSucceeded(entry);
         }
         return testSetStats;
-    }
-
-    private static class CapturingLogger implements ConsoleLogger {
-        final List<String> lines = new ArrayList<>();
-
-        @Override
-        public boolean isDebugEnabled() {
-            return false;
-        }
-
-        @Override
-        public void debug(String message) {
-        }
-
-        @Override
-        public boolean isInfoEnabled() {
-            return true;
-        }
-
-        @Override
-        public void info(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public boolean isWarnEnabled() {
-            return true;
-        }
-
-        @Override
-        public void warning(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public boolean isErrorEnabled() {
-            return true;
-        }
-
-        @Override
-        public void error(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public void error(String message, Throwable t) {
-            lines.add(message);
-        }
-
-        @Override
-        public void error(Throwable t) {
-            lines.add(String.valueOf(t));
-        }
     }
 }

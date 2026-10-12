@@ -146,3 +146,12 @@ new SurefireEmulator(NestedExampleTest.class).run();
 By running this command it's possible to debug the code almost as the actual
 Surefire was running. And it also returns a List with all the lines that were
 printed during the test execution.
+
+### Testing the printed tree
+
+The tree is compared with golden files in unit tests (`mvn test`) and in integration tests that run real Maven
+builds with every supported maven-surefire-plugin version (`mvn integration-test`). Every bug fix should come with
+such a test.
+
+[docs/integration-tests.md](docs/integration-tests.md) explains how they work, why each piece is there, and how to
+add a test for a bug.

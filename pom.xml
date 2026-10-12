@@ -25,6 +25,11 @@
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
+        <!-- maven-surefire-plugin used by the integration tests in src/it, CI runs one job per supported version -->
+        <it.surefire.version>${maven.surefire.version}</it.surefire.version>
+        <!-- -Dsnapshot.update=true writes the current tree as the new golden file -->
+        <snapshot.update>false</snapshot.update>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-bom.version>5.14.0</junit-bom.version>
     </properties>
@@ -163,6 +168,53 @@
                         <theme>EMOJI</theme>
                     </statelessTestsetInfoReporter>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- Runs the projects in src/it with the reporter just built and compares the printed tree -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>${maven-invoker-plugin.version}</version>
+                <configuration>
+                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                    <settingsFile>src/it/settings.xml</settingsFile>
+                    <mergeUserSettings>true</mergeUserSettings>
+                    <pomIncludes>
+                        <pomInclude>*/pom.xml</pomInclude>
+                    </pomIncludes>
+                    <goals>
+                        <goal>test</goal>
+                    </goals>
+                    <mavenOpts>-Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8</mavenOpts>
+                    <postBuildHookScript>verify</postBuildHookScript>
+                    <showErrors>true</showErrors>
+                    <scriptVariables>
+                        <itSourceDir>${project.basedir}/src/it</itSourceDir>
+                        <snapshotUpdate>${snapshot.update}</snapshotUpdate>
+                    </scriptVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-for-it</id>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-it</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it/surefire-${it.surefire.version}</cloneProjectsTo>
+                            <properties>
+                                <surefire.version>${it.surefire.version}</surefire.version>
+                            </properties>
+                            <scriptVariables>
+                                <surefireVersion>${it.surefire.version}</surefireVersion>
+                            </scriptVariables>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
