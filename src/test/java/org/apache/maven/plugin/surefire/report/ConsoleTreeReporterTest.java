@@ -208,5 +208,22 @@ class ConsoleTreeReporterTest {
                 consoleTreeReporter.testSetCompleted(wrappedRegisteredTest, testSetStats, null));
     }
 
+    @Test
+    void testSetCompletedWithUnregisteredSourceName_shouldKeepEntry() {
+        // A @Disabled class never starts its @Nested classes, yet their skipped entry is still reported
+        SimpleReportEntry outer = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "DisabledExampleTest", null, null, null);
+        WrappedReportEntry wrappedOuter = new WrappedReportEntry(outer, ReportEntryType.SKIPPED, 0, stdout, stderr);
+        SimpleReportEntry inner = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "DisabledExampleTest$InnerTest", null, null, null, "disabled");
+        WrappedReportEntry wrappedInner = new WrappedReportEntry(inner, ReportEntryType.SKIPPED, 0, stdout, stderr);
+
+        TestSetStats testSetStats = new TestSetStats(false, true);
+        testSetStats.testSkipped(wrappedInner);
+
+        Node outerNode = Node.getRoot().addChildren("DisabledExampleTest");
+        new TestReportHandler(wrappedOuter, testSetStats).print(new TreePrinter(new PluginConsoleLogger(logger), ReporterOptions.builder().build()));
+
+        assertThat(outerNode.wrappedReportEntries).containsExactly(wrappedInner);
+    }
+
 
 }
