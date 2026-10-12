@@ -1,6 +1,7 @@
 // Shared by every scenario's verify.groovy: compares the tree printed in build.log with the golden file.
 //
 // Variables set by the maven-invoker-plugin: basedir, itSourceDir, surefireVersion, snapshotUpdate.
+// A scenario that reuses another scenario's tests sets goldenScenario to compare with that scenario's golden files.
 // Run with -Dsnapshot.update=true to write the current tree as the new golden file.
 
 def lines = new File(basedir, 'build.log').getText('UTF-8').readLines()
@@ -19,7 +20,7 @@ def actual = lines.subList(start + 2, end) // skips the dashes below T E S T S
         .join('\n').trim() + '\n'
 
 // expected-output-<surefire version>.txt wins over expected-output.txt when the tree differs between versions
-def scenarioDir = new File(itSourceDir, basedir.name)
+def scenarioDir = new File(itSourceDir, binding.hasVariable('goldenScenario') ? goldenScenario : basedir.name)
 def golden = new File(scenarioDir, "expected-output-${surefireVersion}.txt")
 if (!golden.exists()) golden = new File(scenarioDir, 'expected-output.txt')
 

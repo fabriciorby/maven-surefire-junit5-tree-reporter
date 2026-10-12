@@ -41,8 +41,12 @@ src/it/
 │   ├── verify.groovy             One line that runs ../verify-tree.groovy
 │   ├── expected-output.txt       Golden file, the expected tree
 │   └── expected-output-3.5.3.txt Golden file only for surefire 3.5.3, which prints a different tree
-└── hide-results-on-success/      EMOJI theme, hideResultsOnSuccess and printBlankLineBetweenTests
-    └── ...
+├── hide-results-on-success/      EMOJI theme, hideResultsOnSuccess and printBlankLineBetweenTests
+│   └── ...
+└── failsafe-nested-tree/         nested-tree's tests run with maven-failsafe-plugin instead of surefire
+    ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
+    ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
+    └── verify.groovy             Compares with nested-tree's golden files
 ```
 
 Each scenario is a small but complete Maven project. Its tests can be read side by side with its
@@ -61,6 +65,7 @@ takes over, in two executions configured in the root `pom.xml`:
       `pom.xml` with values from the root pom: `@project.version@` becomes the reporter version just built,
       `@junit-bom.version@` the JUnit version, and so on.
    2. Runs `mvn test -Dsurefire.version=<version>` on the copy, using `target/local-repo` and `src/it/settings.xml`.
+      A scenario's `invoker.properties` can change the goals, like `mvn verify` for `failsafe-nested-tree`.
       Everything Maven prints goes to `build.log` in the copy.
    3. Runs the scenario's `verify.groovy`, which runs `src/it/verify-tree.groovy`:
       1. Takes the lines between `T E S T S` and `Results:` from `build.log`. That is where the tree is printed.
@@ -121,6 +126,13 @@ different versions keep their logs side by side in `target/it/surefire-<version>
 
 **`<properties><surefire.version>`.** Passes `-Dsurefire.version` to the sample builds. Their `pom.xml` declares
 `<version>${surefire.version}</version>` for the surefire plugin, so the same scenario runs with any version.
+
+**`failsafe-nested-tree`.** The README says the reporter works with maven-failsafe-plugin, and this scenario is what
+checks it. Failsafe is released together with surefire under the same version, so it uses `${surefire.version}` too
+and runs with every version in the CI matrix. It reuses nested-tree's tests through `testSourceDirectory` instead of
+copying them, and its `verify.groovy` sets `goldenScenario` so the tree is compared with nested-tree's golden files: the
+reporter must print the same tree under both plugins. Surefire is skipped in this scenario, otherwise it would run the
+same tests first and its output would be the one compared.
 
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.

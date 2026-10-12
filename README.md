@@ -48,6 +48,12 @@ Configure your POM like the following
 so the tree cannot be built ([apache/maven-surefire#3203](https://github.com/apache/maven-surefire/issues/3203)).
 This was fixed in `3.6.0`.
 
+### Maven Failsafe
+
+The extension also works with [maven-failsafe-plugin](https://maven.apache.org/surefire/maven-failsafe-plugin/), which
+shares the same reporter extension API. Add the same `<dependencies>` and `<configuration>` shown above to
+`maven-failsafe-plugin` too. The compatibility table above applies to `maven-failsafe-plugin` versions as well.
+
 ## Output Theme
 
 The output can be printed using Themes:
