@@ -15,17 +15,33 @@ on:
     branches: [ "master" ]
 
 jobs:
+  surefire-versions:
+    # Builds the list of maven-surefire-plugin versions the integration tests in src/it run with, see Compatibility in
+    # README.md: the older versions below plus maven.surefire.version from pom.xml, so a version bump in the pom is
+    # tested without changing this workflow and the jobs are named after the real version.
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.versions.outputs.versions }}
+    env:
+      OLDER_VERSIONS: '["3.0.0", "3.2.5", "3.5.3"]'
+    steps:
+    - uses: actions/checkout@v4
+    - id: versions
+      run: |
+        current=$(sed -n 's:.*<maven.surefire.version>\(.*\)</maven.surefire.version>.*:\1:p' pom.xml)
+        test -n "$current" || { echo "maven.surefire.version not found in pom.xml"; exit 1; }
+        echo "versions=$(jq -c --arg v "$current" '. + [$v] | unique' <<< "$OLDER_VERSIONS")" >> "$GITHUB_OUTPUT"
+
   build:
     name: surefire ${{ matrix.surefire }}
+    needs: surefire-versions
 
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        # maven-surefire-plugin versions the integration tests in src/it run with, see Compatibility in README.md.
-        # "current" is maven.surefire.version from pom.xml, so a version bump in the pom is tested without changing this list.
-        surefire: [ '3.0.0', '3.2.5', '3.5.3', 'current' ]
+        surefire: ${{ fromJSON(needs.surefire-versions.outputs.versions) }}
 
     steps:
     - uses: actions/checkout@v4
@@ -36,7 +52,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B integration-test --file pom.xml ${{ matrix.surefire != 'current' && format('-Dit.surefire.version={0}', matrix.surefire) || '' }}
+      run: mvn -B integration-test --file pom.xml -Dit.surefire.version=${{ matrix.surefire }}
 
   dependency-graph:
     runs-on: ubuntu-latest

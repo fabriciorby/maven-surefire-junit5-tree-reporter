@@ -72,26 +72,25 @@ takes over, in two executions configured in the root `pom.xml`:
 3. The build fails if any scenario failed. Each failure shows the diff in the console.
 
 The surefire version is `-Dit.surefire.version`, `3.6.0` (`maven.surefire.version` in the root pom) by default. CI
-runs the whole build once per version in `.github/workflows/maven-test-suite.yml`:
+runs the whole build once per version in `.github/workflows/maven-test-suite.yml`. A first job, `surefire-versions`,
+builds the list: the older versions in `OLDER_VERSIONS` plus `maven.surefire.version` read from the root pom.
 
 ```yaml
-strategy:
-  fail-fast: false
-  matrix:
-    surefire: [ '3.0.0', '3.2.5', '3.5.3', 'current' ]
+env:
+  OLDER_VERSIONS: '["3.0.0", "3.2.5", "3.5.3"]'
 ```
 
-`current` runs without `-Dit.surefire.version`, so it always tests `maven.surefire.version` from the root pom.
-`fail-fast: false` lets every version finish, so the red jobs show exactly which versions broke.
+The `build` job then runs once per version in that list, with `fail-fast: false`, so every version finishes and the
+red jobs (named `surefire 3.0.0`, ..., `surefire 3.6.0`) show exactly which versions broke.
 
 Moving the project to a new surefire version takes two changes:
 
-1. `maven.surefire.version` in the root `pom.xml`. The compile dependencies, the project's own surefire and the
-   `current` job follow it.
+1. `maven.surefire.version` in the root `pom.xml`. The compile dependencies, the project's own surefire and the CI
+   matrix follow it.
 2. The Compatibility table of the README.
 
-If the previous version stays supported, it is added to the matrix list as a fixed version, the same way `3.5.3` is
-listed. The dependency graph upload runs in its own `dependency-graph` job, so it does not depend on the matrix.
+If the previous version stays supported, it is added to `OLDER_VERSIONS`. The dependency graph upload runs in its own
+`dependency-graph` job, so it does not depend on the matrix.
 
 CI runs `mvn integration-test` and not `mvn verify`, because the `verify` phase also runs the gpg signing used for
 releases. The release workflow runs `mvn deploy`, which passes through `integration-test`, so a release runs these
