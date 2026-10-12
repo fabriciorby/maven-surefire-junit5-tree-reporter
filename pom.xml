@@ -127,6 +127,19 @@
         </repository>
     </distributionManagement>
 
+    <profiles>
+        <profile>
+            <!-- javac/javadoc on JDK 8 don't know the release flag -->
+            <id>release-8</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
