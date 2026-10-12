@@ -92,6 +92,24 @@ class QualifiedSourceNameTest {
         Snapshot.assertMatches("reporter/nested-tree-with-qualified-names", logger.lines);
     }
 
+    @Test
+    void printsSimpleNameOfSkippedClassThatNeverStarted() {
+        ConsoleTreeReporter reporter = new ConsoleTreeReporter(logger, ReporterOptions.builder().build());
+        WrappedReportEntry outer = wrap(classEntry("", "Disabled Sample"));
+        // Events maven-surefire-plugin 3.6.0 sends for the @Nested class of a @Disabled class
+        WrappedReportEntry inner = new WrappedReportEntry(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER,
+                OUTER + "$InnerTest", OUTER + "$InnerTest", null, null, null, null, "whole class disabled",
+                Collections.emptyMap()), ReportEntryType.SKIPPED, 0L, 0, stdout, stderr);
+        TestSetStats stats = new TestSetStats(false, true);
+        stats.testSkipped(inner);
+
+        reporter.testSetStarting(outer);
+        reporter.testSetCompleted(outer, stats, null);
+
+        assertThat(logger.lines).hasSize(2);
+        assertThat(logger.lines.get(1)).contains("InnerTest (whole class disabled)").doesNotContain("$");
+    }
+
     private static SimpleReportEntry classEntry(String nestedPath, String displayName) {
         return new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER, displayName, OUTER + nestedPath,
                 null, null, null, null, null, Collections.emptyMap());

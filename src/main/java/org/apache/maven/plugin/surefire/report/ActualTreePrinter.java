@@ -185,9 +185,14 @@ public class ActualTreePrinter {
     private String getSkippedReport(WrappedReportEntry testResult) {
         if (!isBlank(testResult.getReportName())) {
             return abbreviateName(testResult.getReportName());
-        } else {
-            return testResult.getReportSourceName();
         }
+        String reportSourceName = testResult.getReportSourceName();
+        if (reportSourceName != null && reportSourceName.equals(SourceName.of(testResult))) {
+            // A class that never started has no display name, from 3.6.0 on it comes as the binary class name,
+            // so print the simple name as JUnit5 and maven-surefire-plugin 3.5.3 and older do.
+            return reportSourceName.substring(Math.max(reportSourceName.lastIndexOf('$'), reportSourceName.lastIndexOf('.')) + 1);
+        }
+        return reportSourceName;
     }
 
     private String getSkippedMessage(WrappedReportEntry testResult) {

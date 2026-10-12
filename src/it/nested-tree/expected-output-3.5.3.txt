@@ -1,6 +1,5 @@
 ── Disabled Sample - <time>
-   ├─ ↷ test (whole class disabled) - <time>
-   └─ ↷ sample.DisabledClassTest$InnerTest (whole class disabled) - <time>
+   └─ ↷ test (whole class disabled) - <time>
 ┬─ Nested Sample - <time>
 │  ├─ ✔ Should pass - <time>
 │  └─ ✔ Should pass again - <time>
