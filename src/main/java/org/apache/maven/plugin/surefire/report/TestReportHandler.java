@@ -39,12 +39,23 @@ public class TestReportHandler {
     }
 
     public void print(TreePrinter treePrinter) {
+        // Node may not exist if this report's source was never registered via testSetStarting().
+        // This can happen with @Disabled tests or @TestFactory dynamic tests where the source
+        // name differs from what was registered.
+        Optional<Node> optionalNode = Node.getBranchNode(node, getTestClassPath(SourceName.of(report)));
+        if (!optionalNode.isPresent()) {
+            return;
+        }
+        Node classToBeTested = optionalNode.get();
+
         if (testSetStats != null) {
+            // Entries whose node is missing (e.g. nested classes of a @Disabled class, which never
+            // start) are added to the class being completed, so they are still printed.
             testSetStats.getReportEntries()
-                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(SourceName.of(entry))).get().wrappedReportEntries.add(entry));
+                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(SourceName.of(entry)))
+                            .orElse(classToBeTested).wrappedReportEntries.add(entry));
         }
 
-        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(SourceName.of(report))).get();
         classToBeTested.setClassReportEntry((WrappedReportEntry) report);
 
         if (isMarkedAsNestedTest()) {
