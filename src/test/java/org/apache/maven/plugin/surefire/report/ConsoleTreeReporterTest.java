@@ -71,12 +71,12 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry fifthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Nested Sample Inner Test Inner Inner Test Inner Inner Inner Test", "test", "Inner Inner Inner Test should pass");
         SimpleReportEntry sixthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest$FirstInnerTest", "Nested Sample First Inner Test", "test", "FirstInnerTest should show up");
 
-        WrappedReportEntry wrappedReportEntry1 = new WrappedReportEntry(firstTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
-        WrappedReportEntry wrappedReportEntry2 = new WrappedReportEntry(secondTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
-        WrappedReportEntry wrappedReportEntry3 = new WrappedReportEntry(thirdTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
-        WrappedReportEntry wrappedReportEntry4 = new WrappedReportEntry(fourthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
-        WrappedReportEntry wrappedReportEntry5 = new WrappedReportEntry(fifthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
-        WrappedReportEntry wrappedReportEntry6 = new WrappedReportEntry(sixthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry1 = new WrappedReportEntry(firstTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry2 = new WrappedReportEntry(secondTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry3 = new WrappedReportEntry(thirdTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry4 = new WrappedReportEntry(fourthTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry5 = new WrappedReportEntry(fifthTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry6 = new WrappedReportEntry(sixthTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
 
         TestSetStats testSetStats = new TestSetStats(false, true);
         testSetStats.testSucceeded(wrappedReportEntry1);
@@ -115,22 +115,22 @@ class ConsoleTreeReporterTest {
         SimpleReportEntry simpleReportEntry5 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$FirstInnerTest", "Nested Sample First Inner Test", null, null);
 
         SimpleReportEntry firstTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest", "Nested Sample", "test", "Should not be displayed");
-        WrappedReportEntry wrappedReportEntry1 = new WrappedReportEntry(firstTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry1 = new WrappedReportEntry(firstTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
 
         SimpleReportEntry secondTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest", "Nested Sample", "test2", "Should not be displayed");
-        WrappedReportEntry wrappedReportEntry2 = new WrappedReportEntry(secondTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry2 = new WrappedReportEntry(secondTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
 
         SimpleReportEntry thirdTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest", "Nested Sample Inner Test", "test", "Inner failure test should be displayed");
-        WrappedReportEntry wrappedReportEntry3 = new WrappedReportEntry(thirdTest, ReportEntryType.FAILURE, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry3 = new WrappedReportEntry(thirdTest, ReportEntryType.FAILURE, 0L, 1, stdout, stderr);
 
         SimpleReportEntry fourthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest", "Nested Sample Inner Test Inner Inner Test", "test", "Inner Inner error test should be displayed");
-        WrappedReportEntry wrappedReportEntry4 = new WrappedReportEntry(fourthTest, ReportEntryType.ERROR, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry4 = new WrappedReportEntry(fourthTest, ReportEntryType.ERROR, 0L, 1, stdout, stderr);
 
         SimpleReportEntry fifthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Nested Sample Inner Test Inner Inner Test Inner Inner Inner Test", "test", "Inner Inner Inner skipped test should be displayed");
-        WrappedReportEntry wrappedReportEntry5 = new WrappedReportEntry(fifthTest, ReportEntryType.SKIPPED, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry5 = new WrappedReportEntry(fifthTest, ReportEntryType.SKIPPED, 0L, 1, stdout, stderr);
 
         SimpleReportEntry sixthTest = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "NestedExampleTest$FirstInnerTest", "Nested Sample First Inner Test", "test", "FirstInnerTest should not be displayed");
-        WrappedReportEntry wrappedReportEntry6 = new WrappedReportEntry(sixthTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+        WrappedReportEntry wrappedReportEntry6 = new WrappedReportEntry(sixthTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
 
         TestSetStats testSetStats = new TestSetStats(false, true);
         testSetStats.testSucceeded(wrappedReportEntry1);
@@ -180,7 +180,7 @@ class ConsoleTreeReporterTest {
                 "com.example.ExampleTest", "Example Test",
                 "dynamicTestsWithCollection", "Dynamic Tests");
         WrappedReportEntry wrappedRegisteredTest = new WrappedReportEntry(
-                registeredTest, ReportEntryType.SUCCESS, 1, stdout, stderr);
+                registeredTest, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
 
         // Test entry for an UNREGISTERED source name - simulates dynamic container or disabled test
         // that got reported with a different source name than what was registered
@@ -189,7 +189,7 @@ class ConsoleTreeReporterTest {
                 "com.example.UnregisteredClass", "Unregistered Class",
                 "someTest", "Some Test");
         WrappedReportEntry wrappedUnregisteredTest = new WrappedReportEntry(
-                unregisteredTest, ReportEntryType.SKIPPED, 1, stdout, stderr);
+                unregisteredTest, ReportEntryType.SKIPPED, 0L, 1, stdout, stderr);
 
         // TestSetStats contains both registered and unregistered entries
         TestSetStats testSetStats = new TestSetStats(false, true);
@@ -212,9 +212,9 @@ class ConsoleTreeReporterTest {
     void testSetCompletedWithUnregisteredSourceName_shouldKeepEntry() {
         // A @Disabled class never starts its @Nested classes, yet their skipped entry is still reported
         SimpleReportEntry outer = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "DisabledExampleTest", null, null, null);
-        WrappedReportEntry wrappedOuter = new WrappedReportEntry(outer, ReportEntryType.SKIPPED, 0, stdout, stderr);
+        WrappedReportEntry wrappedOuter = new WrappedReportEntry(outer, ReportEntryType.SKIPPED, 0L, 0, stdout, stderr);
         SimpleReportEntry inner = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "DisabledExampleTest$InnerTest", null, null, null, "disabled");
-        WrappedReportEntry wrappedInner = new WrappedReportEntry(inner, ReportEntryType.SKIPPED, 0, stdout, stderr);
+        WrappedReportEntry wrappedInner = new WrappedReportEntry(inner, ReportEntryType.SKIPPED, 0L, 0, stdout, stderr);
 
         TestSetStats testSetStats = new TestSetStats(false, true);
         testSetStats.testSkipped(wrappedInner);

@@ -16,12 +16,12 @@ Configure your POM like the following
 ```xml
 <plugin>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.5.3</version>
+    <version>3.6.0</version>
     <dependencies>
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>1.5.1</version>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
     <configuration>
@@ -36,12 +36,17 @@ Configure your POM like the following
 </plugin>
 ```
 
-### Important
-Until `maven-surefire-plugin:3.5.3` you should use `maven-surefire-junit5-tree-reporter:1.5.1`.
+### Compatibility
 
-There was a breaking change in `maven-surefire-plugin:3.5.4`, and this plugin won't work anymore.
+| `maven-surefire-plugin` | `maven-surefire-junit5-tree-reporter` |
+|-------------------------|---------------------------------------|
+| `3.6.0` and newer       | `2.0.0` and newer                     |
+| `3.5.4` to `3.5.6`      | Not supported                         |
+| `3.5.3` and older       | `1.5.1` or `2.0.0` and newer          |
 
-For that version on I plan to continue with `maven-surefire-junit5-tree-reporter:2.x.x`.
+`maven-surefire-plugin` versions `3.5.4` to `3.5.6` stopped sending the nested class of JUnit5 `@Nested` tests,
+so the tree cannot be built ([apache/maven-surefire#3203](https://github.com/apache/maven-surefire/issues/3203)).
+This was fixed in `3.6.0`.
 
 ## Output Theme
 

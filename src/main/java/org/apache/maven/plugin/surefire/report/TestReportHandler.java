@@ -42,7 +42,7 @@ public class TestReportHandler {
         // Node may not exist if this report's source was never registered via testSetStarting().
         // This can happen with @Disabled tests or @TestFactory dynamic tests where the source
         // name differs from what was registered.
-        Optional<Node> optionalNode = Node.getBranchNode(node, getTestClassPath(report.getSourceName()));
+        Optional<Node> optionalNode = Node.getBranchNode(node, getTestClassPath(SourceName.of(report)));
         if (!optionalNode.isPresent()) {
             return;
         }
@@ -52,7 +52,7 @@ public class TestReportHandler {
             // Entries whose node is missing (e.g. nested classes of a @Disabled class, which never
             // start) are added to the class being completed, so they are still printed.
             testSetStats.getReportEntries()
-                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName()))
+                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(SourceName.of(entry)))
                             .orElse(classToBeTested).wrappedReportEntries.add(entry));
         }
 
@@ -86,7 +86,7 @@ public class TestReportHandler {
 
     private void markClassNamesForNestedTests() {
         classNames.putIfAbsent(sourceRootName, new HashSet<>(singleton(sourceRootName)));
-        classNames.computeIfPresent(sourceRootName, addToCollection(report.getSourceName()));
+        classNames.computeIfPresent(sourceRootName, addToCollection(SourceName.of(report)));
     }
 
     private Set<String> getClassNameList() {
@@ -135,7 +135,7 @@ public class TestReportHandler {
     }
 
     private String getSourceRootName() {
-        return report.getSourceName().split("\\$", -1)[0];
+        return SourceName.of(report).split("\\$", -1)[0];
     }
 
     private boolean hasNestedTests() {
@@ -153,6 +153,6 @@ public class TestReportHandler {
     }
 
     private boolean hasNestedTests(ReportEntry reportEntry) {
-        return reportEntry.getSourceName().chars().anyMatch(c -> c == $);
+        return SourceName.of(reportEntry).chars().anyMatch(c -> c == $);
     }
 }
