@@ -51,3 +51,6 @@ local.properties
 
 # Java annotation processor (APT)
 .factorypath
+
+# maven-invoker-plugin settings for the integration tests
+!src/it/settings.xml

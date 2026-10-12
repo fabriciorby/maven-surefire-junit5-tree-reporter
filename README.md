@@ -146,3 +146,18 @@ new SurefireEmulator(NestedExampleTest.class).run();
 By running this command it's possible to debug the code almost as the actual
 Surefire was running. And it also returns a List with all the lines that were
 printed during the test execution.
+
+### Testing the printed tree
+
+The tree is compared with golden files in two places:
+
+* Unit tests (`mvn test`): `SurefireEmulator` sends the same events maven-surefire-plugin 3.6.0 sends, and
+  `TreeSnapshotTest` compares the printed lines with [src/test/resources/snapshots](src/test/resources/snapshots).
+* Integration tests (`mvn integration-test`): the [maven-invoker-plugin](https://maven.apache.org/plugins/maven-invoker-plugin/)
+  installs the reporter just built and runs every project in [src/it](src/it) with maven-surefire-plugin 3.5.3 and
+  3.6.0. [verify-tree.groovy](src/it/verify-tree.groovy) compares the tree in each `build.log` with the project's
+  `expected-output.txt`, or with `expected-output-<surefire version>.txt` when the tree differs between versions.
+  Run a single project with `mvn integration-test -Dinvoker.test=nested-tree`.
+
+If the output changes on purpose, run the same command with `-Dsnapshot.update=true` to rewrite the golden files
+and review the change with `git diff`.
