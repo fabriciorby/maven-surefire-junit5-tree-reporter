@@ -53,7 +53,7 @@ public class TestReportHandler {
         // This can happen with @Disabled tests or @TestFactory dynamic tests where the source
         // name differs from what was registered.
         Optional<Node> optionalNode = Node.getBranchNode(node, getTestClassPath(report.getSourceName()));
-        if (optionalNode.isEmpty()) {
+        if (!optionalNode.isPresent()) {
             return;
         }
         Node classToBeTested = optionalNode.get();
