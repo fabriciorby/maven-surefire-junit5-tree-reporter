@@ -53,7 +53,6 @@ This was fixed in `3.6.0`.
 The extension also works with [maven-failsafe-plugin](https://maven.apache.org/surefire/maven-failsafe-plugin/), which
 shares the same reporter extension API. Add the same `<dependencies>` and `<configuration>` shown above to
 `maven-failsafe-plugin` too. The compatibility table above applies to `maven-failsafe-plugin` versions as well.
-See [#75](https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter/issues/75) for details.
 
 ## Output Theme
 
