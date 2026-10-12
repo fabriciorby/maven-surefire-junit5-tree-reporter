@@ -36,7 +36,7 @@ public class ActualTreePrinter {
     }
 
     public void removeChild() {
-        tree.getParent().branches.remove(tree);
+        tree.getParent().removeBranch(tree);
     }
 
     private void print(Node node) {

@@ -5,13 +5,16 @@ import org.apache.maven.surefire.api.report.SimpleReportEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Node {
     private static final Node ROOT = new Node("ROOT", 0);
     final List<Node> branches = new ArrayList<>();
+    private final Map<String, Node> branchMap = new HashMap<>();
     private final Node parent;
     private final String name;
     private final int depth;
@@ -20,6 +23,7 @@ public class Node {
 
     public static void clearTree() {
         ROOT.branches.clear();
+        ROOT.branchMap.clear();
     }
 
     public String getName() {
@@ -36,6 +40,11 @@ public class Node {
 
     public boolean hasBranches() {
        return !branches.isEmpty();
+    }
+
+    public void removeBranch(Node branch) {
+        branches.remove(branch);
+        branchMap.remove(branch.name);
     }
 
     private Node(String name, int nestLevel) {
@@ -71,8 +80,9 @@ public class Node {
     }
 
     private Node generateBranch(String name) {
-        Node branch = new Node(name,this);
+        Node branch = new Node(name, this);
         branches.add(branch);
+        branchMap.put(name, branch);
         return branch;
     }
 
@@ -81,13 +91,11 @@ public class Node {
     }
 
     boolean containsBranch(String reportName) {
-        return branches.stream().anyMatch((item) -> item.name.equals(reportName));
+        return branchMap.containsKey(reportName);
     }
 
     Optional<Node> getBranchNode(String reportName) {
-        return branches.stream()
-                .filter((item) -> item.name.equals(reportName))
-                .findFirst();
+        return Optional.ofNullable(branchMap.get(reportName));
     }
 
     Optional<Node> getBranchNode(List<String> nodePath) {
