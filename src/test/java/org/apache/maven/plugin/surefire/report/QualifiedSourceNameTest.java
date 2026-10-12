@@ -1,14 +1,11 @@
 package org.apache.maven.plugin.surefire.report;
 
-import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,6 +89,7 @@ class QualifiedSourceNameTest {
         assertThat(logger.lines.get(9)).contains("Inner Inner Inner Test");
         assertThat(logger.lines.get(10)).contains("Inner Inner Inner Test should pass");
         assertThat(Node.getRoot().hasBranches()).isFalse();
+        Snapshot.assertMatches("reporter/nested-tree-with-qualified-names", logger.lines);
     }
 
     private static SimpleReportEntry classEntry(String nestedPath, String displayName) {
@@ -114,58 +112,5 @@ class QualifiedSourceNameTest {
             testSetStats.testSucceeded(entry);
         }
         return testSetStats;
-    }
-
-    private static class CapturingLogger implements ConsoleLogger {
-        final List<String> lines = new ArrayList<>();
-
-        @Override
-        public boolean isDebugEnabled() {
-            return false;
-        }
-
-        @Override
-        public void debug(String message) {
-        }
-
-        @Override
-        public boolean isInfoEnabled() {
-            return true;
-        }
-
-        @Override
-        public void info(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public boolean isWarnEnabled() {
-            return true;
-        }
-
-        @Override
-        public void warning(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public boolean isErrorEnabled() {
-            return true;
-        }
-
-        @Override
-        public void error(String message) {
-            lines.add(message);
-        }
-
-        @Override
-        public void error(String message, Throwable t) {
-            lines.add(message);
-        }
-
-        @Override
-        public void error(Throwable t) {
-            lines.add(String.valueOf(t));
-        }
     }
 }

@@ -1,0 +1,18 @@
+.--Very Nested Sample - <time>
+|  +-- [OK] Should pass - <time>
+|  '-- [OK] Should pass2 - <time>
++-----First Inner Test - <time>
+|     '-- [OK] FirstInnerTest should show up - <time>
++--.--Inner Test - <time>
+|  |  '-- [OK] Inner test should pass - <time>
+|  '--.--Inner Inner Test - <time>
+|     |  '-- [OK] Inner Inner Test should pass - <time>
+|     '-----Inner Inner Inner Test - <time>
+|           '-- [OK] Inner Inner Inner Test should pass - <time>
+'--.--Second Inner Test - <time>
+   |  +-- [OK] Inner test should pass - <time>
+   |  '-- [OK] Second Inner test should pass - <time>
+   '--.--Inner Inner Test - <time>
+      |  '-- [OK] Inner Inner Test should pass - <time>
+      '-----Inner Inner Inner Test - <time>
+            '-- [OK] Inner Inner Inner Test should pass - <time>

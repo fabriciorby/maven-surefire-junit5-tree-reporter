@@ -1,32 +1,45 @@
 package org.apache.maven.plugin.surefire.report;
 
-import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.platform.commons.util.StringUtils;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.DisplayNameGenerator.getDisplayNameGenerator;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
+/**
+ * Sends the reporter the same events maven-surefire-plugin 3.6.0 sends for a JUnit5 test class and keeps the printed lines.
+ * <p>
+ * Every class is started before its {@code @Nested} classes, and completed after them with the tests that ran since the
+ * last completed class. The source name is always the top level class, and the nested path goes in the qualified name.
+ * Classes and methods are sorted by name, since the reflection order is not specified.
+ */
 public class SurefireEmulator {
 
-//    private final EmulatorLogger emulatorLogger = new EmulatorLogger();
     private final DisplayNameGenerator displayNameGenerator = getDisplayNameGenerator(DisplayNameGenerator.Standard.class);
     private final Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     private final Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
+    private final CapturingLogger logger = new CapturingLogger();
     private final Class<?> clazz;
     private final ConsoleTreeReporter consoleTreeReporter;
+    private TestSetStats pendingStats = newStats();
 
     public SurefireEmulator(Class<?> clazz) {
         this(ReporterOptions.builder().theme(Theme.UNICODE).build(), clazz);
@@ -34,106 +47,84 @@ public class SurefireEmulator {
 
     public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz) {
         this.clazz = clazz;
-        this.consoleTreeReporter = new ConsoleTreeReporter(new PluginConsoleLogger(LoggerFactory.getLogger(SurefireEmulator.class)), reporterOptions);
+        this.consoleTreeReporter = new ConsoleTreeReporter(logger, reporterOptions);
     }
 
     public List<String> run() {
-        testsStarting();
-        testsCompleted(testsSucceeded());
-        // TODO: Surefire has changed their logging, fix this.
-//        return emulatorLogger.getLogList();
-        return Stream.of("log").collect(toList());
+        run(clazz);
+        return logger.lines;
     }
 
-    private void testsCompleted(TestSetStats testSetStats) {
-        List<WrappedReportEntry> completedWrappedEntries =
-                getAllInnerClasses(clazz).stream()
-                        .map(this::simpleReportEntryGenerator)
-                        .map(this::wrappedReportEntryGenerator)
-                        .collect(toList());
-
-        //List's head needs to be with complete testSetStats
-        completedWrappedEntries.stream().findFirst()
-                .ifPresent(i -> consoleTreeReporter.testSetCompleted(i, testSetStats, null));
-
-        //List's tail goes with empty testSetStats
-        completedWrappedEntries.stream().skip(1)
-                .forEachOrdered(i -> consoleTreeReporter.testSetCompleted(i, new TestSetStats(false, false), null));
+    private void run(Class<?> testClass) {
+        WrappedReportEntry classEntry = wrap(classEntry(testClass));
+        consoleTreeReporter.testSetStarting(classEntry);
+        getTestMethods(testClass).forEach(method -> pendingStats.testSucceeded(wrap(testEntry(testClass, method))));
+        getNestedClasses(testClass).forEach(this::run);
+        TestSetStats stats = pendingStats;
+        pendingStats = newStats();
+        consoleTreeReporter.testSetCompleted(classEntry, stats, null);
     }
 
-    private TestSetStats testsSucceeded() {
-        TestSetStats testSetStats = new TestSetStats(false, true);
-        getAllMethods(getAllInnerClasses(clazz))
-                .entrySet().stream()
-                .flatMap((k) -> k.getValue().stream()
-                        .map(i -> this.simpleReportEntryGenerator(k.getKey(), i))
-                        .map(this::wrappedReportEntryGenerator))
-                .forEachOrdered(testSetStats::testSucceeded);
-        return testSetStats;
+    private SimpleReportEntry classEntry(Class<?> testClass) {
+        return new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, clazz.getName(), getClassDisplayName(testClass),
+                testClass.getName(), null, null, null, null, null, Collections.emptyMap());
     }
 
-    private void testsStarting() {
-        getAllInnerClasses(clazz).stream()
-                .map(this::simpleReportEntryGenerator)
-                .forEachOrdered(consoleTreeReporter::testSetStarting);
+    private SimpleReportEntry testEntry(Class<?> testClass, Method method) {
+        return new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, clazz.getName(), null, testClass.getName(),
+                method.getName(), getMethodDisplayName(testClass, method), null, 1, null, Collections.emptyMap());
     }
 
-    private SimpleReportEntry simpleReportEntryGenerator(Class<?> clazz) {
-        return new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, clazz.getName(), getClassDisplayName(clazz), null, null);
-    }
-
-    private SimpleReportEntry simpleReportEntryGenerator(Class<?> clazz, Method method) {
-        return new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, clazz.getName(), getClassDisplayName(clazz), method.getName(), getMethodDisplayName(clazz, method));
-    }
-
-    private WrappedReportEntry wrappedReportEntryGenerator(SimpleReportEntry simpleReportEntry) {
+    private WrappedReportEntry wrap(SimpleReportEntry simpleReportEntry) {
         return new WrappedReportEntry(simpleReportEntry, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
     }
 
-    private List<Class<?>> getAllInnerClasses(Class<?> clazz) {
-        return getAllInnerClasses(clazz, new ArrayList<>());
+    private static TestSetStats newStats() {
+        return new TestSetStats(false, true);
     }
 
-    private List<Class<?>> getAllInnerClasses(Class<?> clazz, List<Class<?>> acc) {
-        if (clazz.getDeclaredClasses().length == 0) {
-            acc.add(clazz);
-            return acc;
+    private static List<Class<?>> getNestedClasses(Class<?> testClass) {
+        return Arrays.stream(testClass.getDeclaredClasses())
+                .filter(i -> i.isAnnotationPresent(Nested.class))
+                .sorted(Comparator.comparing(Class::getName))
+                .collect(toList());
+    }
+
+    private static List<Method> getTestMethods(Class<?> testClass) {
+        return Arrays.stream(testClass.getDeclaredMethods())
+                .filter(i -> i.isAnnotationPresent(Test.class)
+                        || i.isAnnotationPresent(ParameterizedTest.class)
+                        || i.isAnnotationPresent(TestFactory.class))
+                .sorted(Comparator.comparing(Method::getName))
+                .collect(toList());
+    }
+
+    private static List<Class<?>> getEnclosingClasses(Class<?> testClass) {
+        List<Class<?>> enclosing = new ArrayList<>();
+        for (Class<?> i = testClass.getEnclosingClass(); i != null; i = i.getEnclosingClass()) {
+            enclosing.add(0, i);
         }
-        acc.add(clazz);
-        acc.addAll(Arrays.stream(clazz.getDeclaredClasses())
-                .flatMap(i -> getAllInnerClasses(i, new ArrayList<>()).stream())
-                .collect(toList()));
-        return acc;
+        return enclosing;
     }
 
-    private Map<Class<?>, List<Method>> getAllMethods(List<Class<?>> classes) {
-        return classes.stream()
-                .collect(Collectors.toMap(Function.identity(),
-                        i -> Arrays.asList(i.getDeclaredMethods()),
-                        (x, y) -> y, LinkedHashMap::new));
-    }
-
-    // Got the methods below from JUnit Jupiter codebase DisplayNameUtils.java
-    private String getDisplayName(AnnotatedElement element, Function<Class<?>, String> displayNameSupplier) {
+    // Same rules as JUnit Jupiter DisplayNameUtils.java
+    private static String getDisplayName(AnnotatedElement element, Supplier<String> displayNameSupplier) {
         Optional<DisplayName> displayNameAnnotation = findAnnotation(element, DisplayName.class);
         if (displayNameAnnotation.isPresent()) {
             String displayName = displayNameAnnotation.get().value().trim();
             if (!StringUtils.isBlank(displayName)) return displayName;
         }
-        return displayNameSupplier.apply(element.getClass());
+        return displayNameSupplier.get();
     }
 
-    private String getClassDisplayName(Class<?> clazz) {
-        if (clazz.getEnclosingClass() == null) {
-            return getDisplayName(clazz, displayNameGenerator::generateDisplayNameForClass);
-        } else {
-            return getClassDisplayName(clazz.getEnclosingClass())
-                    .concat(" ")
-                    .concat(getDisplayName(clazz, displayNameGenerator::generateDisplayNameForNestedClass));
+    private String getClassDisplayName(Class<?> testClass) {
+        if (testClass.getEnclosingClass() == null) {
+            return getDisplayName(testClass, () -> displayNameGenerator.generateDisplayNameForClass(testClass));
         }
+        return getDisplayName(testClass, () -> displayNameGenerator.generateDisplayNameForNestedClass(getEnclosingClasses(testClass), testClass));
     }
 
-    private String getMethodDisplayName(Class<?> clazz, Method method) {
-        return getDisplayName(method, (ignored) -> displayNameGenerator.generateDisplayNameForMethod(clazz, method));
+    private String getMethodDisplayName(Class<?> testClass, Method method) {
+        return getDisplayName(method, () -> displayNameGenerator.generateDisplayNameForMethod(getEnclosingClasses(testClass), testClass, method));
     }
 }

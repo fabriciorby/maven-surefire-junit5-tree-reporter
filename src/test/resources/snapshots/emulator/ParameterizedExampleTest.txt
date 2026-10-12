@@ -1,0 +1,3 @@
+── Parameterized Sample Test - <time>
+   ├─ ✔ add(int, int, int) - <time>
+   └─ ✔ 1 + 1 = 2 - <time>

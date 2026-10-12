@@ -29,12 +29,9 @@ class ConsoleTreeReporterTest {
 
     @Test
     void testEmulator() {
-        // Now we can check the output of any Test class using this
-        // TODO: Add some proxy before the logger or something so we can assert the output
-        // TODO: Add some objects with relevant information inside the emulator
         SurefireEmulator surefireEmulator = new SurefireEmulator(VeryNestedExampleTest.class);
         List<String> logs = surefireEmulator.run();
-        assertThat(logs).isNotEmpty();
+        Snapshot.assertMatches("emulator/VeryNestedExampleTest", logs);
     }
 
     @Test
