@@ -41,10 +41,10 @@ public class TestReportHandler {
     public void print(TreePrinter treePrinter) {
         if (testSetStats != null) {
             testSetStats.getReportEntries()
-                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(entry.getSourceName())).get().wrappedReportEntries.add(entry));
+                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(SourceName.of(entry))).get().wrappedReportEntries.add(entry));
         }
 
-        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(report.getSourceName())).get();
+        Node classToBeTested = Node.getBranchNode(node, getTestClassPath(SourceName.of(report))).get();
         classToBeTested.setClassReportEntry((WrappedReportEntry) report);
 
         if (isMarkedAsNestedTest()) {
@@ -75,7 +75,7 @@ public class TestReportHandler {
 
     private void markClassNamesForNestedTests() {
         classNames.putIfAbsent(sourceRootName, new HashSet<>(singleton(sourceRootName)));
-        classNames.computeIfPresent(sourceRootName, addToCollection(report.getSourceName()));
+        classNames.computeIfPresent(sourceRootName, addToCollection(SourceName.of(report)));
     }
 
     private Set<String> getClassNameList() {
@@ -124,7 +124,7 @@ public class TestReportHandler {
     }
 
     private String getSourceRootName() {
-        return report.getSourceName().split("\\$", -1)[0];
+        return SourceName.of(report).split("\\$", -1)[0];
     }
 
     private boolean hasNestedTests() {
@@ -142,6 +142,6 @@ public class TestReportHandler {
     }
 
     private boolean hasNestedTests(ReportEntry reportEntry) {
-        return reportEntry.getSourceName().chars().anyMatch(c -> c == $);
+        return SourceName.of(reportEntry).chars().anyMatch(c -> c == $);
     }
 }
