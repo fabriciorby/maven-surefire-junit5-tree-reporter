@@ -14,7 +14,7 @@ def actual = lines.subList(start + 2, end) // skips the dashes below T E S T S
         .findAll { !it.startsWith('Picked up ') } // JVM notice about JAVA_TOOL_OPTIONS and friends
         .collect { it.replaceAll(/\u001B\[[;\d]*m/, '') }
         .collect { it.replaceFirst(/^\[(INFO|WARNING|ERROR)\] ?/, '') }
-        .collect { it.replaceFirst(/ - [\d.,]+ (s|ms|min)$/, ' - <time>') }
+        .collect { it.replaceFirst(/ - [\d.,]+( (s|ms|min))?$/, ' - <time>') }
         .collect { it.replaceFirst(/\s+$/, '') }
         .join('\n').trim() + '\n'
 

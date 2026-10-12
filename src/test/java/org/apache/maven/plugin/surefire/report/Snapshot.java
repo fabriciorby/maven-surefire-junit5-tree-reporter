@@ -23,7 +23,7 @@ final class Snapshot {
     static final String UPDATE_PROPERTY = "snapshot.update";
 
     private static final Pattern ANSI = Pattern.compile("\u001B\\[[;\\d]*m");
-    private static final Pattern ELAPSED_TIME = Pattern.compile(" - [\\d.,]+ (s|ms|min)$", Pattern.MULTILINE);
+    private static final Pattern ELAPSED_TIME = Pattern.compile(" - [\\d.,]+( (s|ms|min))?$", Pattern.MULTILINE);
 
     private Snapshot() {
     }
