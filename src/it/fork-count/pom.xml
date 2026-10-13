@@ -14,6 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- set by the maven-invoker-plugin execution, one per supported version -->
         <surefire.version>@maven.surefire.version@</surefire.version>
+        <!-- one value per build, to tell the files the classes leave in target/barrier from the ones of an older build -->
+        <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +62,11 @@
                     <!-- surefire clones the reporter into its own class loader when it starts more than one fork, and
                          reports the events of each fork from its own thread -->
                     <forkCount>8</forkCount>
+                    <!-- Par1Test to Par8Test wait for each other in @AfterAll, so the forks complete them together -->
+                    <systemPropertyVariables>
+                        <barrier.parties>8</barrier.parties>
+                        <barrier.run>${maven.build.timestamp}</barrier.run>
+                    </systemPropertyVariables>
                     <testFailureIgnore>true</testFailureIgnore>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>

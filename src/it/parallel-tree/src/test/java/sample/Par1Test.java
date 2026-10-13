@@ -2,8 +2,7 @@ package sample;
 import org.junit.jupiter.api.*;
 class Par1Test {
     static void nap() { try { Thread.sleep((long) (Math.random() * 30)); } catch (InterruptedException e) { } }
-    // completes at the next multiple of 200 ms, at the same time as the classes running in the other threads or forks
-    @AfterAll static void together() { try { Thread.sleep(200 - System.currentTimeMillis() % 200); } catch (InterruptedException e) { } }
+    @AfterAll static void together() { Barrier.await(Par1Test.class); }
     @Test void a() { nap(); }
     @Test void b() { nap(); }
     @Nested class Inner {
