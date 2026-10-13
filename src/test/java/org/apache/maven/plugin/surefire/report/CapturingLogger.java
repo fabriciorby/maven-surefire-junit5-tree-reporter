@@ -3,13 +3,14 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Keeps every line the reporter prints, so tests can assert on the tree.
+ * Keeps every line the reporter prints, so tests can assert on the tree. Reporters on several threads can share it.
  */
 class CapturingLogger implements ConsoleLogger {
-    final List<String> lines = new ArrayList<>();
+    final List<String> lines = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public boolean isDebugEnabled() {

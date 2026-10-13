@@ -36,7 +36,7 @@ public class SurefireEmulator {
     private final DisplayNameGenerator displayNameGenerator = getDisplayNameGenerator(DisplayNameGenerator.Standard.class);
     private final Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     private final Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
-    private final CapturingLogger logger = new CapturingLogger();
+    private final CapturingLogger logger;
     private final Class<?> clazz;
     private final ConsoleTreeReporter consoleTreeReporter;
     private TestSetStats pendingStats = newStats();
@@ -46,7 +46,15 @@ public class SurefireEmulator {
     }
 
     public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz) {
+        this(reporterOptions, clazz, new CapturingLogger());
+    }
+
+    /**
+     * Prints to the given logger, which emulators of other classes may share, like the forks of a surefire run.
+     */
+    public SurefireEmulator(ReporterOptions reporterOptions, Class<?> clazz, CapturingLogger logger) {
         this.clazz = clazz;
+        this.logger = logger;
         this.consoleTreeReporter = new ConsoleTreeReporter(logger, reporterOptions);
     }
 
