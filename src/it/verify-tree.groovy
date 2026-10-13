@@ -2,6 +2,8 @@
 //
 // Variables set by the maven-invoker-plugin: basedir, itSourceDir, surefireVersion, snapshotUpdate.
 // A scenario that reuses another scenario's tests sets goldenScenario to compare with that scenario's golden files.
+// A scenario whose classes run in parallel sets sortClassBlocks, so the trees of its top-level classes are compared in
+// name order instead of the order they completed in. Only the UNICODE theme is supported there.
 // Run with -Dsnapshot.update=true to write the current tree as the new golden file.
 
 def lines = new File(basedir, 'build.log').getText('UTF-8').readLines()
@@ -18,6 +20,7 @@ def actual = lines.subList(start + 2, end) // skips the dashes below T E S T S
         .collect { it.replaceFirst(/ - [\d.,]+( (s|ms|min))?$/, ' - <time>') }
         .collect { it.replaceFirst(/\s+$/, '') }
         .join('\n').trim() + '\n'
+if (binding.hasVariable('sortClassBlocks') && sortClassBlocks) actual = sortedByClass(actual)
 
 // expected-output-<surefire version>.txt wins over expected-output.txt when the tree differs between versions
 def scenarioDir = new File(itSourceDir, binding.hasVariable('goldenScenario') ? goldenScenario : basedir.name)
@@ -31,9 +34,20 @@ if (Boolean.parseBoolean(snapshotUpdate)) {
 assert golden.exists(): "golden file missing, run with -Dsnapshot.update=true to create ${golden}"
 
 def expected = golden.getText('UTF-8').replace('\r\n', '\n')
+if (binding.hasVariable('sortClassBlocks') && sortClassBlocks) expected = sortedByClass(expected)
 if (actual != expected) {
     throw new AssertionError("Tree printed with surefire ${surefireVersion} differs from ${golden}, " +
             "run with -Dsnapshot.update=true to accept it\n" + diff(expected.readLines(), actual.readLines()))
+}
+
+// Splits the tree in the blocks of its top-level classes, each starting with "┬─ " or "── ", and sorts them
+static String sortedByClass(String tree) {
+    def blocks = []
+    tree.readLines().each { line ->
+        if (line ==~ /^(┬─|──) .*/ || blocks.isEmpty()) blocks << []
+        blocks.last() << line
+    }
+    blocks.collect { it.join('\n') }.sort().join('\n') + '\n'
 }
 
 // Line diff based on the longest common subsequence, "-" is only in the golden file and "+" only in the build
