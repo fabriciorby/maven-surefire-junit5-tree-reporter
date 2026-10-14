@@ -1,0 +1,120 @@
+── sample.StdoutPar1Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar1Test out 1
+StdoutPar1Test out 2
+StdoutPar1Test out 3
+StdoutPar1Test out 4
+StdoutPar1Test out 5
+StdoutPar1Test out 6
+StdoutPar1Test out 7
+StdoutPar1Test out 8
+StdoutPar1Test out 9
+StdoutPar1Test out 10
+── sample.StdoutPar2Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar2Test out 1
+StdoutPar2Test out 2
+StdoutPar2Test out 3
+StdoutPar2Test out 4
+StdoutPar2Test out 5
+StdoutPar2Test out 6
+StdoutPar2Test out 7
+StdoutPar2Test out 8
+StdoutPar2Test out 9
+StdoutPar2Test out 10
+── sample.StdoutPar3Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar3Test out 1
+StdoutPar3Test out 2
+StdoutPar3Test out 3
+StdoutPar3Test out 4
+StdoutPar3Test out 5
+StdoutPar3Test out 6
+StdoutPar3Test out 7
+StdoutPar3Test out 8
+StdoutPar3Test out 9
+StdoutPar3Test out 10
+── sample.StdoutPar4Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar4Test out 1
+StdoutPar4Test out 2
+StdoutPar4Test out 3
+StdoutPar4Test out 4
+StdoutPar4Test out 5
+StdoutPar4Test out 6
+StdoutPar4Test out 7
+StdoutPar4Test out 8
+StdoutPar4Test out 9
+StdoutPar4Test out 10
+── sample.StdoutPar5Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar5Test out 1
+StdoutPar5Test out 2
+StdoutPar5Test out 3
+StdoutPar5Test out 4
+StdoutPar5Test out 5
+StdoutPar5Test out 6
+StdoutPar5Test out 7
+StdoutPar5Test out 8
+StdoutPar5Test out 9
+StdoutPar5Test out 10
+── sample.StdoutPar6Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar6Test out 1
+StdoutPar6Test out 2
+StdoutPar6Test out 3
+StdoutPar6Test out 4
+StdoutPar6Test out 5
+StdoutPar6Test out 6
+StdoutPar6Test out 7
+StdoutPar6Test out 8
+StdoutPar6Test out 9
+StdoutPar6Test out 10
+── sample.StdoutPar7Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar7Test out 1
+StdoutPar7Test out 2
+StdoutPar7Test out 3
+StdoutPar7Test out 4
+StdoutPar7Test out 5
+StdoutPar7Test out 6
+StdoutPar7Test out 7
+StdoutPar7Test out 8
+StdoutPar7Test out 9
+StdoutPar7Test out 10
+── sample.StdoutPar8Test - <time>
+   └─ ✔ prints - <time>
+● prints
+
+Standard out
+StdoutPar8Test out 1
+StdoutPar8Test out 2
+StdoutPar8Test out 3
+StdoutPar8Test out 4
+StdoutPar8Test out 5
+StdoutPar8Test out 6
+StdoutPar8Test out 7
+StdoutPar8Test out 8
+StdoutPar8Test out 9
+StdoutPar8Test out 10

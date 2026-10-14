@@ -14,6 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- set by the maven-invoker-plugin execution, one per supported version -->
         <surefire.version>@maven.surefire.version@</surefire.version>
+        <!-- one value per build, to tell the files the classes leave in target/barrier from the ones of an older build -->
+        <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
     </properties>
 
     <dependencyManagement>
@@ -36,8 +38,9 @@
     </dependencies>
 
     <build>
-        <!-- nested-tree's tests, run with more than one fork -->
-        <testSourceDirectory>${project.basedir}/../nested-tree/src/test/java</testSourceDirectory>
+        <!-- parallel-tree's tests, compared with its golden files, but with nested-tree's junit-platform.properties: the
+             classes run one at a time in each fork, and the forks run at the same time -->
+        <testSourceDirectory>${project.basedir}/../parallel-tree/src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
                 <directory>${project.basedir}/../nested-tree/src/test/resources</directory>
@@ -56,12 +59,14 @@
                 </dependencies>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
-                    <!-- surefire clones the reporter into its own class loader when it starts more than one fork -->
-                    <forkCount>2</forkCount>
-                    <!-- one class, so a single fork prints and the tree does not depend on the timing of the forks -->
-                    <includes>
-                        <include>**/NestedTest.java</include>
-                    </includes>
+                    <!-- surefire clones the reporter into its own class loader when it starts more than one fork, and
+                         reports the events of each fork from its own thread -->
+                    <forkCount>8</forkCount>
+                    <!-- Par1Test to Par8Test wait for each other in @AfterAll, so the forks complete them together -->
+                    <systemPropertyVariables>
+                        <barrier.parties>8</barrier.parties>
+                        <barrier.run>${maven.build.timestamp}</barrier.run>
+                    </systemPropertyVariables>
                     <testFailureIgnore>true</testFailureIgnore>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>

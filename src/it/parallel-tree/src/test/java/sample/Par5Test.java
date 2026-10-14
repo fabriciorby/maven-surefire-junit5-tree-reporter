@@ -2,6 +2,7 @@ package sample;
 import org.junit.jupiter.api.*;
 class Par5Test {
     static void nap() { try { Thread.sleep((long) (Math.random() * 30)); } catch (InterruptedException e) { } }
+    @AfterAll static void together() { Barrier.await(Par5Test.class); }
     @Test void a() { nap(); }
     @Test void b() { nap(); }
     @Nested class Inner {

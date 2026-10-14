@@ -49,7 +49,8 @@ src/it/
 │   └── verify.groovy             Compares with nested-tree's golden files
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
-└── fork-count/                   nested-tree's NestedTest with forkCount 2, reads ../nested-tree/src/test
+├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
+└── fork-stdout/                  8 classes that print 10 lines each, in 8 forks, with printStdoutOnSuccess
 ```
 
 Each scenario is a small but complete Maven project. Its tests can be read side by side with its
@@ -143,10 +144,21 @@ while others are still running, and the classes complete in a different order on
 before the comparison, so the order does not matter but every line of every class does. `Par1Test` to `Par8Test` sleep
 for a random time on purpose, so the classes overlap. Run without the fix for issue #82, it fails on every run.
 
-**`fork-count`.** With `forkCount` above 1 surefire clones the reporter into the class loader of each fork, which is
-where issue #82 failed before any test ran. It runs a single class, so only one fork prints and the tree does not
-depend on how the forks are scheduled. Since it reads nested-tree's tests, running it alone takes both scenarios:
-`-Dinvoker.test=fork-count,nested-tree` (the same goes for `failsafe-nested-tree`).
+**`fork-count`.** With `forkCount` above 1 surefire clones the reporter into the class loader of the forks, which is
+where issue #82 failed before any test ran, and reports each fork from its own thread, which mixed the trees of classes
+completing at the same time (issue #83). It runs parallel-tree's tests in 8 forks, one class at a time in each fork
+(nested-tree's `junit-platform.properties`), and compares them with parallel-tree's golden files, with
+`sortClassBlocks`. `Par1Test` to `Par8Test` wait for each other in `@AfterAll` (`Barrier`: each class leaves a file in `target/barrier` and
+waits for the others, and fails the class if they do not arrive in 20 s), so the 8 forks complete their classes at the
+same time, which is when the trees get mixed. Run without the fix for issue #83, it fails on most runs (9 of 10 when measured). Since it reads the tests of
+other scenarios, running it alone takes them too: `-Dinvoker.test=fork-count,nested-tree,parallel-tree` (the same goes
+for `failsafe-nested-tree` and nested-tree).
+
+**`fork-stdout`.** Same idea as `fork-count`, for the output of the tests. `printStdoutOnSuccess` makes the reporter print
+what each test wrote to stdout, and that goes straight to `System.out` (`ActualTreePrinter.printStdOut`), not through
+the logger the tree lines use. 8 classes print 10 lines each and wait for each other in `@AfterAll`, so the 8 forks
+report at the same time. Its golden file is compared with `sortClassBlocks`, so every class must print its tree line,
+its test, `Standard out` and its 10 lines as one block. Run without the fix for issue #83, it fails on every run.
 
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.
@@ -198,6 +210,8 @@ pieces in `src/test/java/org/apache/maven/plugin/surefire/report`:
   with `src/test/resources/snapshots/<name>.txt`.
 * **`TreeSnapshotTest`** uses all of the above for the sample classes in `org.apache.maven.plugin.surefire`, every
   theme and some options.
+* **`ParallelForksTest`** runs several `SurefireEmulator`s at the same time on one shared `CapturingLogger`, the way
+  surefire reports the forks of `forkCount` above 1, and checks each class is printed in one piece.
 
 When the exact events matter (an event order or a field only one surefire version sends), build them by hand like
 `QualifiedSourceNameTest` does, and assert on `CapturingLogger.lines`.
