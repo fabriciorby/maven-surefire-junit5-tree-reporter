@@ -1,0 +1,11 @@
+┬─ Nested Sample - <time>
+│  ├─ ✔ Should pass - <time>
+│  └─ ✔ Should pass again - <time>
+├─ ── First Inner Test - <time>
+│     └─ ✔ First inner test should pass - <time>
+└─ ┬─ Second Inner Test - <time>
+   │  └─ ✔ Second inner test should pass - <time>
+   └─ ┬─ Inner Inner Test - <time>
+      │  └─ ✔ Inner inner test should pass - <time>
+      └─ ── Inner Inner Inner Test - <time>
+            └─ ✔ Inner inner inner test should pass - <time>
