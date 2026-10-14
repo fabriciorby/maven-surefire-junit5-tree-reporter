@@ -2,10 +2,10 @@ package org.apache.maven.plugin.surefire.loader;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.stream.Stream;
+import java.security.CodeSource;
 
 import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter;
+import org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -38,7 +38,6 @@ public class SurefireClassLoaderModifier {
     private final ClassLoader surefireClassLoader;
     private final Method addUrlMethod;
 
-    public static final String MAVEN_SUREFIRE_JUNIT_5_TREE_REPORTER = "maven-surefire-junit5-tree-reporter";
     public static final String ADD_URL_METHOD = "addURL";
 
     public SurefireClassLoaderModifier(ClassLoader surefireClassLoader) throws NoSuchMethodException {
@@ -51,18 +50,15 @@ public class SurefireClassLoaderModifier {
         this.addUrlMethod.invoke(surefireClassLoader, getJarUrl());
     }
 
-    private URL getJarUrl() throws ReflectiveOperationException {
-        return getThreadContextClassLoaderURLs()
-                .filter(this::isMavenSurefireTreeReporterJar)
-                .findFirst()
-                .orElseThrow(ReflectiveOperationException::new);
-    }
-
-    private Stream<URL> getThreadContextClassLoaderURLs() {
-        return Stream.of(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs());
-    }
-
-    private boolean isMavenSurefireTreeReporterJar(URL url) {
-        return url.getFile().contains(MAVEN_SUREFIRE_JUNIT_5_TREE_REPORTER);
+    /**
+     * The jar or directory this reporter was loaded from. Matching the class loader URLs by name picks the wrong one
+     * when the local repository or project path also contains the artifact name (issue #82).
+     */
+    URL getJarUrl() throws ReflectiveOperationException {
+        CodeSource codeSource = JUnit5StatelessTestsetInfoTreeReporter.class.getProtectionDomain().getCodeSource();
+        if (codeSource == null || codeSource.getLocation() == null) {
+            throw new ClassNotFoundException("location of " + JUnit5StatelessTestsetInfoTreeReporter.class.getName());
+        }
+        return codeSource.getLocation();
     }
 }

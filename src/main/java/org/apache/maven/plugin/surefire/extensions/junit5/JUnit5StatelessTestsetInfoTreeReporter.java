@@ -50,7 +50,8 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnError", boolean.class).invoke(clone, isPrintStdoutOnError());
             cls.getMethod("setPrintStdoutOnFailure", boolean.class).invoke(clone, isPrintStdoutOnFailure());
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
-            cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
+            cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isHideResultsOnSuccess());
+            cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;

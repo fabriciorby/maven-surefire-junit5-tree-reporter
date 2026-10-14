@@ -117,6 +117,18 @@ public class Node {
             return false;
     }
 
+    /**
+     * @return the ancestor of this node that is a direct branch of ROOT, that is its top-level test class, or this
+     * node when it is one
+     */
+    public Node getTopLevelNode() {
+        Node node = this;
+        while (node.parent != null && node.parent.parent != null) {
+            node = node.parent;
+        }
+        return node;
+    }
+
     public Node getParent() {
         return this.parent;
     }

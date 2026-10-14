@@ -43,10 +43,13 @@ src/it/
 │   └── expected-output-3.5.3.txt Golden file only for surefire 3.5.3, which prints a different tree
 ├── hide-results-on-success/      EMOJI theme, hideResultsOnSuccess and printBlankLineBetweenTests
 │   └── ...
-└── failsafe-nested-tree/         nested-tree's tests run with maven-failsafe-plugin instead of surefire
-    ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
-    ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
-    └── verify.groovy             Compares with nested-tree's golden files
+├── failsafe-nested-tree/         nested-tree's tests run with maven-failsafe-plugin instead of surefire
+│   ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
+│   ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
+│   └── verify.groovy             Compares with nested-tree's golden files
+├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
+│   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
+└── fork-count/                   nested-tree's NestedTest with forkCount 2, reads ../nested-tree/src/test
 ```
 
 Each scenario is a small but complete Maven project. Its tests can be read side by side with its
@@ -133,6 +136,17 @@ and runs with every version in the CI matrix. It reuses nested-tree's tests thro
 copying them, and its `verify.groovy` sets `goldenScenario` so the tree is compared with nested-tree's golden files: the
 reporter must print the same tree under both plugins. Surefire is skipped in this scenario, otherwise it would run the
 same tests first and its output would be the one compared.
+
+**`parallel-tree`.** JUnit5 runs its classes in parallel (`junit-platform.properties`), so surefire reports a class
+while others are still running, and the classes complete in a different order on each run. Its `verify.groovy` sets
+`sortClassBlocks`: the trees of the top-level classes, each starting with `┬─ ` or `── ` (UNICODE theme), are sorted
+before the comparison, so the order does not matter but every line of every class does. `Par1Test` to `Par8Test` sleep
+for a random time on purpose, so the classes overlap. Run without the fix for issue #82, it fails on every run.
+
+**`fork-count`.** With `forkCount` above 1 surefire clones the reporter into the class loader of each fork, which is
+where issue #82 failed before any test ran. It runs a single class, so only one fork prints and the tree does not
+depend on how the forks are scheduled. Since it reads nested-tree's tests, running it alone takes both scenarios:
+`-Dinvoker.test=fork-count,nested-tree` (the same goes for `failsafe-nested-tree`).
 
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.

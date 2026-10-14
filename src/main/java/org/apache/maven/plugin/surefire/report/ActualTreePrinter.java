@@ -76,7 +76,9 @@ public class ActualTreePrinter {
     }
 
     private boolean isLastMissingBranch(Node node) {
-        Node rootChild = Node.getRoot().branches.get(0); // first after ROOT
+        // The top-level class of this node, not ROOT's first branch: with parallel test classes ROOT also holds the
+        // classes still running, in any order.
+        Node rootChild = node.getTopLevelNode();
         if (rootChild.hasBranches()) {
             Node rootChildLastChild = getLastItem(rootChild.branches); // last branch in root child
             return node.getParent(rootChildLastChild.getName()).isPresent() || node == rootChildLastChild;
