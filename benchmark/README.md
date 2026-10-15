@@ -51,6 +51,7 @@ an `@Nested class Inner` with 2 tests and an `@Nested class Deeper` inside it wi
 | `--msg-kb K` | 1 | size of each failure message, in KB |
 | `--stdout-kb S` | 0 | KB each test prints to stdout |
 | `--parallel` | off | JUnit parallel execution with concurrent classes |
+| `--fork-count N` | 1 | Maven `forkCount`: N test JVMs, each with its own reporter instance in the Maven JVM |
 | `--surefire VERSION` | 3.6.0 | maven-surefire-plugin version |
 
 The generated `pom.xml` has:
@@ -117,6 +118,15 @@ One very large class:
 ```sh
 ./gen.py work/big --classes 1 --tests 20000 --nested-every 0
 ```
+
+Several forks (`forkCount`), alone and together with JUnit parallel:
+
+```sh
+./gen.py work/fork --classes 5000 --fork-count 4
+./gen.py work/fork-parallel --classes 5000 --fail-every 2 --parallel --fork-count 4 --stdout-kb 1
+```
+
+`run.sh` reports the highest fork heap among all forks.
 
 Older surefire versions:
 

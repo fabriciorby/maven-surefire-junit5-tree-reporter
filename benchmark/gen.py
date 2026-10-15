@@ -6,7 +6,7 @@ stdout output, and can run with JUnit parallel execution. See benchmark/README.m
 
 usage: gen.py OUT_DIR [--classes N] [--tests M] [--nested-every K] [--packages P]
                       [--fail-every F] [--stack-depth D] [--msg-kb K] [--stdout-kb S]
-                      [--parallel] [--surefire VERSION]
+                      [--parallel] [--fork-count N] [--surefire VERSION]
 Reporter is switched with -Dtree.reporter.version=... ; run with -Pbaseline for the default
 surefire console reporter (no tree reporter).
 """
@@ -23,9 +23,11 @@ p.add_argument("--stack-depth", type=int, default=50, help="extra stack frames i
 p.add_argument("--msg-kb", type=int, default=1, help="size of each failure message, in KB")
 p.add_argument("--stdout-kb", type=int, default=0, help="KB printed to stdout by each test")
 p.add_argument("--parallel", action="store_true", help="JUnit parallel, classes concurrent (as in the issue)")
+p.add_argument("--fork-count", type=int, default=1, help="Maven forkCount (several test JVMs, each with its own reporter instance)")
 p.add_argument("--surefire", default="3.6.0", help="maven-surefire-plugin version")
 a = p.parse_args()
 
+FORK = f"\n      <forkCount>{a.fork_count}</forkCount>" if a.fork_count != 1 else ""
 CONF = """
       <reportFormat>plain</reportFormat>
       <consoleOutputReporter><disable>true</disable></consoleOutputReporter>
@@ -52,7 +54,7 @@ POM = f"""<?xml version="1.0" encoding="UTF-8"?>
     </dependency></dependencies>
     <configuration>
       <testFailureIgnore>true</testFailureIgnore>
-      <trimStackTrace>false</trimStackTrace>{CONF}
+      <trimStackTrace>false</trimStackTrace>{FORK}{CONF}
     </configuration>
   </plugin></plugins></build>
   <profiles><profile><id>baseline</id>
@@ -61,7 +63,7 @@ POM = f"""<?xml version="1.0" encoding="UTF-8"?>
       <configuration combine.self="override">
         <testFailureIgnore>true</testFailureIgnore>
         <trimStackTrace>false</trimStackTrace>
-        <reportFormat>plain</reportFormat>
+        <reportFormat>plain</reportFormat>{FORK}
       </configuration>
     </plugin></plugins></build>
   </profile></profiles>
