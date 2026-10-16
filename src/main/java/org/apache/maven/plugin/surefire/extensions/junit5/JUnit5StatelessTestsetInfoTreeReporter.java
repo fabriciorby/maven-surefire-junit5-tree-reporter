@@ -27,6 +27,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printStdoutOnSuccess;
     private boolean hideResultsOnSuccess;
     private boolean printBlankLineBetweenTests;
+    private boolean groupParameterizedTests;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -52,6 +53,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
             cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isHideResultsOnSuccess());
             cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
+            cls.getMethod("setGroupParameterizedTests", boolean.class).invoke(clone, isGroupParameterizedTests());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -146,6 +148,14 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.hideResultsOnSuccess = hideResultsOnSuccess;
     }
 
+    public boolean isGroupParameterizedTests() {
+        return groupParameterizedTests;
+    }
+
+    public void setGroupParameterizedTests(boolean groupParameterizedTests) {
+        this.groupParameterizedTests = groupParameterizedTests;
+    }
+
     public void setPrintBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
         this.printBlankLineBetweenTests = printBlankLineBetweenTests;
     }
@@ -178,6 +188,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .usePhrasedClassNameInRunning(isUsePhrasedClassNameInRunning())
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
                 .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
+                .groupParameterizedTests(isGroupParameterizedTests())
                 .theme(getTheme())
                 .build();
     }

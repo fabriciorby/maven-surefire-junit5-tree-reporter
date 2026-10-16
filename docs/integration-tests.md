@@ -43,6 +43,10 @@ src/it/
 │   └── expected-output-3.5.3.txt Golden file only for surefire 3.5.3, which prints a different tree
 ├── hide-results-on-success/      EMOJI theme, hideResultsOnSuccess and printBlankLineBetweenTests
 │   └── ...
+├── parameterized-grouping/       UNICODE theme and groupParameterizedTests
+│   ├── ...
+│   ├── expected-output.txt       Golden file for 3.5.3 and 3.6.0
+│   └── expected-output-3.2.5.txt, expected-output-3.0.0.txt   Same tree, but a @RepeatedTest and a @TestFactory without parameters are not grouped
 ├── failsafe-nested-tree/         nested-tree's tests run with maven-failsafe-plugin instead of surefire
 │   ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
 │   ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
@@ -160,6 +164,13 @@ the logger the tree lines use. 8 classes print 10 lines each and wait for each o
 report at the same time. Its golden file is compared with `sortClassBlocks`, so every class must print its tree line,
 its test, `Standard out` and its 10 lines as one block. Run without the fix for issue #83, it fails on every run.
 
+**`parameterized-grouping`.** `groupParameterizedTests` recognizes an invocation by the index surefire adds to the name of
+its method (`add(int)[2]`). Surefire 3.0.0 and 3.2.5 only send it for methods with parameters, so the tests without
+parameters of the scenario (`eRepeated` and `gFactory`) are not grouped there, and those two versions have their own
+golden files. The scenario covers a method in the middle and at the end of a class and of a `@Nested` class (the
+connectors), overloaded methods, a `@DisplayName` on the method, a failed and a skipped invocation, and a plain test
+named `foo[1]` that must not be grouped.
+
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.
 
@@ -188,9 +199,11 @@ logic lives in one place.
 ### Golden files per surefire version
 
 `expected-output.txt` is the tree most versions print. A version only gets its own `expected-output-<version>.txt`
-when surefire itself sends different events, not when the reporter has a bug. Today the only one is
+when surefire itself sends different events, not when the reporter has a bug. For example
 `nested-tree/expected-output-3.5.3.txt`: surefire 3.5.3 does not report the `@Nested` class of a `@Disabled` class
-at all, so the tree has one line less.
+at all, so the tree has one line less. `parameterized-grouping` has `expected-output-3.2.5.txt` and
+`expected-output-3.0.0.txt` for the same reason: those versions do not send the index of a `@RepeatedTest` or
+`@TestFactory` without parameters.
 
 Before adding a per-version file, check whether the reporter can print the same tree from what that version sends.
 That is how `sample.DisabledClassTest$InnerTest` on 3.6.0 became `InnerTest`, like the other versions.

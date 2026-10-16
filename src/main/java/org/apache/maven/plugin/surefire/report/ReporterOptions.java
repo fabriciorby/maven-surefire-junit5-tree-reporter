@@ -14,6 +14,7 @@ public class ReporterOptions {
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
     private final boolean printBlankLineBetweenTests;
+    private final boolean groupParameterizedTests;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -29,6 +30,7 @@ public class ReporterOptions {
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
         this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
+        this.groupParameterizedTests = builder.groupParameterizedTests;
     }
 
     public static Builder builder() {
@@ -87,6 +89,10 @@ public class ReporterOptions {
         return printBlankLineBetweenTests;
     }
 
+    public boolean isGroupParameterizedTests() {
+        return groupParameterizedTests;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -101,6 +107,7 @@ public class ReporterOptions {
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
         private boolean printBlankLineBetweenTests;
+        private boolean groupParameterizedTests;
 
         private Builder() {
         }
@@ -171,6 +178,11 @@ public class ReporterOptions {
 
         public Builder printBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
             this.printBlankLineBetweenTests = printBlankLineBetweenTests;
+            return this;
+        }
+
+        public Builder groupParameterizedTests(boolean groupParameterizedTests) {
+            this.groupParameterizedTests = groupParameterizedTests;
             return this;
         }
     }
