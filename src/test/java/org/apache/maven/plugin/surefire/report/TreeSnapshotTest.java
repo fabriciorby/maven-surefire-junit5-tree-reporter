@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -58,6 +59,30 @@ class TreeSnapshotTest {
                         .withOutcome("MixedResultsExampleTest.test2", ReportEntryType.FAILURE)
                         .withOutcome("RedInner.test", ReportEntryType.FAILURE)
                         .run());
+    }
+
+    @Test
+    void printsTestCounts() {
+        Snapshot.assertMatches("options/print-test-counts", mixedResults(options().printTestCounts(true)));
+    }
+
+    @Test
+    void keepsTheDefaultTreeWithTheFailureFocusOptionsOff() {
+        Snapshot.assertMatches("options/failure-focus-off", mixedResults(options()));
+    }
+
+    private static ReporterOptions.Builder options() {
+        return ReporterOptions.builder().theme(Theme.UNICODE);
+    }
+
+    private static List<String> mixedResults(ReporterOptions.Builder options) {
+        return new SurefireEmulator(options.build(), MixedResultsExampleTest.class)
+                .withOutcome("MixedResultsExampleTest.test2", ReportEntryType.FAILURE)
+                .withOutcome("MixedResultsExampleTest.test3", ReportEntryType.SKIPPED)
+                .withOutcome("RedInner.test", ReportEntryType.FAILURE)
+                .withOutcome("RedDeep.test", ReportEntryType.ERROR)
+                .withOutcome("SkippedInner.test", ReportEntryType.SKIPPED)
+                .run();
     }
 
     @Test

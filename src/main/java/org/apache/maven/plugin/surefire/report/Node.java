@@ -17,6 +17,8 @@ public class Node {
     private final int depth;
     public final List<WrappedReportEntry> wrappedReportEntries = new ArrayList<>();
     private WrappedReportEntry classReportEntry;
+    /** Only set in the copies of {@link TreeView}, to print the counts of the whole tree the copy comes from. */
+    TestCounts counts;
 
     public static void clearTree() {
         ROOT.branches.clear();

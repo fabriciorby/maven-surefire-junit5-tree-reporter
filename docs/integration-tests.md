@@ -47,6 +47,7 @@ src/it/
 │   ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
 │   ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
 │   └── verify.groovy             Compares with nested-tree's golden files
+├── print-test-counts/            UNICODE theme and printTestCounts, on green, failing and skipped classes
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
 ├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
@@ -137,6 +138,10 @@ and runs with every version in the CI matrix. It reuses nested-tree's tests thro
 copying them, and its `verify.groovy` sets `goldenScenario` so the tree is compared with nested-tree's golden files: the
 reporter must print the same tree under both plugins. Surefire is skipped in this scenario, otherwise it would run the
 same tests first and its output would be the one compared.
+
+**`print-test-counts`.** The counts on the line of each class: classes that are green, that fail first, in the middle
+and last in their class, and that have a skipped test in a nested class, so the counts have to add up what is in
+the `@Nested` classes below and tell failed, passed and skipped apart.
 
 **`parallel-tree`.** JUnit5 runs its classes in parallel (`junit-platform.properties`), so surefire reports a class
 while others are still running, and the classes complete in a different order on each run. Its `verify.groovy` sets

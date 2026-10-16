@@ -109,6 +109,21 @@ To reduce verbosity, you can a _hide successful results_ option can be configure
 </statelessTestsetInfoReporter>
 ```
 
+## Focus on failures
+
+More options, all `false` by default, cut the tree down to what needs attention.
+
+* `printTestCounts` adds the number of tests to the line of each class, including the `@Nested` ones, counting
+  everything below it. A failed count includes the errors, and categories with zero are left out.
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <theme>UNICODE</theme>
+    <printTestCounts>true</printTestCounts>
+</statelessTestsetInfoReporter>
+```
+
 ## Failure details
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:

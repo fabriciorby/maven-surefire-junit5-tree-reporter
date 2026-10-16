@@ -34,7 +34,7 @@ public class ActualTreePrinter {
     }
 
     public void print() {
-        print(tree);
+        print(new TreeView(options).of(tree));
     }
 
     public void removeChild() {
@@ -134,6 +134,9 @@ public class ActualTreePrinter {
         }
 
         builder.strong(cleanReportName(node));
+        if (node.counts != null && !node.counts.format().isEmpty()) {
+            builder.a(" " + node.counts.format());
+        }
         builder.a(" - " + node.getClassReportEntry().elapsedTimeAsString());
 
         println(builder.toString());
