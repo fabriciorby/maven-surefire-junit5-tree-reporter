@@ -61,7 +61,7 @@ public class ActualTreePrinter {
     }
 
     private void printSuccess(Node node, WrappedReportEntry testResult) {
-        printTestResult(buffer().success(theme.successful() + abbreviateName(testResult.getReportName())), node, testResult);
+        printTestResult(buffer().success(theme.successful() + getTestName(testResult)), node, testResult);
     }
 
     private void printTestResult(MessageBuilder builder, Node node, WrappedReportEntry testResult) {
@@ -186,11 +186,11 @@ public class ActualTreePrinter {
 
     private void printSkipped(Node node, WrappedReportEntry testResult) {
         printTestResult(buffer()
-                .warning(theme.skipped() + getSkippedReport(testResult))
+                .warning(theme.skipped() + getTestName(testResult))
                 .warning(getSkippedMessage(testResult)), node, testResult);
     }
 
-    private String getSkippedReport(WrappedReportEntry testResult) {
+    private String getTestName(WrappedReportEntry testResult) {
         if (!isBlank(testResult.getReportName())) {
             return abbreviateName(testResult.getReportName());
         }
@@ -213,9 +213,9 @@ public class ActualTreePrinter {
 
     private void printPreambleDetails(WrappedReportEntry testResult) {
         if (testResult.isSucceeded()) {
-            println(buffer().success(theme.details()).success(abbreviateName(testResult.getReportName())).toString());
+            println(buffer().success(theme.details()).success(getTestName(testResult)).toString());
         } else {
-            println(buffer().failure(theme.details()).failure(abbreviateName(testResult.getReportName())).toString());
+            println(buffer().failure(theme.details()).failure(getTestName(testResult)).toString());
         }
     }
 
@@ -250,6 +250,6 @@ public class ActualTreePrinter {
 
     private void printFailure(Node node, WrappedReportEntry testResult) {
         printTestResult(buffer()
-                .failure(theme.failed() + abbreviateName(testResult.getReportName())), node, testResult);
+                .failure(theme.failed() + getTestName(testResult)), node, testResult);
     }
 }
