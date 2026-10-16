@@ -28,6 +28,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean hideResultsOnSuccess;
     private boolean printBlankLineBetweenTests;
     private boolean printTestCounts;
+    private boolean collapseSuccessfulClasses;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -54,6 +55,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isHideResultsOnSuccess());
             cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
             cls.getMethod("setPrintTestCounts", boolean.class).invoke(clone, isPrintTestCounts());
+            cls.getMethod("setCollapseSuccessfulClasses", boolean.class).invoke(clone, isCollapseSuccessfulClasses());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -116,6 +118,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return printTestCounts;
     }
 
+    public boolean isCollapseSuccessfulClasses() {
+        return collapseSuccessfulClasses;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -160,6 +166,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.printTestCounts = printTestCounts;
     }
 
+    public void setCollapseSuccessfulClasses(boolean collapseSuccessfulClasses) {
+        this.collapseSuccessfulClasses = collapseSuccessfulClasses;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -189,6 +199,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
                 .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
                 .printTestCounts(isPrintTestCounts())
+                .collapseSuccessfulClasses(isCollapseSuccessfulClasses())
                 .theme(getTheme())
                 .build();
     }

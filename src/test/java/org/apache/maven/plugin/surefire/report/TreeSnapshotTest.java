@@ -67,6 +67,21 @@ class TreeSnapshotTest {
     }
 
     @Test
+    void collapsesSuccessfulClasses() {
+        ReporterOptions options = options().collapseSuccessfulClasses(true).build();
+        Snapshot.assertMatches("options/collapse-successful-classes-failed",
+                new SurefireEmulator(options, MixedResultsExampleTest.class)
+                        .withOutcome("RedInner.test", ReportEntryType.FAILURE).run());
+        Node.clearTree();
+        Snapshot.assertMatches("options/collapse-successful-classes-green",
+                new SurefireEmulator(options, VeryNestedExampleTest.class).run());
+        Node.clearTree();
+        Snapshot.assertMatches("options/collapse-successful-classes-skipped",
+                new SurefireEmulator(options, MixedResultsExampleTest.class)
+                        .withOutcome("SkippedInner.test", ReportEntryType.SKIPPED).run());
+    }
+
+    @Test
     void keepsTheDefaultTreeWithTheFailureFocusOptionsOff() {
         Snapshot.assertMatches("options/failure-focus-off", mixedResults(options()));
     }

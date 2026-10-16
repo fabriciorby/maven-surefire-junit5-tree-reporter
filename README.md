@@ -115,14 +115,21 @@ More options, all `false` by default, cut the tree down to what needs attention.
 
 * `printTestCounts` adds the number of tests to the line of each class, including the `@Nested` ones, counting
   everything below it. A failed count includes the errors, and categories with zero are left out.
+* `collapseSuccessfulClasses` prints a top-level class with no failure and no error in a single line with its counts.
+  Classes with a failure are printed in full.
 
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
     <theme>UNICODE</theme>
     <printTestCounts>true</printTestCounts>
+    <collapseSuccessfulClasses>true</collapseSuccessfulClasses>
 </statelessTestsetInfoReporter>
 ```
+
+A class with only passed or skipped tests becomes
+one line (skipped tests do not prevent it), and with `collapseSuccessfulClasses` its stdout and stderr are not printed, whatever the `printStdoutOnSuccess`
+and `printStderrOnSuccess` options say.
 
 ## Failure details
 

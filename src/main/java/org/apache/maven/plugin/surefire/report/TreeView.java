@@ -17,8 +17,16 @@ final class TreeView {
     }
 
     Node of(Node tree) {
-        if (!options.isPrintTestCounts()) {
+        if (!options.isPrintTestCounts() && !options.isCollapseSuccessfulClasses()) {
             return tree;
+        }
+        TestCounts counts = TestCounts.of(tree);
+        if (options.isCollapseSuccessfulClasses() && !counts.hasFailed()) {
+            // Just the line of the class, with the counts of what is below it
+            Node collapsed = new Node(tree.getName(), tree.getParent());
+            collapsed.setClassReportEntry(tree.getClassReportEntry());
+            collapsed.counts = counts;
+            return collapsed;
         }
         return copyWithBranches(tree, tree.getParent());
     }

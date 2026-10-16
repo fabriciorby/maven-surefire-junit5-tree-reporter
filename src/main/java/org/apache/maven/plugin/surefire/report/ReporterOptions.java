@@ -15,6 +15,7 @@ public class ReporterOptions {
     private final boolean usePhrasedClassNameInTestCaseSummary;
     private final boolean printBlankLineBetweenTests;
     private final boolean printTestCounts;
+    private final boolean collapseSuccessfulClasses;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -31,6 +32,7 @@ public class ReporterOptions {
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
         this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
         this.printTestCounts = builder.printTestCounts;
+        this.collapseSuccessfulClasses = builder.collapseSuccessfulClasses;
     }
 
     public static Builder builder() {
@@ -93,6 +95,10 @@ public class ReporterOptions {
         return printTestCounts;
     }
 
+    public boolean isCollapseSuccessfulClasses() {
+        return collapseSuccessfulClasses;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -108,6 +114,7 @@ public class ReporterOptions {
         private boolean usePhrasedClassNameInTestCaseSummary;
         private boolean printBlankLineBetweenTests;
         private boolean printTestCounts;
+        private boolean collapseSuccessfulClasses;
 
         private Builder() {
         }
@@ -183,6 +190,11 @@ public class ReporterOptions {
 
         public Builder printTestCounts(boolean printTestCounts) {
             this.printTestCounts = printTestCounts;
+            return this;
+        }
+
+        public Builder collapseSuccessfulClasses(boolean collapseSuccessfulClasses) {
+            this.collapseSuccessfulClasses = collapseSuccessfulClasses;
             return this;
         }
 
