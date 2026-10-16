@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.surefire.report;
 
+import org.apache.maven.plugin.surefire.MixedResultsExampleTest;
 import org.apache.maven.plugin.surefire.NestedExampleTest;
 import org.apache.maven.plugin.surefire.ParameterizedExampleTest;
 import org.apache.maven.plugin.surefire.VeryNestedExampleTest;
@@ -44,6 +45,17 @@ class TreeSnapshotTest {
         ReporterOptions options = ReporterOptions.builder().theme(Theme.UNICODE).printBlankLineBetweenTests(true).build();
         Snapshot.assertMatches("options/print-blank-line-between-tests",
                 new SurefireEmulator(options, NestedExampleTest.class).run());
+    }
+
+    @Test
+    void hideResultsOnSuccessKeepsTheLastConnectorOnTheLastVisibleTest() {
+        // The last tests of the class pass and are hidden, so the failure before them is the last line of its class
+        ReporterOptions options = ReporterOptions.builder().theme(Theme.UNICODE).hideResultsOnSuccess(true).build();
+        Snapshot.assertMatches("options/hide-results-on-success-last-test-hidden",
+                new SurefireEmulator(options, MixedResultsExampleTest.class)
+                        .withOutcome("MixedResultsExampleTest.test2", ReportEntryType.FAILURE)
+                        .withOutcome("RedInner.test", ReportEntryType.FAILURE)
+                        .run());
     }
 
     @Test

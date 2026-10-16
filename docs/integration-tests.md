@@ -204,8 +204,10 @@ pieces in `src/test/java/org/apache/maven/plugin/surefire/report`:
 * **`SurefireEmulator`** reads a test class by reflection and sends the reporter the same events maven-surefire-plugin
   3.6.0 sends: each class is started before its `@Nested` classes and completed after them, with the results
   collected since the last completed class. It returns the printed lines. Classes and methods are sorted by name,
-  because Java does not specify the order reflection returns them in. Every test passes, so use the integration tests
-  for failures and skipped tests.
+  because Java does not specify the order reflection returns them in. Every test passes unless the unit test says otherwise with
+  `withOutcome("SimpleClassName.methodName", ReportEntryType.FAILURE)` (also `ERROR` and `SKIPPED`), which reports
+  that method with that result. The integration tests are still the ones that see what surefire sends for a real
+  failure, a skipped test or a stack trace.
 * **`Snapshot.assertMatches(name, lines)`** normalizes the lines the same way as `verify-tree.groovy` and compares them
   with `src/test/resources/snapshots/<name>.txt`.
 * **`TreeSnapshotTest`** uses all of the above for the sample classes in `org.apache.maven.plugin.surefire`, every

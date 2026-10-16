@@ -8,6 +8,7 @@ import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
@@ -60,6 +61,10 @@ public class ActualTreePrinter {
 
     private boolean isSuccessPrintAllowed() {
         return !options.isHideResultsOnSuccess();
+    }
+
+    private boolean isShown(WrappedReportEntry testResult) {
+        return isSuccessPrintAllowed() || !testResult.isSucceeded();
     }
 
     private void printSuccess(Node node, WrappedReportEntry testResult) {
@@ -117,8 +122,13 @@ public class ActualTreePrinter {
         return builder;
     }
 
-    private static boolean isLastTestToBeEval(Node node, WrappedReportEntry testResult) {
-        return node.wrappedReportEntries.indexOf(testResult) + 1 != node.wrappedReportEntries.size();
+    private boolean isLastTestToBeEval(Node node, WrappedReportEntry testResult) {
+        // Only the tests that are printed count, a hidden success after the last printed test does not make it
+        // a middle one.
+        List<WrappedReportEntry> shown = node.wrappedReportEntries.stream()
+                .filter(this::isShown)
+                .collect(Collectors.toList());
+        return shown.indexOf(testResult) + 1 != shown.size();
     }
 
     private void printClass(Node node) {

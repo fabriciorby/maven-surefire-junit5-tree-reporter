@@ -1,0 +1,8 @@
+┬─ Mixed Sample - <time>
+│  └─ ✘ Second - <time>
+├─ ┬─ Green Inner - <time>
+│  └─ ── Green Deep - <time>
+├─ ┬─ Red Inner - <time>
+│  │  └─ ✘ Red test - <time>
+│  └─ ── Red Deep - <time>
+└─ ── Skipped Inner - <time>
