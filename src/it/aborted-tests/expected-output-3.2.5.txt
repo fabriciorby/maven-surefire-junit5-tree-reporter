@@ -1,0 +1,6 @@
+── Aborted Sample - <time>
+   ├─ ✔ Should pass - <time>
+   ├─ ↷ Assumption with message (Assumption failed: not running on this OS) - <time>
+   ├─ ↷ Disabled test (not ready yet) - <time>
+   ├─ ↷ Assumption without message (Assumption failed: assumption is not true) - <time>
+   └─ ↷ Aborted exception (aborted by hand) - <time>
