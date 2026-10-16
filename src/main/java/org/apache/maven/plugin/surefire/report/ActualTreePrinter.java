@@ -163,12 +163,14 @@ public class ActualTreePrinter {
 
         boolean printStackTrace = options.isPrintStacktraceOnError() && isError
                 || options.isPrintStacktraceOnFailure() && isFailure;
-        boolean printStdOut = options.isPrintStdoutOnSuccess() && isSuccess
+        boolean printStdOut = (options.isPrintStdoutOnSuccess() && isSuccess
                 || options.isPrintStdoutOnError() && isError
-                || options.isPrintStdoutOnFailure() && isFailure;
-        boolean printStdErr = options.isPrintStderrOnSuccess() && isSuccess
+                || options.isPrintStdoutOnFailure() && isFailure)
+                && hasOutput(testResult.getStdout());
+        boolean printStdErr = (options.isPrintStderrOnSuccess() && isSuccess
                 || options.isPrintStderrOnError() && isError
-                || options.isPrintStderrOnFailure() && isFailure;
+                || options.isPrintStderrOnFailure() && isFailure)
+                && hasOutput(testResult.getStdErr());
 
         if (printStackTrace || printStdOut || printStdErr) {
             printPreambleDetails(testResult);
@@ -176,6 +178,10 @@ public class ActualTreePrinter {
             if (printStdOut) printStdOut(testResult);
             if (printStdErr) printStdErr(testResult);
         }
+    }
+
+    private static boolean hasOutput(Utf8RecodingDeferredFileOutputStream output) {
+        return output != null && output.getByteCount() > 0;
     }
 
     private void printSkipped(Node node, WrappedReportEntry testResult) {
