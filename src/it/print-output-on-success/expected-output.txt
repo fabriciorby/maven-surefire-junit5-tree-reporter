@@ -1,0 +1,7 @@
+── Output Sample - <time>
+   ├─ ✔ Should print nothing - <time>
+   └─ ✔ Should print to stdout - <time>
+● Should print to stdout
+
+Standard out
+hello from stdout

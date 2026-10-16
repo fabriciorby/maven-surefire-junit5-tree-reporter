@@ -35,6 +35,18 @@ class ConsoleTreeReporterTest {
     }
 
     @Test
+    void emptyStdoutAndStderrAreNotPrintedOnSuccess() {
+        // Issue #48: printStdoutOnSuccess and printStderrOnSuccess printed the headers even with nothing to show
+        ReporterOptions printOutputOnSuccess = ReporterOptions.builder().theme(Theme.UNICODE)
+                .printStdoutOnSuccess(true).printStderrOnSuccess(true).build();
+        List<String> withOutputOptions = new SurefireEmulator(printOutputOnSuccess, VeryNestedExampleTest.class).run();
+        Node.clearTree();
+        List<String> withoutOutputOptions = new SurefireEmulator(VeryNestedExampleTest.class).run();
+        assertThat(withOutputOptions).isEqualTo(withoutOutputOptions)
+                .noneMatch(line -> line.contains("Standard out") || line.contains("Standard error"));
+    }
+
+    @Test
     void testSetStarting() {
         //Runs 4 times for this class
         SimpleReportEntry simpleReportEntry1 = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "org.apache.maven.plugin.surefire.NestedExampleTest", "Nested Sample", null, null);
