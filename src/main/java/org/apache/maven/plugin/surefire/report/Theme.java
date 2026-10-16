@@ -59,7 +59,7 @@ public enum Theme {
      * ...
      * </pre>
      */
-    ASCII("|  ", "+--", "'--", ".--", "---", " [OK] ", " [XX] ", " [??] ", "[*] "),
+    ASCII("|  ", "+--", "'--", ".--", "---", " [OK] ", " [XX] ", " [??] ", "[*] ", "[SLOW]"),
 
     /**
      * Unicode (extended ASCII) characters are used to display the test execution tree.
@@ -90,9 +90,9 @@ public enum Theme {
      * ...
      * </pre>
      */
-    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ", "● "),
+    UNICODE("│  ", "├─ ", "└─ ", "┬─ ", "── ", "✔ ", "✘ ", "↷ ", "● ", "[SLOW]"),
 
-    EMOJI("│  ", "├─ ", "└─ ", "┬─ ", "── ", "🟢 ", "🔴 ", "🟡 ", "📘 ");
+    EMOJI("│  ", "├─ ", "└─ ", "┬─ ", "── ", "🟢 ", "🔴 ", "🟡 ", "📘 ", "🐢");
 
     public static Theme valueOf(Charset charset) {
         if (StandardCharsets.UTF_8.equals(charset)) {
@@ -146,6 +146,13 @@ public enum Theme {
 
     public final String details() {
         return tiles[8];
+    }
+
+    /**
+     * Marker printed after the name of a test that took at least {@code slowTestThreshold}.
+     */
+    public final String slow() {
+        return tiles[9];
     }
 
     /**

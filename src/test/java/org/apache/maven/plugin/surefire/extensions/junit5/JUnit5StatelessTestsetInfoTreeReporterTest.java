@@ -28,6 +28,7 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
         reporter.setPrintTestCounts(true);
         reporter.setCollapseSuccessfulClasses(true);
         reporter.setHideSuccessfulNestedClasses(true);
+        reporter.setSlowTestThreshold("2s");
         reporter.setTheme(Theme.EMOJI);
 
         // Like the class loader of a surefire fork: surefire's jars, and the reporter added by clone()
@@ -47,7 +48,8 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
                     .hasFieldOrPropertyWithValue("printBlankLineBetweenTests", true)
                     .hasFieldOrPropertyWithValue("printTestCounts", true)
                     .hasFieldOrPropertyWithValue("collapseSuccessfulClasses", true)
-                    .hasFieldOrPropertyWithValue("hideSuccessfulNestedClasses", true);
+                    .hasFieldOrPropertyWithValue("hideSuccessfulNestedClasses", true)
+                    .hasFieldOrPropertyWithValue("slowTestThreshold", "2s");
             assertThat(((Enum<?>) clone.getClass().getMethod("getTheme").invoke(clone)).name()).isEqualTo(Theme.EMOJI.name());
         }
     }
