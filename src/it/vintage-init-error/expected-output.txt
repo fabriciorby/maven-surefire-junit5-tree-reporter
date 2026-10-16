@@ -1,4 +1,4 @@
 ── sample.InvalidTest - <time>
-   └─ ✘ initializationError - <time>
+   └─ ✘ InvalidTest initializationError - <time>
 ── sample.ValidTest - <time>
    └─ ✔ shouldPass - <time>
