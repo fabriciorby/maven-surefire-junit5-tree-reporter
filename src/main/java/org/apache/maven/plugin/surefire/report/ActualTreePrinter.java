@@ -69,8 +69,20 @@ public class ActualTreePrinter {
     private void printTestResult(MessageBuilder builder, Node node, WrappedReportEntry testResult) {
         println(getTestPrefix(node, testResult)
                 .a(builder)
+                .a(getSlowMarker(testResult))
                 .a(" - " + testResult.elapsedTimeAsString())
                 .toString());
+    }
+
+    private MessageBuilder getSlowMarker(WrappedReportEntry testResult) {
+        MessageBuilder marker = buffer();
+        long threshold = options.getSlowTestThresholdMillis();
+        Integer elapsed = testResult.getElapsed();
+        if (threshold != ReporterOptions.SLOW_TEST_THRESHOLD_DISABLED && !testResult.isSkipped()
+                && elapsed != null && elapsed >= threshold) {
+            marker.warning(" " + theme.slow());
+        }
+        return marker;
     }
 
     private void println(String message) {

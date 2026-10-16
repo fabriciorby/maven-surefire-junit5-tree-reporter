@@ -27,6 +27,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printStdoutOnSuccess;
     private boolean hideResultsOnSuccess;
     private boolean printBlankLineBetweenTests;
+    private String slowTestThreshold;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -52,6 +53,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
             cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isHideResultsOnSuccess());
             cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
+            cls.getMethod("setSlowTestThreshold", String.class).invoke(clone, getSlowTestThreshold());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -110,6 +112,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return printBlankLineBetweenTests;
     }
 
+    public String getSlowTestThreshold() {
+        return slowTestThreshold;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -150,6 +156,12 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.printBlankLineBetweenTests = printBlankLineBetweenTests;
     }
 
+    public void setSlowTestThreshold(String slowTestThreshold) {
+        // fails the configuration right away when the value is invalid
+        ReporterOptions.parseSlowTestThreshold(slowTestThreshold);
+        this.slowTestThreshold = slowTestThreshold;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -178,6 +190,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .usePhrasedClassNameInRunning(isUsePhrasedClassNameInRunning())
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
                 .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
+                .slowTestThreshold(getSlowTestThreshold())
                 .theme(getTheme())
                 .build();
     }
