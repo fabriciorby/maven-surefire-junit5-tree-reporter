@@ -3,6 +3,7 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.MixedResultsExampleTest;
 import org.apache.maven.plugin.surefire.NestedExampleTest;
 import org.apache.maven.plugin.surefire.ParameterizedExampleTest;
+import org.apache.maven.plugin.surefire.SiblingsExampleTest;
 import org.apache.maven.plugin.surefire.VeryNestedExampleTest;
 import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
@@ -27,7 +28,8 @@ class TreeSnapshotTest {
     }
 
     @ParameterizedTest
-    @ValueSource(classes = {NestedExampleTest.class, VeryNestedExampleTest.class, ParameterizedExampleTest.class})
+    @ValueSource(classes = {NestedExampleTest.class, VeryNestedExampleTest.class, ParameterizedExampleTest.class,
+            SiblingsExampleTest.class})
     void printsExampleClass(Class<?> testClass) {
         Snapshot.assertMatches("emulator/" + testClass.getSimpleName(), new SurefireEmulator(testClass).run());
     }
