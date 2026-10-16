@@ -110,6 +110,23 @@ class QualifiedSourceNameTest {
         assertThat(logger.lines.get(1)).contains("InnerTest (whole class disabled)").doesNotContain("$");
     }
 
+    @Test
+    void printsClassNameOfErroredTestWithoutName() {
+        ConsoleTreeReporter reporter = new ConsoleTreeReporter(logger, ReporterOptions.builder().build());
+        WrappedReportEntry bad = wrap(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, "x.BadTest", null, null, null));
+        // JUnit4 InvalidTestClassError run by the vintage engine: the error has no test name
+        WrappedReportEntry error = new WrappedReportEntry(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, "x.BadTest",
+                null, null, null), ReportEntryType.ERROR, 0L, 1, stdout, stderr);
+        TestSetStats stats = new TestSetStats(false, true);
+        stats.testError(error);
+
+        reporter.testSetStarting(bad);
+        reporter.testSetCompleted(bad, stats, null);
+
+        assertThat(logger.lines).hasSize(2);
+        assertThat(logger.lines.get(1)).contains("BadTest").doesNotContain("null");
+    }
+
     private static SimpleReportEntry classEntry(String nestedPath, String displayName) {
         return new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER, displayName, OUTER + nestedPath,
                 null, null, null, null, null, Collections.emptyMap());
