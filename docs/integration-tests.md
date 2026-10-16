@@ -50,7 +50,12 @@ src/it/
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
 ├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
-└── fork-stdout/                  8 classes that print 10 lines each, in 8 forks, with printStdoutOnSuccess
+├── fork-stdout/                  8 classes that print 10 lines each, in 8 forks, with printStdoutOnSuccess
+├── verify-summary.groovy         Shared check: the failure summary in build.log
+├── failure-summary/              printFailureSummary, with JUnit5ConsoleOutputTreeReporter
+│   └── expected-summary.txt      Golden file, the "Failed tests" block
+├── failure-summary-forks/        The same tests in 3 forks, summary compared with sortSummary
+└── failure-summary-failsafe/     The same tests with maven-failsafe-plugin, run twice in the same build
 ```
 
 Each scenario is a small but complete Maven project. Its tests can be read side by side with its
@@ -159,6 +164,22 @@ what each test wrote to stdout, and that goes straight to `System.out` (`ActualT
 the logger the tree lines use. 8 classes print 10 lines each and wait for each other in `@AfterAll`, so the 8 forks
 report at the same time. Its golden file is compared with `sortClassBlocks`, so every class must print its tree line,
 its test, `Standard out` and its 10 lines as one block. Run without the fix for issue #83, it fails on every run.
+
+**`failure-summary`, `failure-summary-forks` and `failure-summary-failsafe`.** The failure summary is printed when
+surefire closes the execution, which happens after the `Results:` line, where `verify-tree.groovy` stops reading.
+Surefire has no end-of-execution call for the reporter of the tree, but it closes the `consoleOutputReporter` then (once
+per fork), so these scenarios use `JUnit5ConsoleOutputTreeReporter` there. Their `verify.groovy` runs
+`verify-tree.groovy` as usual and then `src/it/verify-summary.groovy`, which compares the `Failed tests (N):` block of
+`build.log`, which must come after `Tests run:`, with `expected-summary.txt`. It is checked to be printed once per
+execution, not once per fork: `failure-summary-forks` runs 3 forks, which makes surefire close the reporter 3 times,
+and its classes complete in any order, so `sortSummary` compares the failed tests in name order.
+`failure-summary-failsafe` runs the tests with `maven-failsafe-plugin` in two executions of the same build (`executions`
+is 2, the second one has another `reportsDirectory` because failsafe skips an execution with the same configuration),
+and shares the golden files of `failure-summary` (`goldenScenario` for the tree, `summaryScenario` for the summary):
+the second summary must be equal to the first, so nothing leaks from one execution to the next.
+`maxFailuresInSummary` is 3 in `failure-summary` and `failure-summary-failsafe` to also cover `... and N more`. The scenarios that reuse
+the tests of `failure-summary` take them with it, so running one alone needs
+`-Dinvoker.test=failure-summary,failure-summary-forks,failure-summary-failsafe`.
 
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.

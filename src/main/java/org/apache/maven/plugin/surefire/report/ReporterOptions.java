@@ -14,6 +14,8 @@ public class ReporterOptions {
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
     private final boolean printBlankLineBetweenTests;
+    private final boolean printFailureSummary;
+    private final int maxFailuresInSummary;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -29,6 +31,8 @@ public class ReporterOptions {
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
         this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
+        this.printFailureSummary = builder.printFailureSummary;
+        this.maxFailuresInSummary = builder.maxFailuresInSummary;
     }
 
     public static Builder builder() {
@@ -87,6 +91,14 @@ public class ReporterOptions {
         return printBlankLineBetweenTests;
     }
 
+    public boolean isPrintFailureSummary() {
+        return printFailureSummary;
+    }
+
+    public int getMaxFailuresInSummary() {
+        return maxFailuresInSummary;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -101,6 +113,8 @@ public class ReporterOptions {
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
         private boolean printBlankLineBetweenTests;
+        private boolean printFailureSummary;
+        private int maxFailuresInSummary = 50;
 
         private Builder() {
         }
@@ -171,6 +185,16 @@ public class ReporterOptions {
 
         public Builder printBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
             this.printBlankLineBetweenTests = printBlankLineBetweenTests;
+            return this;
+        }
+
+        public Builder printFailureSummary(boolean printFailureSummary) {
+            this.printFailureSummary = printFailureSummary;
+            return this;
+        }
+
+        public Builder maxFailuresInSummary(int maxFailuresInSummary) {
+            this.maxFailuresInSummary = maxFailuresInSummary;
             return this;
         }
     }

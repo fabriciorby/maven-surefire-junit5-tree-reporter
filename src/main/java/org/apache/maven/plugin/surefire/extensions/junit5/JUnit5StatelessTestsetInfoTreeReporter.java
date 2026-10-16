@@ -27,6 +27,8 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printStdoutOnSuccess;
     private boolean hideResultsOnSuccess;
     private boolean printBlankLineBetweenTests;
+    private boolean printFailureSummary;
+    private int maxFailuresInSummary = 50;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -52,6 +54,8 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintStdoutOnSuccess", boolean.class).invoke(clone, isPrintStdoutOnSuccess());
             cls.getMethod("setHideResultsOnSuccess", boolean.class).invoke(clone, isHideResultsOnSuccess());
             cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
+            cls.getMethod("setPrintFailureSummary", boolean.class).invoke(clone, isPrintFailureSummary());
+            cls.getMethod("setMaxFailuresInSummary", int.class).invoke(clone, getMaxFailuresInSummary());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -110,6 +114,14 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return printBlankLineBetweenTests;
     }
 
+    public boolean isPrintFailureSummary() {
+        return printFailureSummary;
+    }
+
+    public int getMaxFailuresInSummary() {
+        return maxFailuresInSummary;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -150,6 +162,14 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.printBlankLineBetweenTests = printBlankLineBetweenTests;
     }
 
+    public void setPrintFailureSummary(boolean printFailureSummary) {
+        this.printFailureSummary = printFailureSummary;
+    }
+
+    public void setMaxFailuresInSummary(int maxFailuresInSummary) {
+        this.maxFailuresInSummary = maxFailuresInSummary;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -178,6 +198,8 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .usePhrasedClassNameInRunning(isUsePhrasedClassNameInRunning())
                 .usePhrasedClassNameInTestCaseSummary(isUsePhrasedClassNameInTestCaseSummary())
                 .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
+                .printFailureSummary(isPrintFailureSummary())
+                .maxFailuresInSummary(getMaxFailuresInSummary())
                 .theme(getTheme())
                 .build();
     }

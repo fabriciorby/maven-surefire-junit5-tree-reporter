@@ -25,6 +25,8 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
         reporter.setPrintStdoutOnFailure(true);
         reporter.setHideResultsOnSuccess(true);
         reporter.setPrintBlankLineBetweenTests(true);
+        reporter.setPrintFailureSummary(true);
+        reporter.setMaxFailuresInSummary(7);
         reporter.setTheme(Theme.EMOJI);
 
         // Like the class loader of a surefire fork: surefire's jars, and the reporter added by clone()
@@ -41,8 +43,35 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
                     .hasFieldOrPropertyWithValue("printStdoutOnFailure", true)
                     .hasFieldOrPropertyWithValue("printStdoutOnSuccess", false)
                     .hasFieldOrPropertyWithValue("hideResultsOnSuccess", true)
-                    .hasFieldOrPropertyWithValue("printBlankLineBetweenTests", true);
+                    .hasFieldOrPropertyWithValue("printBlankLineBetweenTests", true)
+                    .hasFieldOrPropertyWithValue("printFailureSummary", true)
+                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 7);
             assertThat(((Enum<?>) clone.getClass().getMethod("getTheme").invoke(clone)).name()).isEqualTo(Theme.EMOJI.name());
+        }
+    }
+
+    @Test
+    void cloneKeepsTheDefaultsOfTheSummaryOptions() throws Exception {
+        try (TargetClassLoader target = new TargetClassLoader(getClassPathWithoutThisProject())) {
+            Object clone = new JUnit5StatelessTestsetInfoTreeReporter().clone(target);
+
+            assertThat(clone).hasFieldOrPropertyWithValue("printFailureSummary", false)
+                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 50);
+        }
+    }
+
+    @Test
+    void consoleOutputReporterIsClonedIntoTheClassLoaderOfTheForks() throws Exception {
+        JUnit5ConsoleOutputTreeReporter reporter = new JUnit5ConsoleOutputTreeReporter();
+        reporter.setEncoding("UTF-16");
+
+        try (TargetClassLoader target = new TargetClassLoader(getClassPathWithoutThisProject())) {
+            Object clone = reporter.clone(target);
+
+            assertThat(clone.getClass().getName()).isEqualTo(JUnit5ConsoleOutputTreeReporter.class.getName());
+            assertThat(clone.getClass().getClassLoader()).isSameAs(target);
+            assertThat(clone).hasFieldOrPropertyWithValue("disable", false)
+                    .hasFieldOrPropertyWithValue("encoding", "UTF-16");
         }
     }
 
