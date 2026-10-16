@@ -475,9 +475,54 @@ totals surefire prints at the end of the run, with the same display names as the
 - The summary is printed when surefire closes the execution, and surefire gives the reporter of the tree no call for
   that. It does for `consoleOutputReporter`, so `JUnit5ConsoleOutputTreeReporter` replaces
   `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>`. It drops the output captured from the tests
-  like `disable` does and prints the summary when the execution ends. Without it, `printFailureSummary` prints
-  nothing. It works with `forkCount` above 1, with `maven-failsafe-plugin` and
+  like `disable` does and prints the summary when the execution ends. Without it, `printFailureSummary` and
+  `githubStepSummary` print and write nothing. It works with `forkCount` above 1, with `maven-failsafe-plugin` and
   with several executions in the same build.
+
+</details>
+
+<details>
+<summary><b>GitHub job summary (<code>githubStepSummary</code>)</b></summary>
+
+On GitHub Actions the results can also go to the page of the job. With `githubStepSummary` the reporter appends
+Markdown to the file named by the environment variable `GITHUB_STEP_SUMMARY`, when the execution ends. Like the failure
+summary, it needs the `JUnit5ConsoleOutputTreeReporter` shown above.
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <githubStepSummary>true</githubStepSummary>
+</statelessTestsetInfoReporter>
+```
+
+It writes one line with the totals, a collapsed `<details>` with the tree of each class with a failure, and the classes
+without failures in one line:
+
+````markdown
+### Test results
+
+11 tests: 6 passed, 4 failed, 1 skipped
+
+<details>
+<summary>Gamma, an error, a failure and a skip: 2 failed</summary>
+
+```text
+── Gamma, an error, a failure and a skip - 0.033 s
+   ├─ 🔴 throws an error - 0.010 s
+   ├─ 🔴 fails - 0.008 s
+   └─ 🟡 is skipped (void sample.GammaTest.skipped() is @Disabled) - 0 s
+```
+
+</details>
+
+Classes without failures: `Alpha, all green`, `sample.DeltaTest`
+````
+
+- `githubStepSummary` is `false` by default. Nothing is written when `GITHUB_STEP_SUMMARY` is not set.
+- The file is only appended to, never overwritten, so every execution of the build (every module, surefire and failsafe)
+  adds its own `### Test results` section.
+- The trees of the classes with a failure are kept up to `maxFailuresInSummary` (the others are counted in a
+  `... and N more classes with failures` line).
 
 </details>
 

@@ -33,6 +33,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private String slowTestThreshold;
     private boolean printFailureSummary;
     private int maxFailuresInSummary = 50;
+    private boolean githubStepSummary;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -64,6 +65,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setSlowTestThreshold", String.class).invoke(clone, getSlowTestThreshold());
             cls.getMethod("setPrintFailureSummary", boolean.class).invoke(clone, isPrintFailureSummary());
             cls.getMethod("setMaxFailuresInSummary", int.class).invoke(clone, getMaxFailuresInSummary());
+            cls.getMethod("setGithubStepSummary", boolean.class).invoke(clone, isGithubStepSummary());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -146,6 +148,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return maxFailuresInSummary;
     }
 
+    public boolean isGithubStepSummary() {
+        return githubStepSummary;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -212,6 +218,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.maxFailuresInSummary = maxFailuresInSummary;
     }
 
+    public void setGithubStepSummary(boolean githubStepSummary) {
+        this.githubStepSummary = githubStepSummary;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -246,6 +256,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .slowTestThreshold(getSlowTestThreshold())
                 .printFailureSummary(isPrintFailureSummary())
                 .maxFailuresInSummary(getMaxFailuresInSummary())
+                .githubStepSummary(isGithubStepSummary())
                 .theme(getTheme())
                 .build();
     }

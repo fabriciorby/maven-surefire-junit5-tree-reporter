@@ -31,6 +31,7 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
         reporter.setSlowTestThreshold("2s");
         reporter.setPrintFailureSummary(true);
         reporter.setMaxFailuresInSummary(7);
+        reporter.setGithubStepSummary(true);
         reporter.setTheme(Theme.EMOJI);
 
         // Like the class loader of a surefire fork: surefire's jars, and the reporter added by clone()
@@ -53,7 +54,8 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
                     .hasFieldOrPropertyWithValue("hideSuccessfulNestedClasses", true)
                     .hasFieldOrPropertyWithValue("slowTestThreshold", "2s")
                     .hasFieldOrPropertyWithValue("printFailureSummary", true)
-                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 7);
+                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 7)
+                    .hasFieldOrPropertyWithValue("githubStepSummary", true);
             assertThat(((Enum<?>) clone.getClass().getMethod("getTheme").invoke(clone)).name()).isEqualTo(Theme.EMOJI.name());
         }
     }
@@ -64,7 +66,8 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
             Object clone = new JUnit5StatelessTestsetInfoTreeReporter().clone(target);
 
             assertThat(clone).hasFieldOrPropertyWithValue("printFailureSummary", false)
-                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 50);
+                    .hasFieldOrPropertyWithValue("maxFailuresInSummary", 50)
+                    .hasFieldOrPropertyWithValue("githubStepSummary", false);
         }
     }
 

@@ -28,6 +28,7 @@ public class ReporterOptions {
     private final long slowTestThresholdMillis;
     private final boolean printFailureSummary;
     private final int maxFailuresInSummary;
+    private final boolean githubStepSummary;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -49,6 +50,7 @@ public class ReporterOptions {
         this.slowTestThresholdMillis = parseSlowTestThreshold(builder.slowTestThreshold);
         this.printFailureSummary = builder.printFailureSummary;
         this.maxFailuresInSummary = builder.maxFailuresInSummary;
+        this.githubStepSummary = builder.githubStepSummary;
     }
 
     /**
@@ -163,6 +165,10 @@ public class ReporterOptions {
         return maxFailuresInSummary;
     }
 
+    public boolean isGithubStepSummary() {
+        return githubStepSummary;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -183,6 +189,7 @@ public class ReporterOptions {
         private String slowTestThreshold;
         private boolean printFailureSummary;
         private int maxFailuresInSummary = 50;
+        private boolean githubStepSummary;
 
         private Builder() {
         }
@@ -283,6 +290,11 @@ public class ReporterOptions {
 
         public Builder maxFailuresInSummary(int maxFailuresInSummary) {
             this.maxFailuresInSummary = maxFailuresInSummary;
+            return this;
+        }
+
+        public Builder githubStepSummary(boolean githubStepSummary) {
+            this.githubStepSummary = githubStepSummary;
             return this;
         }
     }

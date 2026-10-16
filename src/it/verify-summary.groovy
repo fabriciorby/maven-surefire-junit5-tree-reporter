@@ -1,21 +1,26 @@
-// Shared by the scenarios that print the failure summary when the run ends. Run after verify-tree.groovy, which only
-// looks at the lines up to "Results:".
+// Shared by the scenarios that print the failure summary and write the GitHub job summary when the run ends. Run
+// after verify-tree.groovy, which only looks at the lines up to "Results:".
 //
-// Checks the "Failed tests" block of build.log (after the "Tests run:" totals) against expected-summary.txt. It must
-// have been printed once, not once per fork.
+// Checks the "Failed tests" block of build.log (after the "Tests run:" totals) against expected-summary.txt, and the
+// file the reporter appended to (github-step-summary.md, set by GITHUB_STEP_SUMMARY in invoker.properties) against
+// expected-github-summary.md. Both must have been written once, not once per fork.
 //
 // A scenario that runs the tests more than once in the same build sets executions: the summary must then be printed
-// once per execution, each equal to the golden file, as the state of one execution must not leak into the next one.
+// and written once per execution, each equal to the golden files, as the state of one execution must not leak into
+// the next one.
 //
-// A scenario that prints the same summary as another one sets summaryScenario to use that scenario's golden file.
+// A scenario that prints the same summary as another one sets summaryScenario to use that scenario's golden files.
 //
 // Variables set by the maven-invoker-plugin: basedir, itSourceDir, surefireVersion, snapshotUpdate.
-// A scenario whose classes complete in any order sets sortSummary: the failed tests are compared in name order.
+// A scenario whose classes complete in any order sets sortSummary: the failed tests, the classes with failures and
+// the classes without are compared in name order.
 // Run with -Dsnapshot.update=true to write the current output as the new golden files.
 
 def sorted = binding.hasVariable('sortSummary') && binding.getVariable('sortSummary')
 def expectedRuns = binding.hasVariable('executions') ? binding.getVariable('executions') as int : 1
 def scenarioDir = new File(itSourceDir, binding.hasVariable('summaryScenario') ? binding.getVariable('summaryScenario') : basedir.name)
+
+def stripTimes = { String line -> line.replaceAll(/ - [\d.,]+( (s|ms|min))?$/, ' - <time>') }
 
 // ---- the block printed to the console
 def lines = new File(basedir, 'build.log').getText('UTF-8').readLines()
@@ -32,6 +37,24 @@ def blocks = starts.collect { start ->
 }
 compare(new File(scenarioDir, 'expected-summary.txt'), blocks[0])
 blocks.each { assert it == blocks[0]: "the failure summaries of the executions differ:\n${blocks.join('\n')}" }
+
+// ---- the markdown appended to the GitHub job summary
+def github = new File(basedir, 'github-step-summary.md')
+assert github.exists(): "the reporter did not write ${github}"
+def all = github.getText('UTF-8').readLines().collect(stripTimes).join('\n') + '\n'
+def sections = all.split(/(?m)^(?=### Test results$)/).findAll { it }
+assert sections.size() == expectedRuns: "expected ${expectedRuns} sections in the GitHub job summary, found ${sections.size()}"
+sections = sections.collect { md ->
+    if (sorted) {
+        def details = (md =~ /(?s)<details>.*?<\/details>\n\n/).collect { it }.sort()
+        def passed = (md =~ /(?m)^Classes without failures: (.*)$/).collect { it[1].split(/(?<=`), (?=`)/).sort().join(', ') }
+        def header = md.substring(0, md.indexOf('<details>'))
+        md = header + details.join('') + passed.collect { "Classes without failures: ${it}\n\n" }.join('')
+    }
+    md
+}
+compare(new File(scenarioDir, 'expected-github-summary.md'), sections[0])
+sections.each { assert it == sections[0]: "the sections of the GitHub job summary differ:\n${sections.join('\n')}" }
 
 return true // the invoker takes any other value, like the list above, for a failed script
 
