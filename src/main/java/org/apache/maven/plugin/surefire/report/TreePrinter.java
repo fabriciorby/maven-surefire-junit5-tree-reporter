@@ -40,9 +40,12 @@ public class TreePrinter {
     }
 
     public void printTests(Node node) {
-        new ActualTreePrinter(node, consoleLogger, options).printAndRemoveChild();
-        if (options.isPrintFailureSummary()) {
-            FailureSummary.record(node, options, consoleLogger);
+        if (!options.isPrintFailureSummary() && !options.isGithubStepSummary()) {
+            new ActualTreePrinter(node, consoleLogger, options).printAndRemoveChild();
+            return;
         }
+        RecordingConsoleLogger recording = new RecordingConsoleLogger(consoleLogger);
+        new ActualTreePrinter(node, recording, options).printAndRemoveChild();
+        FailureSummary.record(node, options, consoleLogger, recording.lines);
     }
 }

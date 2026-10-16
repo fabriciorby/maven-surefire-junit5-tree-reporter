@@ -4,7 +4,12 @@ import org.apache.maven.surefire.api.report.RunMode;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +24,9 @@ class FailureSummaryTest {
     private static final String BETA = "x.BetaTest";
     private static final String ALPHA = "x.AlphaTest";
 
+    @TempDir
+    File dir;
+
     private final Utf8RecodingDeferredFileOutputStream stdout = new Utf8RecodingDeferredFileOutputStream("stdout");
     private final Utf8RecodingDeferredFileOutputStream stderr = new Utf8RecodingDeferredFileOutputStream("stderr");
     private final CapturingLogger logger = new CapturingLogger();
@@ -26,15 +34,15 @@ class FailureSummaryTest {
     @BeforeEach
     void clean() {
         Node.clearTree();
-        FailureSummary.printAndClear();
+        FailureSummary.printAndClear(null);
     }
 
     @Test
     void printsTheFailedTestsAfterTheRunAndOnlyOnce() {
-        runClasses(options(true, 50));
+        runClasses(options(true, false, 50));
         logger.lines.clear();
 
-        FailureSummary.printAndClear();
+        FailureSummary.printAndClear(null);
 
         assertThat(logger.lines).containsExactly(
                 "Failed tests (3):",
@@ -44,17 +52,17 @@ class FailureSummaryTest {
                 "");
         // surefire closes the reporter once per fork, the others have nothing left to print
         logger.lines.clear();
-        FailureSummary.printAndClear();
+        FailureSummary.printAndClear(null);
         assertThat(logger.lines).isEmpty();
         assertThat(FailureSummary.isEmpty()).isTrue();
     }
 
     @Test
     void cutsTheListAtMaxFailuresInSummary() {
-        runClasses(options(true, 2));
+        runClasses(options(true, false, 2));
         logger.lines.clear();
 
-        FailureSummary.printAndClear();
+        FailureSummary.printAndClear(null);
 
         assertThat(logger.lines).containsExactly(
                 "Failed tests (3):",
@@ -66,18 +74,60 @@ class FailureSummaryTest {
 
     @Test
     void printsNothingWhenTheOptionIsOff() {
-        runClasses(options(false, 50));
+        runClasses(options(false, false, 50));
         logger.lines.clear();
 
-        FailureSummary.printAndClear();
+        FailureSummary.printAndClear(null);
 
         assertThat(logger.lines).isEmpty();
         assertThat(FailureSummary.isEmpty()).isTrue();
     }
 
     @Test
+    void remembersNothingWhenNoOptionIsOn() {
+        runClasses(options(false, false, 50));
+
+        assertThat(FailureSummary.isEmpty()).isTrue();
+    }
+
+    @Test
+    void appendsMarkdownWithoutOverwritingTheFile() throws IOException {
+        File summary = new File(dir, "summary.md");
+        Files.write(summary.toPath(), "# Earlier step\n".getBytes(StandardCharsets.UTF_8));
+        runClasses(options(false, true, 50));
+
+        FailureSummary.printAndClear(summary.getPath());
+
+        String markdown = new String(Files.readAllBytes(summary.toPath()), StandardCharsets.UTF_8);
+        assertThat(markdown).startsWith("# Earlier step\n### Test results\n\n5 tests: 2 passed, 3 failed, 0 skipped\n\n<details>\n"
+                + "<summary>Beta: 3 failed</summary>\n\n```text\n");
+        assertThat(markdown).contains("Beta -").contains("fails").contains("Deeper");
+        assertThat(markdown).endsWith("```\n\n</details>\n\nClasses without failures: `Alpha`\n\n");
+        // the tree of the class without failures is not kept
+        assertThat(markdown).doesNotContain("passes");
+
+        runClasses(options(false, true, 50));
+        FailureSummary.printAndClear(summary.getPath());
+        assertThat(new String(Files.readAllBytes(summary.toPath()), StandardCharsets.UTF_8))
+                .as("a second execution adds a section").hasSize(markdown.length() * 2 - "# Earlier step\n".length());
+    }
+
+    @Test
+    void doesNotWriteWithoutTheFile() {
+        runClasses(options(false, true, 50));
+
+        FailureSummary.printAndClear(null);
+        assertThat(FailureSummary.isEmpty()).isTrue();
+
+        runClasses(options(false, true, 50));
+        FailureSummary.printAndClear("");
+        assertThat(FailureSummary.isEmpty()).isTrue();
+        assertThat(dir.list()).isEmpty();
+    }
+
+    @Test
     void forksCloseTheReporterOneAfterTheOther() throws Exception {
-        runClasses(options(true, 50));
+        runClasses(options(true, false, 50));
         logger.lines.clear();
         int forks = 4;
         ExecutorService executor = Executors.newFixedThreadPool(forks);
@@ -85,7 +135,7 @@ class FailureSummaryTest {
         for (int i = 0; i < forks; i++) {
             executor.submit(() -> {
                 start.await();
-                FailureSummary.printAndClear();
+                FailureSummary.printAndClear(null);
                 return null;
             });
         }
@@ -118,9 +168,9 @@ class FailureSummaryTest {
         reporter.testSetCompleted(beta, stats(), null);
     }
 
-    private static ReporterOptions options(boolean printFailureSummary, int max) {
+    private static ReporterOptions options(boolean printFailureSummary, boolean githubStepSummary, int max) {
         return ReporterOptions.builder().theme(Theme.UNICODE).printFailureSummary(printFailureSummary)
-                .maxFailuresInSummary(max).build();
+                .githubStepSummary(githubStepSummary).maxFailuresInSummary(max).build();
     }
 
     private static SimpleReportEntry classEntry(String topLevel, String nestedPath, String displayName) {

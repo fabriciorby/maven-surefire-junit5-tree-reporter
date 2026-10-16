@@ -12,7 +12,8 @@ import java.io.PrintStream;
 
 /**
  * Replaces {@code <consoleOutputReporter><disable>true</disable></consoleOutputReporter>} when the failure summary
- * (option {@code printFailureSummary} of {@link JUnit5StatelessTestsetInfoTreeReporter}) is wanted.
+ * (options {@code printFailureSummary} and {@code githubStepSummary} of
+ * {@link JUnit5StatelessTestsetInfoTreeReporter}) is wanted.
  * <p>
  * Surefire has no end-of-execution call for the reporter of the tree, but it closes the listener of the console
  * output reporter after printing the totals of the execution. This reporter does what {@code disable} does while the

@@ -104,6 +104,7 @@
                         <theme>UNICODE</theme>
                         <printFailureSummary>true</printFailureSummary>
                         <maxFailuresInSummary>3</maxFailuresInSummary>
+                        <githubStepSummary>true</githubStepSummary>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>

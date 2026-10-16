@@ -69,6 +69,7 @@
                             implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
                         <theme>UNICODE</theme>
                         <printFailureSummary>true</printFailureSummary>
+                        <githubStepSummary>true</githubStepSummary>
                     </statelessTestsetInfoReporter>
                 </configuration>
             </plugin>
