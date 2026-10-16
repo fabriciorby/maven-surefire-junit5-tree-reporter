@@ -5,8 +5,8 @@ package org.apache.maven.plugin.surefire.report;
  * <p>
  * The connectors of {@link ActualTreePrinter} are worked out from the nodes it is given, so a node that is not
  * printed must not be among them. The view is a copy of the tree without the nodes that the options hide, and the
- * printer is unaware of the difference. Without an option that needs it there is no copy, and the tree itself is
- * printed.
+ * printer is unaware of the difference. Without any of the options that hide nodes or count tests there is no copy,
+ * and the tree itself is printed.
  */
 final class TreeView {
 
@@ -17,7 +17,8 @@ final class TreeView {
     }
 
     Node of(Node tree) {
-        if (!options.isPrintTestCounts() && !options.isCollapseSuccessfulClasses()) {
+        if (!options.isPrintTestCounts() && !options.isCollapseSuccessfulClasses()
+                && !options.isHideSuccessfulNestedClasses()) {
             return tree;
         }
         TestCounts counts = TestCounts.of(tree);
@@ -39,7 +40,9 @@ final class TreeView {
         }
         copy.wrappedReportEntries.addAll(node.wrappedReportEntries);
         for (Node branch : node.branches) {
-            copy.branches.add(copyWithBranches(branch, copy));
+            if (!options.isHideSuccessfulNestedClasses() || !TestCounts.of(branch).hasOnlyPassed()) {
+                copy.branches.add(copyWithBranches(branch, copy));
+            }
         }
         return copy;
     }

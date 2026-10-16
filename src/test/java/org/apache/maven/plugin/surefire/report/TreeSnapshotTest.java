@@ -82,6 +82,33 @@ class TreeSnapshotTest {
     }
 
     @Test
+    void hidesSuccessfulNestedClasses() {
+        Snapshot.assertMatches("options/hide-successful-nested-classes",
+                mixedResults(options().hideSuccessfulNestedClasses(true)));
+    }
+
+    @Test
+    void hidesSuccessfulNestedClassesWithHiddenResults() {
+        Snapshot.assertMatches("options/hide-successful-nested-classes-and-results",
+                mixedResults(options().hideSuccessfulNestedClasses(true).hideResultsOnSuccess(true)));
+    }
+
+    @Test
+    void hidesTheLastNestedClassesKeepingTheLastConnector() {
+        // The nested classes before and after Red Inner are green, so it is the only one left and the last
+        Snapshot.assertMatches("options/hide-successful-nested-classes-last",
+                new SurefireEmulator(options().hideSuccessfulNestedClasses(true).build(), MixedResultsExampleTest.class)
+                        .withOutcome("RedDeep.test", ReportEntryType.FAILURE).run());
+    }
+
+    @Test
+    void focusesOnFailures() {
+        Snapshot.assertMatches("options/failure-focus", mixedResults(options()
+                .printTestCounts(true).collapseSuccessfulClasses(true).hideSuccessfulNestedClasses(true)
+                .hideResultsOnSuccess(true)));
+    }
+
+    @Test
     void keepsTheDefaultTreeWithTheFailureFocusOptionsOff() {
         Snapshot.assertMatches("options/failure-focus-off", mixedResults(options()));
     }

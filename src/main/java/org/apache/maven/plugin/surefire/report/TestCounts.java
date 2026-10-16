@@ -37,6 +37,10 @@ final class TestCounts {
         return failed > 0;
     }
 
+    boolean hasOnlyPassed() {
+        return failed == 0 && skipped == 0;
+    }
+
     /**
      * @return for example {@code (3 passed, 1 failed, 1 skipped)} without the categories that are zero, or an empty
      * string when there are no tests

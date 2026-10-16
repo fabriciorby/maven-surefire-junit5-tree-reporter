@@ -47,7 +47,9 @@ src/it/
 │   ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
 │   ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
 │   └── verify.groovy             Compares with nested-tree's golden files
-├── print-test-counts/            UNICODE theme and printTestCounts, on green, failing and skipped classes
+├── failure-focus/                UNICODE theme, printTestCounts, collapseSuccessfulClasses, hideSuccessfulNestedClasses and hideResultsOnSuccess
+│   └── ...                       Green, failing and skipped classes, with the failure first, in the middle and last
+├── print-test-counts/            The same classes with only printTestCounts
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
 ├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
@@ -139,9 +141,12 @@ copying them, and its `verify.groovy` sets `goldenScenario` so the tree is compa
 reporter must print the same tree under both plugins. Surefire is skipped in this scenario, otherwise it would run the
 same tests first and its output would be the one compared.
 
-**`print-test-counts`.** The counts on the line of each class: classes that are green, that fail first, in the middle
-and last in their class, and that have a skipped test in a nested class, so the counts have to add up what is in
-the `@Nested` classes below and tell failed, passed and skipped apart.
+**`failure-focus`.** The options that cut the tree down to what failed, all on at once. The connectors (`├─`, `└─`,
+`│`) have to be worked out on what is printed and not on the whole tree, so the classes put the failure where it breaks
+them: first and last in its class, in the middle of green nested classes, deep in a nested class whose sibling is
+hidden, and a skipped test in a nested class. `AllGreenTest` and `SkippedTest` have no failure, so they collapse into
+one line. `print-test-counts` runs the same classes with just `printTestCounts`, which is also the full tree the
+other scenario is cut from.
 
 **`parallel-tree`.** JUnit5 runs its classes in parallel (`junit-platform.properties`), so surefire reports a class
 while others are still running, and the classes complete in a different order on each run. Its `verify.groovy` sets

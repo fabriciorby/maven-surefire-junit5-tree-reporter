@@ -29,6 +29,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printBlankLineBetweenTests;
     private boolean printTestCounts;
     private boolean collapseSuccessfulClasses;
+    private boolean hideSuccessfulNestedClasses;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -56,6 +57,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintBlankLineBetweenTests", boolean.class).invoke(clone, isPrintBlankLineBetweenTests());
             cls.getMethod("setPrintTestCounts", boolean.class).invoke(clone, isPrintTestCounts());
             cls.getMethod("setCollapseSuccessfulClasses", boolean.class).invoke(clone, isCollapseSuccessfulClasses());
+            cls.getMethod("setHideSuccessfulNestedClasses", boolean.class).invoke(clone, isHideSuccessfulNestedClasses());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -122,6 +124,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return collapseSuccessfulClasses;
     }
 
+    public boolean isHideSuccessfulNestedClasses() {
+        return hideSuccessfulNestedClasses;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -170,6 +176,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.collapseSuccessfulClasses = collapseSuccessfulClasses;
     }
 
+    public void setHideSuccessfulNestedClasses(boolean hideSuccessfulNestedClasses) {
+        this.hideSuccessfulNestedClasses = hideSuccessfulNestedClasses;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -200,6 +210,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .printBlankLineBetweenTests(isPrintBlankLineBetweenTests())
                 .printTestCounts(isPrintTestCounts())
                 .collapseSuccessfulClasses(isCollapseSuccessfulClasses())
+                .hideSuccessfulNestedClasses(isHideSuccessfulNestedClasses())
                 .theme(getTheme())
                 .build();
     }

@@ -111,12 +111,14 @@ To reduce verbosity, you can a _hide successful results_ option can be configure
 
 ## Focus on failures
 
-More options, all `false` by default, cut the tree down to what needs attention.
+Three more options, all `false` by default, cut the tree down to what needs attention.
 
 * `printTestCounts` adds the number of tests to the line of each class, including the `@Nested` ones, counting
   everything below it. A failed count includes the errors, and categories with zero are left out.
 * `collapseSuccessfulClasses` prints a top-level class with no failure and no error in a single line with its counts.
   Classes with a failure are printed in full.
+* `hideSuccessfulNestedClasses` leaves out the `@Nested` classes that have no failure, error or skipped test, and keeps
+  the path to the ones that are left. Use it together with `hideResultsOnSuccess` to see only what went wrong.
 
 ```xml
 <statelessTestsetInfoReporter
@@ -124,11 +126,24 @@ More options, all `false` by default, cut the tree down to what needs attention.
     <theme>UNICODE</theme>
     <printTestCounts>true</printTestCounts>
     <collapseSuccessfulClasses>true</collapseSuccessfulClasses>
+    <hideSuccessfulNestedClasses>true</hideSuccessfulNestedClasses>
+    <hideResultsOnSuccess>true</hideResultsOnSuccess>
 </statelessTestsetInfoReporter>
 ```
 
-A class with only passed or skipped tests becomes
-one line (skipped tests do not prevent it), and with `collapseSuccessfulClasses` its stdout and stderr are not printed, whatever the `printStdoutOnSuccess`
+```
+── All Green (3 passed) - 0.004 s
+── Fail First (2 passed, 1 failed) - 0.012 s
+   └─ ✘ Fails first - 0.011 s
+┬─ Fail In Middle (6 passed, 2 failed) - 0.021 s
+└─ ┬─ Red Middle (3 passed, 2 failed) - 0.019 s
+   │  └─ ✘ Middle fails - 0.008 s
+   └─ ── Deep Red (1 passed, 1 failed) - 0.006 s
+         └─ ✘ Deep red errors - 0.005 s
+```
+
+`collapseSuccessfulClasses` is applied before `hideResultsOnSuccess`: a class with only passed or skipped tests becomes
+one line (skipped tests do not prevent it), and its stdout and stderr are not printed, whatever the `printStdoutOnSuccess`
 and `printStderrOnSuccess` options say.
 
 ## Failure details

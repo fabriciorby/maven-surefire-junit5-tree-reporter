@@ -1,0 +1,15 @@
+── All Green (3 passed) - <time>
+── Fail First (2 passed, 1 failed) - <time>
+   └─ ✘ Fails first - <time>
+┬─ Fail In Middle (6 passed, 2 failed) - <time>
+└─ ┬─ Red Middle (3 passed, 2 failed) - <time>
+   │  └─ ✘ Middle fails - <time>
+   └─ ── Deep Red (1 passed, 1 failed) - <time>
+         └─ ✘ Deep red errors - <time>
+── Fail Last (3 passed, 1 failed) - <time>
+   └─ ✘ Fails last - <time>
+┬─ Skip In Nested (2 passed, 1 failed, 1 skipped) - <time>
+│  └─ ✘ Fails - <time>
+└─ ── Skipped Nested (1 skipped) - <time>
+      └─ ↷ Is skipped (not today) - <time>
+── Skipped (2 passed, 1 skipped) - <time>
