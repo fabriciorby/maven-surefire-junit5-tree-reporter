@@ -1,0 +1,17 @@
+── Alpha, all green - <time>
+   ├─ ✔ adds - <time>
+   └─ ✔ subtracts - <time>
+┬─ Beta, failures in the class and in a nested class - <time>
+│  ├─ ✘ fails in the class - <time>
+│  └─ ✔ passes - <time>
+└─ ── Inner - <time>
+      ├─ ✘ fails in the nested class - <time>
+      └─ ✔ passes in the nested class - <time>
+┬─ sample.DeltaTest - <time>
+│  └─ ✔ passes - <time>
+└─ ── Inner - <time>
+      └─ ✔ passes in the nested class - <time>
+── Gamma, an error, a failure and a skip - <time>
+   ├─ ✘ throws an error - <time>
+   ├─ ✘ fails - <time>
+   └─ ↷ is skipped (void sample.GammaTest.skipped() is @Disabled) - <time>

@@ -41,5 +41,8 @@ public class TreePrinter {
 
     public void printTests(Node node) {
         new ActualTreePrinter(node, consoleLogger, options).printAndRemoveChild();
+        if (options.isPrintFailureSummary()) {
+            FailureSummary.record(node, options, consoleLogger);
+        }
     }
 }

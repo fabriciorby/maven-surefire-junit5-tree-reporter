@@ -444,6 +444,44 @@ The marker is `[SLOW]` in the ASCII and UNICODE themes, and `🐢` in the EMOJI 
 </details>
 
 <details>
+<summary><b>Failure summary (<code>printFailureSummary</code>)</b></summary>
+
+In a big build the failures are in the middle of a long tree. The failure summary lists them all in one place, after the
+totals surefire prints at the end of the run, with the same display names as the tree:
+
+```xml
+<consoleOutputReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputTreeReporter">
+</consoleOutputReporter>
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <printFailureSummary>true</printFailureSummary>
+    <maxFailuresInSummary>50</maxFailuresInSummary>
+</statelessTestsetInfoReporter>
+```
+
+```
+[ERROR] Tests run: 11, Failures: 3, Errors: 1, Skipped: 1
+[INFO]
+[INFO] Failed tests (4):
+[INFO]   Beta, failures in the class and in a nested class > fails in the class
+[INFO]   Beta, failures in the class and in a nested class > Inner > fails in the nested class
+[INFO]   Gamma, an error, a failure and a skip > throws an error
+[INFO]   ... and 1 more
+```
+
+- `printFailureSummary` is `false` by default. It lists the failures and the errors.
+- `maxFailuresInSummary` is `50` by default. Above it the summary ends with `... and N more`.
+- The summary is printed when surefire closes the execution, and surefire gives the reporter of the tree no call for
+  that. It does for `consoleOutputReporter`, so `JUnit5ConsoleOutputTreeReporter` replaces
+  `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>`. It drops the output captured from the tests
+  like `disable` does and prints the summary when the execution ends. Without it, `printFailureSummary` prints
+  nothing. It works with `forkCount` above 1, with `maven-failsafe-plugin` and
+  with several executions in the same build.
+
+</details>
+
+<details>
 <summary><b>Failure details</b></summary>
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:
