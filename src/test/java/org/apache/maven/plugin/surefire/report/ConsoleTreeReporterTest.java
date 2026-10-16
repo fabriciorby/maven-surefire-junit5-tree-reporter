@@ -3,6 +3,8 @@ package org.apache.maven.plugin.surefire.report;
 import org.apache.maven.plugin.surefire.VeryNestedExampleTest;
 import org.apache.maven.plugin.surefire.log.PluginConsoleLogger;
 import org.apache.maven.surefire.api.report.RunMode;
+import org.apache.maven.surefire.api.report.SafeThrowable;
+import org.apache.maven.surefire.api.report.StackTraceWriter;
 import org.apache.maven.surefire.api.report.SimpleReportEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -234,5 +236,53 @@ class ConsoleTreeReporterTest {
         assertThat(outerNode.wrappedReportEntries).containsExactly(wrappedInner);
     }
 
+
+    @Test
+    void abortedTestShowsTheThrowableMessage() {
+        // Issue #47: a failed assumption is reported as skipped with no message, the reason is only on the throwable
+        StackTraceWriter abortedWriter = new StackTraceWriter() {
+            @Override
+            public String writeTraceToString() {
+                return "";
+            }
+
+            @Override
+            public String smartTrimmedStackTrace() {
+                return "";
+            }
+
+            @Override
+            public String writeTrimmedTraceToString() {
+                return "";
+            }
+
+            @Override
+            public SafeThrowable getThrowable() {
+                return new SafeThrowable(new RuntimeException("Assumption failed: not on this OS"));
+            }
+        };
+        SimpleReportEntry aborted = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "AbortedExampleTest", "Aborted Example", "test", "aborted test", (String) null, abortedWriter, 1, null, java.util.Collections.emptyMap());
+        SimpleReportEntry disabled = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "AbortedExampleTest", "Aborted Example", "test2", "disabled test", "because reasons");
+        SimpleReportEntry plain = new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "AbortedExampleTest", "Aborted Example", "test3", "skipped test");
+        WrappedReportEntry wrappedAborted = new WrappedReportEntry(aborted, ReportEntryType.SKIPPED, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedDisabled = new WrappedReportEntry(disabled, ReportEntryType.SKIPPED, 0L, 1, stdout, stderr);
+        WrappedReportEntry wrappedPlain = new WrappedReportEntry(plain, ReportEntryType.SKIPPED, 0L, 1, stdout, stderr);
+
+        TestSetStats testSetStats = new TestSetStats(false, true);
+        testSetStats.testSkipped(wrappedAborted);
+        testSetStats.testSkipped(wrappedDisabled);
+        testSetStats.testSkipped(wrappedPlain);
+
+        CapturingLogger capturingLogger = new CapturingLogger();
+        ReporterOptions options = ReporterOptions.builder().theme(Theme.ASCII).build();
+        ConsoleTreeReporter consoleTreeReporter = new ConsoleTreeReporter(capturingLogger, options);
+        consoleTreeReporter.testSetStarting(new SimpleReportEntry(RunMode.NORMAL_RUN, 123L, "AbortedExampleTest", "Aborted Example", null, null));
+        consoleTreeReporter.testSetCompleted(wrappedAborted, testSetStats, null);
+
+        assertThat(capturingLogger.lines)
+                .anyMatch(line -> line.contains("aborted test (Assumption failed: not on this OS)"))
+                .anyMatch(line -> line.contains("disabled test (because reasons)"))
+                .anyMatch(line -> line.endsWith("skipped test") || line.contains("skipped test - "));
+    }
 
 }

@@ -1,6 +1,8 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.plugin.surefire.log.api.ConsoleLogger;
+import org.apache.maven.surefire.api.report.SafeThrowable;
+import org.apache.maven.surefire.api.report.StackTraceWriter;
 import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
@@ -204,11 +206,22 @@ public class ActualTreePrinter {
     }
 
     private String getSkippedMessage(WrappedReportEntry testResult) {
-        if (!isBlank(testResult.getMessage())) {
-            return " (" + testResult.getMessage() + ")";
-        } else {
-            return "";
+        String message = testResult.getMessage();
+        if (isBlank(message)) {
+            // An aborted test (failed assumption, TestAbortedException) is reported as skipped without a message,
+            // the reason is only on its throwable.
+            message = getThrowableMessage(testResult);
         }
+        return isBlank(message) ? "" : " (" + message + ")";
+    }
+
+    private static String getThrowableMessage(WrappedReportEntry testResult) {
+        StackTraceWriter stackTraceWriter = testResult.getStackTraceWriter();
+        if (stackTraceWriter == null) {
+            return null;
+        }
+        SafeThrowable throwable = stackTraceWriter.getThrowable();
+        return throwable == null ? null : throwable.getLocalizedMessage();
     }
 
     private void printPreambleDetails(WrappedReportEntry testResult) {
