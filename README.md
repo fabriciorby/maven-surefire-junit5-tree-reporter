@@ -535,6 +535,11 @@ without failures in one line:
 Classes without failures: `Alpha, all green`, `sample.DeltaTest`
 ````
 
+This is how it looks on the page of the job (from the sample project in `src/it/failure-summary`, which has failing tests
+on purpose):
+
+![GitHub job summary written by githubStepSummary](docs/github-job-summary.png)
+
 - `githubStepSummary` is `false` by default. Nothing is written when `GITHUB_STEP_SUMMARY` is not set.
 - The file is only appended to, never overwritten, so every execution of the build (every module, surefire and failsafe)
   adds its own `### Test results` section.
