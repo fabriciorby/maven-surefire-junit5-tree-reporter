@@ -53,6 +53,16 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B integration-test --file pom.xml -Dit.surefire.version=${{ matrix.surefire }}
+    - name: Show the GitHub job summary
+      # Runs the failure-summary sample project, which has failing tests on purpose (testFailureIgnore), with the
+      # reporter just built, so githubStepSummary writes the tree of the failing classes to the summary of this job.
+      env:
+        MAVEN_OPTS: -Dfile.encoding=UTF-8
+      run: |
+        echo "## githubStepSummary sample, surefire ${{ matrix.surefire }} (failing tests on purpose)" >> "$GITHUB_STEP_SUMMARY"
+        mvn -B -f target/it/surefire-${{ matrix.surefire }}/failure-summary/pom.xml test \
+          -Dmaven.repo.local="$PWD/target/local-repo" \
+          -s "$PWD/target/it/surefire-${{ matrix.surefire }}/interpolated-settings.xml"
 
   dependency-graph:
     runs-on: ubuntu-latest
