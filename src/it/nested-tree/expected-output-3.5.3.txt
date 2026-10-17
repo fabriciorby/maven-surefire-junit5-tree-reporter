@@ -7,10 +7,14 @@
 │     └─ ✔ First inner test should pass - <time>
 └─ ┬─ Second Inner Test - <time>
    │  └─ ✔ Second inner test should pass - <time>
-   └─ ┬─ Inner Inner Test - <time>
-      │  └─ ✔ Inner inner test should pass - <time>
-      └─ ── Inner Inner Inner Test - <time>
-            └─ ✔ Inner inner inner test should pass - <time>
+   ├─ ┬─ Inner Inner Test - <time>
+   │  │  └─ ✔ Inner inner test should pass - <time>
+   │  ├─ ── Inner Inner Inner Test - <time>
+   │  │     └─ ✔ Inner inner inner test should pass - <time>
+   │  └─ ── Sibling Inner Inner Inner Test - <time>
+   │        └─ ✔ Sibling inner inner inner test should pass - <time>
+   └─ ── Sibling Inner Inner Test - <time>
+         └─ ✔ Sibling inner inner test should pass - <time>
 ── Parameterized Sample - <time>
    ├─ ✔ add(int, int, int) 0 + 1 = 1 - <time>
    ├─ ✔ add(int, int, int) 1 + 2 = 3 - <time>
