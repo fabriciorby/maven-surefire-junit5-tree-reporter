@@ -54,6 +54,26 @@ class NestedTest {
                 void test() {
                 }
             }
+
+            @Nested
+            @DisplayName("Sibling Inner Inner Inner Test")
+            class SiblingInnerInnerInnerTest {
+
+                @Test
+                @DisplayName("Sibling inner inner inner test should pass")
+                void test() {
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("Sibling Inner Inner Test")
+        class SiblingInnerInnerTest {
+
+            @Test
+            @DisplayName("Sibling inner inner test should pass")
+            void test() {
+            }
         }
     }
 }

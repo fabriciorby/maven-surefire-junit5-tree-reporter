@@ -12,7 +12,11 @@
 '--.--Second Inner Test - <time>
    |  +-- [OK] Inner test should pass - <time>
    |  '-- [OK] Second Inner test should pass - <time>
-   '--.--Inner Inner Test - <time>
-      |  '-- [OK] Inner Inner Test should pass - <time>
-      '-----Inner Inner Inner Test - <time>
-            '-- [OK] Inner Inner Inner Test should pass - <time>
+   +--.--Inner Inner Test - <time>
+   |  |  '-- [OK] Inner Inner Test should pass - <time>
+   |  +-----Inner Inner Inner Test - <time>
+   |  |     '-- [OK] Inner Inner Inner Test should pass - <time>
+   |  '-----Sibling Inner Inner Inner Test - <time>
+   |        '-- [OK] Sibling Inner Inner Inner Test should pass - <time>
+   '-----Sibling Inner Inner Test - <time>
+         '-- [OK] Sibling Inner Inner Test should pass - <time>

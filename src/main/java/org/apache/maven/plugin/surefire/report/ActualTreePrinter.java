@@ -8,7 +8,7 @@ import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.LongStream;
+import java.util.stream.Collectors;
 
 import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
 import static org.apache.maven.surefire.shared.utils.StringUtils.isBlank;
@@ -34,7 +34,7 @@ public class ActualTreePrinter {
     }
 
     public void print() {
-        print(tree);
+        print(new TreeView(options).of(tree));
     }
 
     public void removeChild() {
@@ -62,6 +62,10 @@ public class ActualTreePrinter {
         return !options.isHideResultsOnSuccess();
     }
 
+    private boolean isShown(WrappedReportEntry testResult) {
+        return isSuccessPrintAllowed() || !testResult.isSucceeded();
+    }
+
     private void printSuccess(Node node, WrappedReportEntry testResult) {
         printTestResult(buffer().success(theme.successful() + getTestName(testResult)), node, testResult);
     }
@@ -77,38 +81,29 @@ public class ActualTreePrinter {
         consoleLogger.info(message);
     }
 
-    private boolean isLastMissingBranch(Node node) {
-        // The top-level class of this node, not ROOT's first branch: with parallel test classes ROOT also holds the
-        // classes still running, in any order.
-        Node rootChild = node.getTopLevelNode();
-        if (rootChild.hasBranches()) {
-            Node rootChildLastChild = getLastItem(rootChild.branches); // last branch in root child
-            return node.getParent(rootChildLastChild.getName()).isPresent() || node == rootChildLastChild;
-        } else {
-            return true;
-        }
+    /**
+     * @return whether the node is the last branch of its parent. A top-level class has no siblings that matter here:
+     * with parallel test classes ROOT also holds the classes still running, in any order.
+     */
+    private static boolean isLastBranch(Node node) {
+        List<Node> siblings = node.getParent().branches;
+        return siblings.get(siblings.size() - 1) == node;
     }
 
-    private static <T> T getLastItem(List<T> list) {
-        return list.get(list.size() - 1);
+    /**
+     * The columns of the nested classes the node is in, from the second level down to the node itself if asked. Each
+     * is the line going down along that class while it has siblings still to be printed.
+     */
+    private String getBranchColumns(Node node, boolean includeNode) {
+        if (node.getDepth() <= 1) return "";
+        String columns = getBranchColumns(node.getParent(), true);
+        return includeNode ? columns + (isLastBranch(node) ? theme.blank() : theme.pipe()) : columns;
     }
 
     private MessageBuilder getTestPrefix(Node node, WrappedReportEntry testResult) {
         MessageBuilder builder = buffer();
-        if (isLastMissingBranch(node))
-            builder.a(theme.blank());
-        else
-            builder.a(theme.pipe());
-        if (node.getDepth() > 1) {
-            LongStream.rangeClosed(0, node.getDepth() - 3)
-                    .forEach(i -> builder.a(theme.blank()));
-            if (node.getParent().hasBranches() && node.hasBranches()
-            ) {
-                builder.a(theme.pipe());
-            } else {
-                builder.a(theme.blank());
-            }
-        }
+        builder.a(getBranchColumns(node, true));
+        builder.a(node.hasBranches() ? theme.pipe() : theme.blank());
         if (isLastTestToBeEval(node, testResult)) {
             builder.a(theme.entry());
         } else {
@@ -117,23 +112,20 @@ public class ActualTreePrinter {
         return builder;
     }
 
-    private static boolean isLastTestToBeEval(Node node, WrappedReportEntry testResult) {
-        return node.wrappedReportEntries.indexOf(testResult) + 1 != node.wrappedReportEntries.size();
+    private boolean isLastTestToBeEval(Node node, WrappedReportEntry testResult) {
+        // Only the tests that are printed count, a hidden success after the last printed test does not make it
+        // a middle one.
+        List<WrappedReportEntry> shown = node.wrappedReportEntries.stream()
+                .filter(this::isShown)
+                .collect(Collectors.toList());
+        return shown.indexOf(testResult) + 1 != shown.size();
     }
 
     private void printClass(Node node) {
         MessageBuilder builder = buffer();
         if (node.getDepth() > 1) {
-            if (node.getDepth() > 2) {
-                if (isLastMissingBranch(node)) builder.a(theme.blank());
-                else builder.a(theme.pipe());
-                LongStream.rangeClosed(0, node.getDepth() - 4)
-                        .forEach(i -> builder.a(theme.blank()));
-                builder.a(theme.end());
-            } else {
-                if (isLastMissingBranch(node)) builder.a(theme.end());
-                else builder.a(theme.entry());
-            }
+            builder.a(getBranchColumns(node, false));
+            builder.a(isLastBranch(node) ? theme.end() : theme.entry());
         }
         if (node.hasBranches()) {
             builder.a(theme.down());
@@ -142,6 +134,9 @@ public class ActualTreePrinter {
         }
 
         builder.strong(cleanReportName(node));
+        if (node.counts != null && !node.counts.format().isEmpty()) {
+            builder.a(" " + node.counts.format());
+        }
         builder.a(" - " + node.getClassReportEntry().elapsedTimeAsString());
 
         println(builder.toString());

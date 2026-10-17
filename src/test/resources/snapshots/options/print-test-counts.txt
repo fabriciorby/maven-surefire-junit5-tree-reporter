@@ -1,0 +1,14 @@
+┬─ Mixed Sample (3 passed, 3 failed, 2 skipped) - <time>
+│  ├─ ✔ First - <time>
+│  ├─ ✘ Second - <time>
+│  └─ ↷ Third - <time>
+├─ ┬─ Green Inner (2 passed) - <time>
+│  │  └─ ✔ Green test - <time>
+│  └─ ── Green Deep (1 passed) - <time>
+│        └─ ✔ Green deep test - <time>
+├─ ┬─ Red Inner (2 failed) - <time>
+│  │  └─ ✘ Red test - <time>
+│  └─ ── Red Deep (1 failed) - <time>
+│        └─ ✘ Red deep test - <time>
+└─ ── Skipped Inner (1 skipped) - <time>
+      └─ ↷ Skipped test - <time>

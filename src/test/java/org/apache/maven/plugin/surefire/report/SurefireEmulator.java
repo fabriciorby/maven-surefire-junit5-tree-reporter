@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -39,6 +41,7 @@ public class SurefireEmulator {
     private final CapturingLogger logger;
     private final Class<?> clazz;
     private final ConsoleTreeReporter consoleTreeReporter;
+    private final Map<String, ReportEntryType> outcomes = new HashMap<>();
     private TestSetStats pendingStats = newStats();
 
     public SurefireEmulator(Class<?> clazz) {
@@ -58,6 +61,16 @@ public class SurefireEmulator {
         this.consoleTreeReporter = new ConsoleTreeReporter(logger, reporterOptions);
     }
 
+    /**
+     * Makes a test report another result than success, which is the default of every test. The test is named like
+     * {@code SimpleClassName.methodName}, with the simple name of the class that declares the method, which may be
+     * a {@code @Nested} one.
+     */
+    public SurefireEmulator withOutcome(String test, ReportEntryType type) {
+        outcomes.put(test, type);
+        return this;
+    }
+
     public List<String> run() {
         run(clazz);
         return logger.lines;
@@ -66,11 +79,29 @@ public class SurefireEmulator {
     private void run(Class<?> testClass) {
         WrappedReportEntry classEntry = wrap(classEntry(testClass));
         consoleTreeReporter.testSetStarting(classEntry);
-        getTestMethods(testClass).forEach(method -> pendingStats.testSucceeded(wrap(testEntry(testClass, method))));
+        getTestMethods(testClass).forEach(method -> report(testClass, method));
         getNestedClasses(testClass).forEach(this::run);
         TestSetStats stats = pendingStats;
         pendingStats = newStats();
         consoleTreeReporter.testSetCompleted(classEntry, stats, null);
+    }
+
+    private void report(Class<?> testClass, Method method) {
+        ReportEntryType type = outcomes.getOrDefault(testClass.getSimpleName() + "." + method.getName(), ReportEntryType.SUCCESS);
+        WrappedReportEntry entry = wrap(testEntry(testClass, method), type);
+        switch (type) {
+            case FAILURE:
+                pendingStats.testFailure(entry);
+                break;
+            case ERROR:
+                pendingStats.testError(entry);
+                break;
+            case SKIPPED:
+                pendingStats.testSkipped(entry);
+                break;
+            default:
+                pendingStats.testSucceeded(entry);
+        }
     }
 
     private SimpleReportEntry classEntry(Class<?> testClass) {
@@ -84,7 +115,11 @@ public class SurefireEmulator {
     }
 
     private WrappedReportEntry wrap(SimpleReportEntry simpleReportEntry) {
-        return new WrappedReportEntry(simpleReportEntry, ReportEntryType.SUCCESS, 0L, 1, stdout, stderr);
+        return wrap(simpleReportEntry, ReportEntryType.SUCCESS);
+    }
+
+    private WrappedReportEntry wrap(SimpleReportEntry simpleReportEntry, ReportEntryType type) {
+        return new WrappedReportEntry(simpleReportEntry, type, 0L, 1, stdout, stderr);
     }
 
     private static TestSetStats newStats() {

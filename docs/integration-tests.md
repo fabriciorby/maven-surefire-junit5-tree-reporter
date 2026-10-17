@@ -47,6 +47,9 @@ src/it/
 │   ├── pom.xml                   Same configuration on maven-failsafe-plugin, reads ../nested-tree/src/test
 │   ├── invoker.properties        Runs mvn verify, failsafe runs in the integration-test phase
 │   └── verify.groovy             Compares with nested-tree's golden files
+├── failure-focus/                UNICODE theme, printTestCounts, collapseSuccessfulClasses, hideSuccessfulNestedClasses and hideResultsOnSuccess
+│   └── ...                       Green, failing and skipped classes, with the failure first, in the middle and last
+├── print-test-counts/            The same classes with only printTestCounts
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
 ├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
@@ -138,6 +141,13 @@ copying them, and its `verify.groovy` sets `goldenScenario` so the tree is compa
 reporter must print the same tree under both plugins. Surefire is skipped in this scenario, otherwise it would run the
 same tests first and its output would be the one compared.
 
+**`failure-focus`.** The options that cut the tree down to what failed, all on at once. The connectors (`├─`, `└─`,
+`│`) have to be worked out on what is printed and not on the whole tree, so the classes put the failure where it breaks
+them: first and last in its class, in the middle of green nested classes, deep in a nested class whose sibling is
+hidden, and a skipped test in a nested class. `AllGreenTest` and `SkippedTest` have no failure, so they collapse into
+one line. `print-test-counts` runs the same classes with just `printTestCounts`, which is also the full tree the
+other scenario is cut from.
+
 **`parallel-tree`.** JUnit5 runs its classes in parallel (`junit-platform.properties`), so surefire reports a class
 while others are still running, and the classes complete in a different order on each run. Its `verify.groovy` sets
 `sortClassBlocks`: the trees of the top-level classes, each starting with `┬─ ` or `── ` (UNICODE theme), are sorted
@@ -204,8 +214,10 @@ pieces in `src/test/java/org/apache/maven/plugin/surefire/report`:
 * **`SurefireEmulator`** reads a test class by reflection and sends the reporter the same events maven-surefire-plugin
   3.6.0 sends: each class is started before its `@Nested` classes and completed after them, with the results
   collected since the last completed class. It returns the printed lines. Classes and methods are sorted by name,
-  because Java does not specify the order reflection returns them in. Every test passes, so use the integration tests
-  for failures and skipped tests.
+  because Java does not specify the order reflection returns them in. Every test passes unless the unit test says otherwise with
+  `withOutcome("SimpleClassName.methodName", ReportEntryType.FAILURE)` (also `ERROR` and `SKIPPED`), which reports
+  that method with that result. The integration tests are still the ones that see what surefire sends for a real
+  failure, a skipped test or a stack trace.
 * **`Snapshot.assertMatches(name, lines)`** normalizes the lines the same way as `verify-tree.groovy` and compares them
   with `src/test/resources/snapshots/<name>.txt`.
 * **`TreeSnapshotTest`** uses all of the above for the sample classes in `org.apache.maven.plugin.surefire`, every
