@@ -54,14 +54,19 @@ The extension also works with [maven-failsafe-plugin](https://maven.apache.org/s
 shares the same reporter extension API. Add the same `<dependencies>` and `<configuration>` shown above to
 `maven-failsafe-plugin` too. The compatibility table above applies to `maven-failsafe-plugin` versions as well.
 
-## Output Theme
+## Features
+
+The examples use the `EMOJI` theme. Click a feature to see how to turn it on and what it prints.
+
+<details>
+<summary><b>Output theme</b></summary>
 
 The output can be printed using Themes:
 - ASCII (default).
 - UNICODE
 - EMOJI
 
-### EMOJI
+`EMOJI`:
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -70,7 +75,7 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/8JuxGRO.png "EMOJI Output")
 
-### UNICODE
+`UNICODE`:
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -79,7 +84,7 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/wBSQnin.png "UNICODE Output")
 
-### ASCII
+`ASCII`:
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -88,7 +93,11 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/g6OkbqU.png "ASCII Output")
 
-## Blank line between tests
+</details>
+
+<details>
+<summary><b>Blank line between tests</b></summary>
+
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -96,11 +105,38 @@ The output can be printed using Themes:
 </statelessTestsetInfoReporter>
 ```
 
+The result prints a blank line between the trees of two classes:
 
-## Reduce verbosity
+```
+┬─ All Green - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+
+┬─ Fail In Middle - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
+
+</details>
+
+<details>
+<summary><b>Hide successful results (<code>hideResultsOnSuccess</code>)</b></summary>
 
 Output in large projects could become too verbose, making failures or errors difficult to find inside the printed trees.
-To reduce verbosity, you can a _hide successful results_ option can be configured as follows:
+To reduce verbosity, the _hide successful results_ option prints only the tests that did not pass:
 
 ```xml
 <statelessTestsetInfoReporter
@@ -109,21 +145,253 @@ To reduce verbosity, you can a _hide successful results_ option can be configure
 </statelessTestsetInfoReporter>
 ```
 
-## Focus on failures
+Without the option:
 
-Three more options, all `false` by default, cut the tree down to what needs attention.
+```
+┬─ All Green - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+┬─ Fail In Middle - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
 
-* `printTestCounts` adds the number of tests to the line of each class, including the `@Nested` ones, counting
-  everything below it. A failed count includes the errors, and categories with zero are left out.
-* `collapseSuccessfulClasses` prints a top-level class with no failure and no error in a single line with its counts.
-  Classes with a failure are printed in full.
-* `hideSuccessfulNestedClasses` leaves out the `@Nested` classes that have no failure, error or skipped test, and keeps
-  the path to the ones that are left. Use it together with `hideResultsOnSuccess` to see only what went wrong.
+With the option:
+
+```
+┬─ All Green - 0.012 s
+└─ ── Green Inner - 0.004 s
+┬─ Fail In Middle - 0.009 s
+├─ ── Green Before - 0.021 s
+├─ ┬─ Red Middle - 0.006 s
+│  │  └─ 🔴 Middle fails - 0.015 s
+│  ├─ ── Deep Green - 0.003 s
+│  └─ ── Deep Red - 0.011 s
+│        └─ 🔴 Deep red errors - 0.012 s
+└─ ── Green After - 0.004 s
+```
+
+</details>
+
+<details>
+<summary><b>Test counts (<code>printTestCounts</code>)</b></summary>
+
+Adds the number of tests to the line of each class, including the `@Nested` ones, counting everything below it.
+A failed count includes the errors, and categories with zero are left out. Default: `false`.
 
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-    <theme>UNICODE</theme>
+    <printTestCounts>true</printTestCounts>
+</statelessTestsetInfoReporter>
+```
+
+Without the option:
+
+```
+┬─ All Green - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+┬─ Fail In Middle - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
+
+With the option:
+
+```
+┬─ All Green (3 passed) - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner (1 passed) - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+┬─ Fail In Middle (6 passed, 2 failed) - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before (1 passed) - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle (3 passed, 2 failed) - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green (1 passed) - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red (1 passed, 1 failed) - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After (1 passed) - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
+
+</details>
+
+<details>
+<summary><b>Collapse successful classes (<code>collapseSuccessfulClasses</code>)</b></summary>
+
+Prints a top-level class with no failure and no error in a single line with its counts. Classes with a failure are
+printed in full. Default: `false`.
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <collapseSuccessfulClasses>true</collapseSuccessfulClasses>
+</statelessTestsetInfoReporter>
+```
+
+Without the option:
+
+```
+┬─ All Green - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+┬─ Fail In Middle - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
+
+With the option:
+
+```
+── All Green (3 passed) - 0.012 s
+┬─ Fail In Middle - 0.004 s
+│  └─ 🟢 Top passes - 0.009 s
+├─ ── Green Before - 0.021 s
+│     └─ 🟢 Before passes - 0.006 s
+├─ ┬─ Red Middle - 0.015 s
+│  │  ├─ 🟢 Middle passes - 0.003 s
+│  │  └─ 🔴 Middle fails - 0.011 s
+│  ├─ ── Deep Green - 0.012 s
+│  │     └─ 🟢 Deep green passes - 0.004 s
+│  └─ ── Deep Red - 0.009 s
+│        ├─ 🔴 Deep red errors - 0.021 s
+│        └─ 🟢 Deep red passes - 0.006 s
+└─ ── Green After - 0.015 s
+      └─ 🟢 After passes - 0.003 s
+```
+
+`collapseSuccessfulClasses` is applied before `hideResultsOnSuccess`: a class with only passed or skipped tests becomes
+one line (skipped tests do not prevent it), and its stdout and stderr are not printed, whatever the `printStdoutOnSuccess`
+and `printStderrOnSuccess` options say.
+
+</details>
+
+<details>
+<summary><b>Hide successful nested classes (<code>hideSuccessfulNestedClasses</code>)</b></summary>
+
+Leaves out the `@Nested` classes that have no failure, error or skipped test, and keeps the path to the ones that are
+left. Default: `false`.
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <hideSuccessfulNestedClasses>true</hideSuccessfulNestedClasses>
+</statelessTestsetInfoReporter>
+```
+
+Without the option:
+
+```
+┬─ All Green - 0.012 s
+│  ├─ 🟢 Passes one - 0.004 s
+│  └─ 🟢 Passes two - 0.009 s
+└─ ── Green Inner - 0.021 s
+      └─ 🟢 Inner passes - 0.006 s
+┬─ Fail In Middle - 0.015 s
+│  └─ 🟢 Top passes - 0.003 s
+├─ ── Green Before - 0.011 s
+│     └─ 🟢 Before passes - 0.012 s
+├─ ┬─ Red Middle - 0.004 s
+│  │  ├─ 🟢 Middle passes - 0.009 s
+│  │  └─ 🔴 Middle fails - 0.021 s
+│  ├─ ── Deep Green - 0.006 s
+│  │     └─ 🟢 Deep green passes - 0.015 s
+│  └─ ── Deep Red - 0.003 s
+│        ├─ 🔴 Deep red errors - 0.011 s
+│        └─ 🟢 Deep red passes - 0.012 s
+└─ ── Green After - 0.004 s
+      └─ 🟢 After passes - 0.009 s
+```
+
+With the option:
+
+```
+── All Green - 0.012 s
+   ├─ 🟢 Passes one - 0.004 s
+   └─ 🟢 Passes two - 0.009 s
+┬─ Fail In Middle - 0.021 s
+│  └─ 🟢 Top passes - 0.006 s
+└─ ┬─ Red Middle - 0.015 s
+   │  ├─ 🟢 Middle passes - 0.003 s
+   │  └─ 🔴 Middle fails - 0.011 s
+   └─ ── Deep Red - 0.012 s
+         ├─ 🔴 Deep red errors - 0.004 s
+         └─ 🟢 Deep red passes - 0.009 s
+```
+
+Use it together with `hideResultsOnSuccess` to see only what went wrong:
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <hideSuccessfulNestedClasses>true</hideSuccessfulNestedClasses>
+    <hideResultsOnSuccess>true</hideResultsOnSuccess>
+</statelessTestsetInfoReporter>
+```
+
+```
+── All Green - 0.012 s
+┬─ Fail In Middle - 0.004 s
+└─ ┬─ Red Middle - 0.009 s
+   │  └─ 🔴 Middle fails - 0.021 s
+   └─ ── Deep Red - 0.006 s
+         └─ 🔴 Deep red errors - 0.015 s
+```
+
+</details>
+
+<details>
+<summary><b>Focus on failures: all the options together</b></summary>
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
     <printTestCounts>true</printTestCounts>
     <collapseSuccessfulClasses>true</collapseSuccessfulClasses>
     <hideSuccessfulNestedClasses>true</hideSuccessfulNestedClasses>
@@ -132,21 +400,18 @@ Three more options, all `false` by default, cut the tree down to what needs atte
 ```
 
 ```
-── All Green (3 passed) - 0.004 s
-── Fail First (2 passed, 1 failed) - 0.012 s
-   └─ ✘ Fails first - 0.011 s
-┬─ Fail In Middle (6 passed, 2 failed) - 0.021 s
-└─ ┬─ Red Middle (3 passed, 2 failed) - 0.019 s
-   │  └─ ✘ Middle fails - 0.008 s
+── All Green (3 passed) - 0.012 s
+┬─ Fail In Middle (6 passed, 2 failed) - 0.004 s
+└─ ┬─ Red Middle (3 passed, 2 failed) - 0.009 s
+   │  └─ 🔴 Middle fails - 0.021 s
    └─ ── Deep Red (1 passed, 1 failed) - 0.006 s
-         └─ ✘ Deep red errors - 0.005 s
+         └─ 🔴 Deep red errors - 0.015 s
 ```
 
-`collapseSuccessfulClasses` is applied before `hideResultsOnSuccess`: a class with only passed or skipped tests becomes
-one line (skipped tests do not prevent it), and its stdout and stderr are not printed, whatever the `printStdoutOnSuccess`
-and `printStderrOnSuccess` options say.
+</details>
 
-## Failure details
+<details>
+<summary><b>Failure details</b></summary>
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:
 
@@ -163,6 +428,9 @@ By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReport
     <printStderrOnSuccess>false</printStderrOnSuccess>
 </statelessTestsetInfoReporter>
 ```
+
+</details>
+
 
 ## Contribute
 
