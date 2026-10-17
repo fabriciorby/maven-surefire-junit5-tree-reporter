@@ -460,6 +460,9 @@ totals surefire prints at the end of the run, with the same display names as the
 </statelessTestsetInfoReporter>
 ```
 
+With 4 failing tests and `maxFailuresInSummary` set to `3` instead of `50` (only to show the cut), the end of the run
+looks like this:
+
 ```
 [ERROR] Tests run: 11, Failures: 3, Errors: 1, Skipped: 1
 [INFO]
