@@ -30,6 +30,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printTestCounts;
     private boolean collapseSuccessfulClasses;
     private boolean hideSuccessfulNestedClasses;
+    private String slowTestThreshold;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -58,6 +59,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintTestCounts", boolean.class).invoke(clone, isPrintTestCounts());
             cls.getMethod("setCollapseSuccessfulClasses", boolean.class).invoke(clone, isCollapseSuccessfulClasses());
             cls.getMethod("setHideSuccessfulNestedClasses", boolean.class).invoke(clone, isHideSuccessfulNestedClasses());
+            cls.getMethod("setSlowTestThreshold", String.class).invoke(clone, getSlowTestThreshold());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -128,6 +130,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return hideSuccessfulNestedClasses;
     }
 
+    public String getSlowTestThreshold() {
+        return slowTestThreshold;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -180,6 +186,12 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.hideSuccessfulNestedClasses = hideSuccessfulNestedClasses;
     }
 
+    public void setSlowTestThreshold(String slowTestThreshold) {
+        // fails the configuration right away when the value is invalid
+        ReporterOptions.parseSlowTestThreshold(slowTestThreshold);
+        this.slowTestThreshold = slowTestThreshold;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -211,6 +223,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .printTestCounts(isPrintTestCounts())
                 .collapseSuccessfulClasses(isCollapseSuccessfulClasses())
                 .hideSuccessfulNestedClasses(isHideSuccessfulNestedClasses())
+                .slowTestThreshold(getSlowTestThreshold())
                 .theme(getTheme())
                 .build();
     }

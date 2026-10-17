@@ -52,6 +52,10 @@ src/it/
 ├── print-test-counts/            The same classes with only printTestCounts
 ├── parallel-tree/                nested-tree's samples and 8 more classes, run by JUnit5 in parallel
 │   └── verify.groovy             Sets sortClassBlocks, the classes complete in any order
+├── slow-tests/                   UNICODE theme, slowTestThreshold of 250ms, tests that sleep for 1s
+│   └── ...
+├── slow-tests-emoji/             slow-tests' tests with the EMOJI theme and the threshold as 0.25s
+│   └── ...
 ├── fork-count/                   parallel-tree's tests in 8 forks, compared with parallel-tree's golden files
 └── fork-stdout/                  8 classes that print 10 lines each, in 8 forks, with printStdoutOnSuccess
 ```
@@ -169,6 +173,13 @@ what each test wrote to stdout, and that goes straight to `System.out` (`ActualT
 the logger the tree lines use. 8 classes print 10 lines each and wait for each other in `@AfterAll`, so the 8 forks
 report at the same time. Its golden file is compared with `sortClassBlocks`, so every class must print its tree line,
 its test, `Standard out` and its 10 lines as one block. Run without the fix for issue #83, it fails on every run.
+
+**`slow-tests` and `slow-tests-emoji`.** `slowTestThreshold` marks the tests that took at least the threshold (`[SLOW]`,
+`🐢` in the EMOJI theme) before the elapsed time. The threshold is 250ms, and the slow tests sleep for 1s while the others
+do nothing, so there are 750ms of margin on one side and 250ms on the other for a loaded CI machine. The marker has to
+show up on passed and failed tests, in a `@Nested` class, and never on a skipped test. `slow-tests-emoji` reads the
+tests of `slow-tests` (the same way `failsafe-nested-tree` does, so running it alone takes it too:
+`-Dinvoker.test=slow-tests,slow-tests-emoji`), with the EMOJI theme and the threshold written as `0.25s`.
 
 **`<postBuildHookScript>verify</postBuildHookScript>`.** The invoker looks for `postbuild.groovy` by default. This makes
 it run `verify.groovy`, the name most Maven projects use.
