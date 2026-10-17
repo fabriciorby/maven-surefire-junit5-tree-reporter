@@ -1,0 +1,14 @@
+┬─ Siblings Sample - <time>
+│  └─ ✔ Top test - <time>
+├─ ┬─ Left - <time>
+│  │  └─ ✔ First test - <time>
+│  ├─ ┬─ Apple - <time>
+│  │  │  └─ ✔ First A test - <time>
+│  │  ├─ ── Cherry - <time>
+│  │  │     └─ ✔ First A1 test - <time>
+│  │  └─ ── Plum - <time>
+│  │        └─ ✔ First A2 test - <time>
+│  └─ ── Banana - <time>
+│        └─ ✔ First B test - <time>
+└─ ── Right - <time>
+      └─ ✔ Second test - <time>

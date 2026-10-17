@@ -1,0 +1,41 @@
+┬─ All Green (3 passed) - <time>
+│  ├─ ✔ Passes one - <time>
+│  └─ ✔ Passes two - <time>
+└─ ── Green Inner (1 passed) - <time>
+      └─ ✔ Inner passes - <time>
+── Fail First (2 passed, 1 failed) - <time>
+   ├─ ✘ Fails first - <time>
+   ├─ ✔ Passes after - <time>
+   └─ ✔ Passes last - <time>
+┬─ Fail In Middle (6 passed, 2 failed) - <time>
+│  └─ ✔ Top passes - <time>
+├─ ── Green Before (1 passed) - <time>
+│     └─ ✔ Before passes - <time>
+├─ ┬─ Red Middle (3 passed, 2 failed) - <time>
+│  │  ├─ ✔ Middle passes - <time>
+│  │  └─ ✘ Middle fails - <time>
+│  ├─ ── Deep Green (1 passed) - <time>
+│  │     └─ ✔ Deep green passes - <time>
+│  └─ ── Deep Red (1 passed, 1 failed) - <time>
+│        ├─ ✘ Deep red errors - <time>
+│        └─ ✔ Deep red passes - <time>
+└─ ── Green After (1 passed) - <time>
+      └─ ✔ After passes - <time>
+┬─ Fail Last (3 passed, 1 failed) - <time>
+│  ├─ ✔ Passes first - <time>
+│  ├─ ✔ Passes second - <time>
+│  └─ ✘ Fails last - <time>
+└─ ── Inner Last (1 passed) - <time>
+      └─ ✔ Inner passes - <time>
+┬─ Skip In Nested (2 passed, 1 failed, 1 skipped) - <time>
+│  ├─ ✔ Passes - <time>
+│  └─ ✘ Fails - <time>
+├─ ── Green Nested (1 passed) - <time>
+│     └─ ✔ Green passes - <time>
+└─ ── Skipped Nested (1 skipped) - <time>
+      └─ ↷ Is skipped (not today) - <time>
+┬─ Skipped (2 passed, 1 skipped) - <time>
+│  ├─ ✔ Passes - <time>
+│  └─ ↷ Is skipped (not today) - <time>
+└─ ── Quiet Inner (1 passed) - <time>
+      └─ ✔ Inner passes - <time>

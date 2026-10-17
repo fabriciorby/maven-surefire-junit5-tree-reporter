@@ -14,6 +14,9 @@ public class ReporterOptions {
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
     private final boolean printBlankLineBetweenTests;
+    private final boolean printTestCounts;
+    private final boolean collapseSuccessfulClasses;
+    private final boolean hideSuccessfulNestedClasses;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -29,6 +32,9 @@ public class ReporterOptions {
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
         this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
+        this.printTestCounts = builder.printTestCounts;
+        this.collapseSuccessfulClasses = builder.collapseSuccessfulClasses;
+        this.hideSuccessfulNestedClasses = builder.hideSuccessfulNestedClasses;
     }
 
     public static Builder builder() {
@@ -87,6 +93,18 @@ public class ReporterOptions {
         return printBlankLineBetweenTests;
     }
 
+    public boolean isPrintTestCounts() {
+        return printTestCounts;
+    }
+
+    public boolean isCollapseSuccessfulClasses() {
+        return collapseSuccessfulClasses;
+    }
+
+    public boolean isHideSuccessfulNestedClasses() {
+        return hideSuccessfulNestedClasses;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -101,6 +119,9 @@ public class ReporterOptions {
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
         private boolean printBlankLineBetweenTests;
+        private boolean printTestCounts;
+        private boolean collapseSuccessfulClasses;
+        private boolean hideSuccessfulNestedClasses;
 
         private Builder() {
         }
@@ -171,6 +192,21 @@ public class ReporterOptions {
 
         public Builder printBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
             this.printBlankLineBetweenTests = printBlankLineBetweenTests;
+            return this;
+        }
+
+        public Builder printTestCounts(boolean printTestCounts) {
+            this.printTestCounts = printTestCounts;
+            return this;
+        }
+
+        public Builder collapseSuccessfulClasses(boolean collapseSuccessfulClasses) {
+            this.collapseSuccessfulClasses = collapseSuccessfulClasses;
+            return this;
+        }
+
+        public Builder hideSuccessfulNestedClasses(boolean hideSuccessfulNestedClasses) {
+            this.hideSuccessfulNestedClasses = hideSuccessfulNestedClasses;
             return this;
         }
     }
