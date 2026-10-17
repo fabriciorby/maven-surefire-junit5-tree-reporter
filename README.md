@@ -54,19 +54,14 @@ The extension also works with [maven-failsafe-plugin](https://maven.apache.org/s
 shares the same reporter extension API. Add the same `<dependencies>` and `<configuration>` shown above to
 `maven-failsafe-plugin` too. The compatibility table above applies to `maven-failsafe-plugin` versions as well.
 
-## Features
-
-The examples use the `EMOJI` theme. Click a feature to see how to turn it on and what it prints.
-
-<details>
-<summary><b>Output theme</b></summary>
+## Output Theme
 
 The output can be printed using Themes:
 - ASCII (default).
 - UNICODE
 - EMOJI
 
-`EMOJI`:
+### EMOJI
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -75,7 +70,7 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/8JuxGRO.png "EMOJI Output")
 
-`UNICODE`:
+### UNICODE
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -84,7 +79,7 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/wBSQnin.png "UNICODE Output")
 
-`ASCII`:
+### ASCII
 ```xml
 <statelessTestsetInfoReporter
         implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -93,7 +88,9 @@ The output can be printed using Themes:
 ```
 ![Imgur](https://i.imgur.com/g6OkbqU.png "ASCII Output")
 
-</details>
+## Features
+
+The examples use the `EMOJI` theme. Click a feature to see how to turn it on and what it prints.
 
 <details>
 <summary><b>Blank line between tests</b></summary>
