@@ -507,6 +507,20 @@ without failures in one line:
 11 tests: 6 passed, 4 failed, 1 skipped
 
 <details>
+<summary>Beta, failures in the class and in a nested class: 2 failed</summary>
+
+```text
+┬─ Beta, failures in the class and in a nested class - 0.041 s
+│  ├─ 🔴 fails in the class - 0.012 s
+│  └─ 🟢 passes - 0.001 s
+└─ ── Inner - 0.026 s
+      ├─ 🔴 fails in the nested class - 0.009 s
+      └─ 🟢 passes in the nested class - 0 s
+```
+
+</details>
+
+<details>
 <summary>Gamma, an error, a failure and a skip: 2 failed</summary>
 
 ```text
