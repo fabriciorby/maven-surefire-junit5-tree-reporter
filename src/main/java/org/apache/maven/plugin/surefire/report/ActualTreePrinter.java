@@ -7,7 +7,13 @@ import org.apache.maven.surefire.shared.lang3.StringUtils;
 import org.apache.maven.surefire.shared.utils.logging.MessageBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.LongStream;
 
 import static org.apache.maven.plugin.surefire.report.TextFormatter.abbreviateName;
@@ -43,31 +49,114 @@ public class ActualTreePrinter {
 
     private void print(Node node) {
         printClass(node);
-        node.wrappedReportEntries.forEach(i -> printTestFormated(node, i));
+        if (options.isGroupParameterizedTests()) {
+            printGroupedTests(node);
+        } else {
+            node.wrappedReportEntries.forEach(i -> printTestFormated(node, i));
+        }
         node.branches.forEach(this::print);
     }
 
     private void printTestFormated(Node node, WrappedReportEntry testResult) {
-        if (testResult.isErrorOrFailure()) {
-            printFailure(node, testResult);
-        } else if (testResult.isSkipped()) {
-            printSkipped(node, testResult);
-        } else if (isSuccessPrintAllowed() && testResult.isSucceeded()) {
-            printSuccess(node, testResult);
+        if (isVisible(testResult)) {
+            printTestFormated(getTestPrefix(node, testResult), getTestName(testResult), testResult);
         }
         printDetails(testResult);
+    }
+
+    private void printTestFormated(MessageBuilder prefix, String name, WrappedReportEntry testResult) {
+        if (testResult.isErrorOrFailure()) {
+            printFailure(prefix, name, testResult);
+        } else if (testResult.isSkipped()) {
+            printSkipped(prefix, name, testResult);
+        } else {
+            printSuccess(prefix, name, testResult);
+        }
+    }
+
+    private boolean isVisible(WrappedReportEntry testResult) {
+        return testResult.isErrorOrFailure()
+                || testResult.isSkipped()
+                || isSuccessPrintAllowed() && testResult.isSucceeded();
+    }
+
+    /**
+     * Prints the tests of a class with the invocations of the same method under a node with the name of the method.
+     * The connectors are calculated on the items that are printed: a test, or a method with its invocations.
+     */
+    private void printGroupedTests(Node node) {
+        List<Item> items = new ArrayList<>();
+        Map<WrappedReportEntry, Item> itemOf = new IdentityHashMap<>();
+        Map<String, Item> methods = new HashMap<>();
+        for (WrappedReportEntry testResult : node.wrappedReportEntries) {
+            if (!isVisible(testResult)) {
+                continue;
+            }
+            String method = ParameterizedInvocations.methodOf(testResult);
+            Item item = method == null ? null : methods.get(method);
+            if (item == null) {
+                item = new Item(method);
+                items.add(item);
+                if (method != null) methods.put(method, item);
+            }
+            item.testResults.add(testResult);
+            itemOf.put(testResult, item);
+        }
+        Set<Item> printed = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (WrappedReportEntry testResult : node.wrappedReportEntries) {
+            Item item = itemOf.get(testResult);
+            if (item == null) {
+                printDetails(testResult); // a result that is not printed still has its output
+            } else if (item.method == null) {
+                printTestFormated(getTestPrefix(node, !isLast(items, item)), getTestName(testResult), testResult);
+                printDetails(testResult);
+            } else if (printed.add(item)) {
+                printMethod(node, item, !isLast(items, item));
+            }
+        }
+    }
+
+    private static boolean isLast(List<Item> items, Item item) {
+        return items.get(items.size() - 1) == item;
+    }
+
+    private void printMethod(Node node, Item item, boolean notLast) {
+        println(getTestIndent(node)
+                .a(notLast ? theme.entry() : theme.end())
+                .a(theme.down())
+                .strong(abbreviateName(item.method))
+                .a(" - " + ParameterizedInvocations.elapsedTimeAsString(item.testResults))
+                .toString());
+        for (int i = 0; i < item.testResults.size(); i++) {
+            WrappedReportEntry testResult = item.testResults.get(i);
+            MessageBuilder prefix = getTestIndent(node)
+                    .a(notLast ? theme.pipe() : theme.blank())
+                    .a(i < item.testResults.size() - 1 ? theme.entry() : theme.end());
+            String name = abbreviateName(ParameterizedInvocations.labelOf(testResult, testResult.getReportName()));
+            printTestFormated(prefix, name, testResult);
+            printDetails(testResult);
+        }
+    }
+
+    private static final class Item {
+        private final String method;
+        private final List<WrappedReportEntry> testResults = new ArrayList<>();
+
+        private Item(String method) {
+            this.method = method;
+        }
     }
 
     private boolean isSuccessPrintAllowed() {
         return !options.isHideResultsOnSuccess();
     }
 
-    private void printSuccess(Node node, WrappedReportEntry testResult) {
-        printTestResult(buffer().success(theme.successful() + getTestName(testResult)), node, testResult);
+    private void printSuccess(MessageBuilder prefix, String name, WrappedReportEntry testResult) {
+        printTestResult(buffer().success(theme.successful() + name), prefix, testResult);
     }
 
-    private void printTestResult(MessageBuilder builder, Node node, WrappedReportEntry testResult) {
-        println(getTestPrefix(node, testResult)
+    private void printTestResult(MessageBuilder builder, MessageBuilder prefix, WrappedReportEntry testResult) {
+        println(prefix
                 .a(builder)
                 .a(" - " + testResult.elapsedTimeAsString())
                 .toString());
@@ -94,6 +183,14 @@ public class ActualTreePrinter {
     }
 
     private MessageBuilder getTestPrefix(Node node, WrappedReportEntry testResult) {
+        return getTestPrefix(node, isLastTestToBeEval(node, testResult));
+    }
+
+    private MessageBuilder getTestPrefix(Node node, boolean notLast) {
+        return getTestIndent(node).a(notLast ? theme.entry() : theme.end());
+    }
+
+    private MessageBuilder getTestIndent(Node node) {
         MessageBuilder builder = buffer();
         if (isLastMissingBranch(node))
             builder.a(theme.blank());
@@ -108,11 +205,6 @@ public class ActualTreePrinter {
             } else {
                 builder.a(theme.blank());
             }
-        }
-        if (isLastTestToBeEval(node, testResult)) {
-            builder.a(theme.entry());
-        } else {
-            builder.a(theme.end());
         }
         return builder;
     }
@@ -186,10 +278,10 @@ public class ActualTreePrinter {
         return output != null && output.getByteCount() > 0;
     }
 
-    private void printSkipped(Node node, WrappedReportEntry testResult) {
+    private void printSkipped(MessageBuilder prefix, String name, WrappedReportEntry testResult) {
         printTestResult(buffer()
-                .warning(theme.skipped() + getTestName(testResult))
-                .warning(getSkippedMessage(testResult)), node, testResult);
+                .warning(theme.skipped() + name)
+                .warning(getSkippedMessage(testResult)), prefix, testResult);
     }
 
     private String getTestName(WrappedReportEntry testResult) {
@@ -261,8 +353,8 @@ public class ActualTreePrinter {
         }
     }
 
-    private void printFailure(Node node, WrappedReportEntry testResult) {
+    private void printFailure(MessageBuilder prefix, String name, WrappedReportEntry testResult) {
         printTestResult(buffer()
-                .failure(theme.failed() + getTestName(testResult)), node, testResult);
+                .failure(theme.failed() + name), prefix, testResult);
     }
 }
