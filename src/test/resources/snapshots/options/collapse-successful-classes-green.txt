@@ -1,1 +1,1 @@
-── Very Nested Sample (10 passed) - <time>
+── Very Nested Sample (12 passed) - <time>

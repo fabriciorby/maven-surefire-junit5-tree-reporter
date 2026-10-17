@@ -90,6 +90,30 @@ public class VeryNestedExampleTest {
 
             }
 
+            @Nested
+            @DisplayName("Sibling Inner Inner Inner Test")
+            class SiblingInnerInnerInnerTest {
+
+                @Test
+                @DisplayName("Sibling Inner Inner Inner Test should pass")
+                void test() throws InterruptedException {
+                    Thread.sleep(300);
+                }
+
+            }
+
+        }
+
+        @Nested
+        @DisplayName("Sibling Inner Inner Test")
+        class SiblingInnerInnerTest {
+
+            @Test
+            @DisplayName("Sibling Inner Inner Test should pass")
+            void test() throws InterruptedException {
+                Thread.sleep(200);
+            }
+
         }
 
         @Test
