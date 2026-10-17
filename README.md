@@ -109,6 +109,28 @@ To reduce verbosity, you can a _hide successful results_ option can be configure
 </statelessTestsetInfoReporter>
 ```
 
+## Slow tests
+
+Tests that took at least the configured time get a marker before their elapsed time, in the warning color. The value is a number of milliseconds (`500`), or a duration like `500ms` or `2s` (`1.5s` works too). It is off by default, and an invalid value fails the build with a message saying so. Skipped tests are never marked.
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <theme>UNICODE</theme>
+    <slowTestThreshold>250ms</slowTestThreshold>
+</statelessTestsetInfoReporter>
+```
+
+```
+┬─ Slow Sample - 2.012 s
+│  ├─ ✔ Should be instant - 0.001 s
+│  ├─ ✔ Should be slow [SLOW] - 1.003 s
+│  ├─ ✘ Should be slow and fail [SLOW] - 1.008 s
+│  └─ ↷ Should be skipped (not run, so never slow) - 0 s
+```
+
+The marker is `[SLOW]` in the ASCII and UNICODE themes, and `🐢` in the EMOJI theme.
+
 ## Failure details
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:

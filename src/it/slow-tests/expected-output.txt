@@ -1,0 +1,11 @@
+── Fast Sample - <time>
+   ├─ ✔ Should be instant - <time>
+   └─ ✔ Should also be instant - <time>
+┬─ Slow Sample - <time>
+│  ├─ ✔ Should be instant - <time>
+│  ├─ ✔ Should be slow [SLOW] - <time>
+│  ├─ ✘ Should be slow and fail [SLOW] - <time>
+│  └─ ↷ Should be skipped (not run, so never slow) - <time>
+└─ ── Inner Test - <time>
+      ├─ ✔ Should be slow in a nested class [SLOW] - <time>
+      └─ ✔ Should be instant in a nested class - <time>

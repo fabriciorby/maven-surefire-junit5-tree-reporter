@@ -1,6 +1,14 @@
 package org.apache.maven.plugin.surefire.report;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ReporterOptions {
+    private static final Pattern DURATION = Pattern.compile("(\\d+(?:\\.\\d+)?)\\s*(ms|s)?", Pattern.CASE_INSENSITIVE);
+
+    /** Value of {@link #getSlowTestThresholdMillis()} when the slow test marker is off. */
+    public static final long SLOW_TEST_THRESHOLD_DISABLED = -1L;
+
     private final boolean printStacktraceOnError;
     private final boolean printStacktraceOnFailure;
     private final boolean printStderrOnError;
@@ -14,6 +22,7 @@ public class ReporterOptions {
     private final boolean usePhrasedClassNameInRunning;
     private final boolean usePhrasedClassNameInTestCaseSummary;
     private final boolean printBlankLineBetweenTests;
+    private final long slowTestThresholdMillis;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -29,6 +38,35 @@ public class ReporterOptions {
         this.usePhrasedClassNameInTestCaseSummary = builder.usePhrasedClassNameInTestCaseSummary;
         this.theme = builder.theme != null ? builder.theme : Theme.ASCII;
         this.printBlankLineBetweenTests = builder.printBlankLineBetweenTests;
+        this.slowTestThresholdMillis = parseSlowTestThreshold(builder.slowTestThreshold);
+    }
+
+    /**
+     * Parses {@code 500ms}, {@code 2s}, {@code 1.5s} or a bare number of milliseconds.
+     *
+     * @return the milliseconds, or {@link #SLOW_TEST_THRESHOLD_DISABLED} for a null or blank value
+     * @throws IllegalArgumentException when the value is not a positive duration
+     */
+    public static long parseSlowTestThreshold(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return SLOW_TEST_THRESHOLD_DISABLED;
+        }
+        Matcher matcher = DURATION.matcher(value.trim());
+        if (!matcher.matches()) {
+            throw invalidThreshold(value);
+        }
+        double amount = Double.parseDouble(matcher.group(1));
+        boolean seconds = "s".equalsIgnoreCase(matcher.group(2));
+        long millis = Math.round(seconds ? amount * 1000 : amount);
+        if (millis <= 0) {
+            throw invalidThreshold(value);
+        }
+        return millis;
+    }
+
+    private static IllegalArgumentException invalidThreshold(String value) {
+        return new IllegalArgumentException("Invalid slowTestThreshold '" + value
+                + "', expected a positive duration like 500ms, 2s, or a number of milliseconds");
     }
 
     public static Builder builder() {
@@ -87,6 +125,14 @@ public class ReporterOptions {
         return printBlankLineBetweenTests;
     }
 
+    /**
+     * @return the elapsed time, in milliseconds, from which a test is marked as slow, or
+     *         {@link #SLOW_TEST_THRESHOLD_DISABLED}
+     */
+    public long getSlowTestThresholdMillis() {
+        return slowTestThresholdMillis;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -101,6 +147,7 @@ public class ReporterOptions {
         private boolean usePhrasedClassNameInRunning;
         private boolean usePhrasedClassNameInTestCaseSummary;
         private boolean printBlankLineBetweenTests;
+        private String slowTestThreshold;
 
         private Builder() {
         }
@@ -171,6 +218,11 @@ public class ReporterOptions {
 
         public Builder printBlankLineBetweenTests(boolean printBlankLineBetweenTests) {
             this.printBlankLineBetweenTests = printBlankLineBetweenTests;
+            return this;
+        }
+
+        public Builder slowTestThreshold(String slowTestThreshold) {
+            this.slowTestThreshold = slowTestThreshold;
             return this;
         }
     }
