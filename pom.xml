@@ -34,6 +34,7 @@
         <junit-bom.version>5.14.0</junit-bom.version>
         <!-- JUnit of the projects in src/it, -Pjunit6 runs them with JUnit 6 (needs JDK 17) -->
         <it.junit.version>${junit-bom.version}</it.junit.version>
+        <it.junit6.version>6.1.3</it.junit6.version>
     </properties>
 
     <dependencyManagement>
@@ -143,7 +144,7 @@
             <!-- The reporter itself is built and tested with JUnit 5 to stay on Java 8, only src/it moves to JUnit 6 -->
             <id>junit6</id>
             <properties>
-                <it.junit.version>6.1.3</it.junit.version>
+                <it.junit.version>${it.junit6.version}</it.junit.version>
             </properties>
         </profile>
     </profiles>
@@ -177,6 +178,22 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
                 <version>${maven-invoker-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <!-- Only here so Dependabot keeps it.junit6.version up to date, the pom type and the
+                             exclusion keep it off the classpath of the plugin -->
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-launcher</artifactId>
+                        <version>${it.junit6.version}</version>
+                        <type>pom</type>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>*</groupId>
+                                <artifactId>*</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <settingsFile>src/it/settings.xml</settingsFile>
