@@ -25,7 +25,7 @@ jobs:
     env:
       OLDER_VERSIONS: '["3.0.0", "3.2.5", "3.5.3"]'
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - id: versions
       run: |
         current=$(sed -n 's:.*<maven.surefire.version>\(.*\)</maven.surefire.version>.*:\1:p' pom.xml)
@@ -44,7 +44,7 @@ jobs:
         surefire: ${{ fromJSON(needs.surefire-versions.outputs.versions) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
