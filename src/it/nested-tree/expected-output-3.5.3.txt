@@ -16,11 +16,13 @@
    └─ ── Sibling Inner Inner Test - <time>
          └─ ✔ Sibling inner inner test should pass - <time>
 ── Parameterized Sample - <time>
-   ├─ ✔ add(int, int, int) 0 + 1 = 1 - <time>
-   ├─ ✔ add(int, int, int) 1 + 2 = 3 - <time>
-   ├─ ✔ add(int, int, int) 49 + 51 = 100 - <time>
-   ├─ ✔ Dynamic Add test - <time>
-   └─ ✔ Dynamic Multiply test - <time>
+   ├─ ┬─ add(int, int, int) - <time>
+   │  ├─ ✔ 0 + 1 = 1 - <time>
+   │  ├─ ✔ 1 + 2 = 3 - <time>
+   │  └─ ✔ 49 + 51 = 100 - <time>
+   └─ ┬─ dynamic() - <time>
+      ├─ ✔ Dynamic Add test - <time>
+      └─ ✔ Dynamic Multiply test - <time>
 ┬─ Results Sample - <time>
 │  ├─ ✔ Should pass - <time>
 │  ├─ ✘ Should fail - <time>

@@ -549,6 +549,38 @@ on purpose):
 </details>
 
 <details>
+<summary><b>Parameterized tests</b></summary>
+
+The invocations of a `@ParameterizedTest`, `@RepeatedTest` or `@TestFactory` are printed under a node with the name of
+the method:
+
+```
+┬─ Grouping Sample - 0.2 s
+│  ├─ 🟢 A plain test - 0.001 s
+│  ├─ ┬─ bAdd(int, int, int) - 0.1 s
+│  │  ├─ 🟢 [1] 1, 2, 3 - 0.09 s
+│  │  ├─ 🔴 [2] 2, 3, 6 - 0.005 s
+│  │  └─ 🟢 [3] 49, 51, 100 - 0.005 s
+│  └─ ┬─ eRepeated() - 0.002 s
+│     ├─ 🟢 repetition 1 of 2 - 0.001 s
+│     └─ 🟢 repetition 2 of 2 - 0.001 s
+```
+
+The node shows the method as maven-surefire-plugin names it, with its signature, and the sum of the time of its
+invocations. Methods with the same name and different parameters get their own node. Each invocation shows its name
+without the method: `[2] 2, 3, 6` for the default name of a `@ParameterizedTest`, `repetition 1 of 2` for a
+`@RepeatedTest`. A `@DisplayName` on the method is not shown on the node: surefire sends it joined to the name of
+the invocation, so it is only removed from the invocation when the name has the index (`My method[2] 3` is printed as
+`[2] 3`), and kept in the other cases.
+
+An invocation is recognized by the index surefire adds to the name of its method, like `add(int, int)[2]`. maven-surefire-plugin 3.5.3 and
+newer always sends it. Up to 3.2.5 it is only sent for methods with parameters, so a `@ParameterizedTest` is always
+grouped, but a `@RepeatedTest` or `@TestFactory` without parameters is printed as before, one test per invocation.
+With `hideResultsOnSuccess`, a method whose invocations all succeed is hidden.
+
+</details>
+
+<details>
 <summary><b>Failure details</b></summary>
 
 By default, `<consoleOutputReporter><disable>true</disable></consoleOutputReporter>` disables all console output. To debug test failures, it may be useful to see the console output and stack traces when a test fails. To do so, you can configure this extension like this:
