@@ -231,6 +231,7 @@
                             </properties>
                             <scriptVariables>
                                 <surefireVersion>${it.surefire.version}</surefireVersion>
+                                <junitVersion>${it.junit.version}</junitVersion>
                             </scriptVariables>
                         </configuration>
                     </execution>

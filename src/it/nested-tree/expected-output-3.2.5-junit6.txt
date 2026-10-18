@@ -1,0 +1,32 @@
+── Disabled Sample - <time>
+   ├─ ↷ test (whole class disabled) - <time>
+   └─ ↷ InnerTest (whole class disabled) - <time>
+┬─ Nested Sample - <time>
+│  ├─ ✔ Should pass - <time>
+│  └─ ✔ Should pass again - <time>
+├─ ── First Inner Test - <time>
+│     └─ ✔ First inner test should pass - <time>
+└─ ┬─ Second Inner Test - <time>
+   │  └─ ✔ Second inner test should pass - <time>
+   ├─ ┬─ Inner Inner Test - <time>
+   │  │  └─ ✔ Inner inner test should pass - <time>
+   │  ├─ ── Inner Inner Inner Test - <time>
+   │  │     └─ ✔ Inner inner inner test should pass - <time>
+   │  └─ ── Sibling Inner Inner Inner Test - <time>
+   │        └─ ✔ Sibling inner inner inner test should pass - <time>
+   └─ ── Sibling Inner Inner Test - <time>
+         └─ ✔ Sibling inner inner test should pass - <time>
+── Parameterized Sample - <time>
+   ├─ ┬─ add(int, int, int) - <time>
+   │  ├─ ✔ "0" + "1" = "1" - <time>
+   │  ├─ ✔ "1" + "2" = "3" - <time>
+   │  └─ ✔ "49" + "51" = "100" - <time>
+   ├─ ✔ Dynamic Add test - <time>
+   └─ ✔ Dynamic Multiply test - <time>
+┬─ Results Sample - <time>
+│  ├─ ✔ Should pass - <time>
+│  ├─ ✘ Should fail - <time>
+│  ├─ ✘ Should be an error - <time>
+│  └─ ↷ Should be skipped (for demonstration purposes) - <time>
+└─ ── Inner Results - <time>
+      └─ ✘ Inner test should fail - <time>

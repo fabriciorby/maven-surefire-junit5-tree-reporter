@@ -21,6 +21,7 @@ the [README](../README.md)).
   * [How a run works](#how-a-run-works)
   * [Why each piece is there](#why-each-piece-is-there)
   * [Golden files per surefire version](#golden-files-per-surefire-version)
+  * [Golden files per JUnit version](#golden-files-per-junit-version)
 * [Unit tests](#unit-tests)
 * [Adding a test for a bug](#adding-a-test-for-a-bug)
 * [Commands](#commands)
@@ -85,7 +86,7 @@ takes over, in two executions configured in the root `pom.xml`:
 2. **`run-it`** (`invoker:run`, phase `integration-test`), for each directory in `src/it` that has a `pom.xml`:
    1. Copies the scenario to `target/it/surefire-<version>/<scenario>` and replaces the `@...@` placeholders in its
       `pom.xml` with values from the root pom: `@project.version@` becomes the reporter version just built,
-      `@junit-bom.version@` the JUnit version, and so on.
+      `@it.junit.version@` the JUnit version (`junit-bom.version` by default, `it.junit6.version` with `-Pjunit6`), and so on.
    2. Runs `mvn test -Dsurefire.version=<version>` on the copy, using `target/local-repo` and `src/it/settings.xml`.
       A scenario's `invoker.properties` can change the goals, like `mvn verify` for `failsafe-nested-tree`.
       Everything Maven prints goes to `build.log` in the copy.
@@ -94,8 +95,9 @@ takes over, in two executions configured in the root `pom.xml`:
       2. Normalizes them: drops `Picked up ...` notices from the JVM, ANSI colors, the `[INFO] ` prefix and trailing
          spaces, and replaces every elapsed time (`- 0.021 s`, or `- 0.021` on surefire 3.0.0) with `- <time>`.
       3. Compares the result with `expected-output-<version>.txt` if that file exists, otherwise with
-         `expected-output.txt`. If they differ, the scenario fails with a line diff (`-` only in the golden file,
-         `+` only in the build).
+         `expected-output.txt`. With JUnit 6, the `-junit6` variant of that file wins when it exists (see
+         [Golden files per JUnit version](#golden-files-per-junit-version)). If they differ, the scenario fails
+         with a line diff (`-` only in the golden file, `+` only in the build).
 3. The build fails if any scenario failed. Each failure shows the diff in the console.
 
 The surefire version is `-Dit.surefire.version`, `3.6.0` (`maven.surefire.version` in the root pom) by default. CI
@@ -256,6 +258,19 @@ at all, so the tree has one line less. `parameterized-grouping` has `expected-ou
 
 Before adding a per-version file, check whether the reporter can print the same tree from what that version sends.
 That is how `sample.DisabledClassTest$InnerTest` on 3.6.0 became `InnerTest`, like the other versions.
+
+### Golden files per JUnit version
+
+The reporter is built and unit tested with JUnit 5 so it stays on Java 8, but the scenarios also run with JUnit 6
+(`-Pjunit6`, Java 17), and CI runs both for every surefire version. JUnit 6 quotes the String arguments in the names
+of parameterized tests, so `0 + 1 = 1` from a `@CsvSource` becomes `"0" + "1" = "1"`. The tree is the same, only
+the names JUnit gives differ.
+
+A scenario whose tree differs on JUnit 6 has `-junit6` variants of its golden files: `expected-output-junit6.txt`
+next to `expected-output.txt`, and `expected-output-<version>-junit6.txt` next to `expected-output-<version>.txt`.
+`verify-tree.groovy` first picks the file for the surefire version as above, then its `-junit6` variant if one exists.
+A scenario that prints the same tree on JUnit 5 and 6 keeps one file. `-Pjunit6 -Dsnapshot.update=true` only writes
+a `-junit6` file when the tree differs from the JUnit 5 one.
 
 ## Unit tests
 

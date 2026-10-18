@@ -1,0 +1,40 @@
+┬─ Grouping Sample - <time>
+│  ├─ ✔ A plain test - <time>
+│  ├─ ┬─ bAdd(int, int, int) - <time>
+│  │  ├─ ✔ [1] "1", "2", "3" - <time>
+│  │  ├─ ✘ [2] "2", "3", "6" - <time>
+│  │  └─ ✔ [3] "49", "51", "100" - <time>
+│  ├─ ┬─ cOverloaded(int) - <time>
+│  │  ├─ ✔ 1 is positive - <time>
+│  │  └─ ✔ 2 is positive - <time>
+│  ├─ ┬─ cOverloaded(String) - <time>
+│  │  ├─ ✔ "a" is not empty - <time>
+│  │  └─ ✔ "b" is not empty - <time>
+│  ├─ ┬─ dDisplayed(int) - <time>
+│  │  ├─ ✔ [1] 1 - <time>
+│  │  └─ ↷ [2] 2 (Assumption failed: two is skipped) - <time>
+│  ├─ ┬─ eRepeated() - <time>
+│  │  ├─ ✔ repetition 1 of 2 - <time>
+│  │  └─ ✔ repetition 2 of 2 - <time>
+│  ├─ ┬─ fRepeatedWithInfo(RepetitionInfo) - <time>
+│  │  ├─ ✔ repetition 1 of 2 - <time>
+│  │  └─ ✔ repetition 2 of 2 - <time>
+│  ├─ ┬─ gFactory() - <time>
+│  │  ├─ ✔ first dynamic test - <time>
+│  │  └─ ✔ second dynamic test - <time>
+│  ├─ ✔ foo[1] - <time>
+│  └─ ✔ Last plain test - <time>
+└─ ── Inner - <time>
+      ├─ ┬─ innerParameterized(int) - <time>
+      │  ├─ ✔ [1] 1 - <time>
+      │  └─ ✔ [2] 2 - <time>
+      ├─ ✔ Inner plain test - <time>
+      └─ ┬─ zInnerParameterizedAtTheEnd(String) - <time>
+         ├─ ✔ [1] "x" - <time>
+         └─ ✘ [2] "y" - <time>
+── Last Method Sample - <time>
+   ├─ ✔ Only plain test before - <time>
+   └─ ┬─ bParameterizedAtTheEnd(int) - <time>
+      ├─ ✔ [1] 1 - <time>
+      ├─ ✔ [2] 2 - <time>
+      └─ ✔ [3] 3 - <time>
