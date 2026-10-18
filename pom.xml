@@ -25,7 +25,7 @@
         <maven-deploy-plugin.version>3.2.0</maven-deploy-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.10.1</maven-invoker-plugin.version>
         <!-- maven-surefire-plugin used by the integration tests in src/it, CI runs one job per supported version -->
         <it.surefire.version>${maven.surefire.version}</it.surefire.version>
         <!-- -Dsnapshot.update=true writes the current tree as the new golden file -->
