@@ -31,6 +31,9 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean collapseSuccessfulClasses;
     private boolean hideSuccessfulNestedClasses;
     private String slowTestThreshold;
+    private boolean printFailureSummary;
+    private int maxFailuresInSummary = 50;
+    private boolean githubStepSummary;
     private Theme theme = Theme.ASCII;
 
     @Override
@@ -60,6 +63,9 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setCollapseSuccessfulClasses", boolean.class).invoke(clone, isCollapseSuccessfulClasses());
             cls.getMethod("setHideSuccessfulNestedClasses", boolean.class).invoke(clone, isHideSuccessfulNestedClasses());
             cls.getMethod("setSlowTestThreshold", String.class).invoke(clone, getSlowTestThreshold());
+            cls.getMethod("setPrintFailureSummary", boolean.class).invoke(clone, isPrintFailureSummary());
+            cls.getMethod("setMaxFailuresInSummary", int.class).invoke(clone, getMaxFailuresInSummary());
+            cls.getMethod("setGithubStepSummary", boolean.class).invoke(clone, isGithubStepSummary());
             cls.getMethod("setTheme", themeClass).invoke(clone, clonedTheme);
 
             return clone;
@@ -134,6 +140,18 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return slowTestThreshold;
     }
 
+    public boolean isPrintFailureSummary() {
+        return printFailureSummary;
+    }
+
+    public int getMaxFailuresInSummary() {
+        return maxFailuresInSummary;
+    }
+
+    public boolean isGithubStepSummary() {
+        return githubStepSummary;
+    }
+
     public void setPrintStacktraceOnError(boolean printStacktraceOnError) {
         this.printStacktraceOnError = printStacktraceOnError;
     }
@@ -192,6 +210,18 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.slowTestThreshold = slowTestThreshold;
     }
 
+    public void setPrintFailureSummary(boolean printFailureSummary) {
+        this.printFailureSummary = printFailureSummary;
+    }
+
+    public void setMaxFailuresInSummary(int maxFailuresInSummary) {
+        this.maxFailuresInSummary = maxFailuresInSummary;
+    }
+
+    public void setGithubStepSummary(boolean githubStepSummary) {
+        this.githubStepSummary = githubStepSummary;
+    }
+
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
@@ -224,6 +254,9 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .collapseSuccessfulClasses(isCollapseSuccessfulClasses())
                 .hideSuccessfulNestedClasses(isHideSuccessfulNestedClasses())
                 .slowTestThreshold(getSlowTestThreshold())
+                .printFailureSummary(isPrintFailureSummary())
+                .maxFailuresInSummary(getMaxFailuresInSummary())
+                .githubStepSummary(isGithubStepSummary())
                 .theme(getTheme())
                 .build();
     }

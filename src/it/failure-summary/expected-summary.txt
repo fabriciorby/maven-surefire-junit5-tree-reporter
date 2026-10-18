@@ -1,0 +1,5 @@
+Failed tests (4):
+  Beta, failures in the class and in a nested class > fails in the class
+  Beta, failures in the class and in a nested class > Inner > fails in the nested class
+  Gamma, an error, a failure and a skip > throws an error
+  ... and 1 more

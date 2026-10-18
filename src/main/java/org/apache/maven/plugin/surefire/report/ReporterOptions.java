@@ -26,6 +26,9 @@ public class ReporterOptions {
     private final boolean collapseSuccessfulClasses;
     private final boolean hideSuccessfulNestedClasses;
     private final long slowTestThresholdMillis;
+    private final boolean printFailureSummary;
+    private final int maxFailuresInSummary;
+    private final boolean githubStepSummary;
 
     private ReporterOptions(Builder builder) {
         this.printStacktraceOnError = builder.printStacktraceOnError;
@@ -45,6 +48,9 @@ public class ReporterOptions {
         this.collapseSuccessfulClasses = builder.collapseSuccessfulClasses;
         this.hideSuccessfulNestedClasses = builder.hideSuccessfulNestedClasses;
         this.slowTestThresholdMillis = parseSlowTestThreshold(builder.slowTestThreshold);
+        this.printFailureSummary = builder.printFailureSummary;
+        this.maxFailuresInSummary = builder.maxFailuresInSummary;
+        this.githubStepSummary = builder.githubStepSummary;
     }
 
     /**
@@ -151,6 +157,18 @@ public class ReporterOptions {
         return slowTestThresholdMillis;
     }
 
+    public boolean isPrintFailureSummary() {
+        return printFailureSummary;
+    }
+
+    public int getMaxFailuresInSummary() {
+        return maxFailuresInSummary;
+    }
+
+    public boolean isGithubStepSummary() {
+        return githubStepSummary;
+    }
+
     public static final class Builder {
         private boolean printStacktraceOnError;
         private boolean printStacktraceOnFailure;
@@ -169,6 +187,9 @@ public class ReporterOptions {
         private boolean collapseSuccessfulClasses;
         private boolean hideSuccessfulNestedClasses;
         private String slowTestThreshold;
+        private boolean printFailureSummary;
+        private int maxFailuresInSummary = 50;
+        private boolean githubStepSummary;
 
         private Builder() {
         }
@@ -259,6 +280,21 @@ public class ReporterOptions {
 
         public Builder slowTestThreshold(String slowTestThreshold) {
             this.slowTestThreshold = slowTestThreshold;
+            return this;
+        }
+
+        public Builder printFailureSummary(boolean printFailureSummary) {
+            this.printFailureSummary = printFailureSummary;
+            return this;
+        }
+
+        public Builder maxFailuresInSummary(int maxFailuresInSummary) {
+            this.maxFailuresInSummary = maxFailuresInSummary;
+            return this;
+        }
+
+        public Builder githubStepSummary(boolean githubStepSummary) {
+            this.githubStepSummary = githubStepSummary;
             return this;
         }
     }

@@ -154,7 +154,7 @@ public class ActualTreePrinter {
         println(builder.toString());
     }
 
-    private String cleanReportName(Node node) {
+    static String cleanReportName(Node node) {
         if (node.getParent().getClassReportEntry() != null &&
                 node.getClassReportEntry().getReportNameWithGroup().startsWith(node.getParent().getClassReportEntry().getReportNameWithGroup())
         ) {
@@ -199,7 +199,7 @@ public class ActualTreePrinter {
                 .warning(getSkippedMessage(testResult)), node, testResult);
     }
 
-    private String getTestName(WrappedReportEntry testResult) {
+    static String getTestName(WrappedReportEntry testResult) {
         if (!isBlank(testResult.getReportName())) {
             return abbreviateName(testResult.getReportName());
         }
