@@ -8,8 +8,8 @@
 │  │  ├─ ✔ 1 is positive - <time>
 │  │  └─ ✔ 2 is positive - <time>
 │  ├─ ┬─ cOverloaded(String) - <time>
-│  │  ├─ ✔ a is not empty - <time>
-│  │  └─ ✔ b is not empty - <time>
+│  │  ├─ ✔ string 1 is not empty - <time>
+│  │  └─ ✔ string 2 is not empty - <time>
 │  ├─ ┬─ dDisplayed(int) - <time>
 │  │  ├─ ✔ [1] 1 - <time>
 │  │  └─ ↷ [2] 2 (Assumption failed: two is skipped) - <time>
@@ -30,8 +30,8 @@
       │  └─ ✔ [2] 2 - <time>
       ├─ ✔ Inner plain test - <time>
       └─ ┬─ zInnerParameterizedAtTheEnd(String) - <time>
-         ├─ ✔ [1] x - <time>
-         └─ ✘ [2] y - <time>
+         ├─ ✔ [1] string - <time>
+         └─ ✘ [2] string - <time>
 ── Last Method Sample - <time>
    ├─ ✔ Only plain test before - <time>
    └─ ┬─ bParameterizedAtTheEnd(int) - <time>
