@@ -1,8 +1,9 @@
 package org.apache.maven.plugin.surefire.report;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +29,7 @@ class NodeTest {
         assertThat(child.getParent().getName()).isEqualTo("you");
 
         //And then add more 3 items in the middle of the tree
-        Node areNode = root.getBranchNode(Lists.newArrayList("how", "are")).get();
+        Node areNode = root.getBranchNode(Arrays.asList("how", "are")).get();
         assertThat(areNode.branches).hasSize(1);
 
         //I should have a node with two branches in a tree that looks like this
