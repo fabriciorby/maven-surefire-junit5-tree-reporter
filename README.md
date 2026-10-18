@@ -48,6 +48,8 @@ Configure your POM like the following
 so the tree cannot be built ([apache/maven-surefire#3203](https://github.com/apache/maven-surefire/issues/3203)).
 This was fixed in `3.6.0`.
 
+The reporter works with JUnit 5 and JUnit 6 (JUnit 6 needs Java 17), the CI runs the integration tests with both.
+
 ### Maven Failsafe
 
 The extension also works with [maven-failsafe-plugin](https://maven.apache.org/surefire/maven-failsafe-plugin/), which

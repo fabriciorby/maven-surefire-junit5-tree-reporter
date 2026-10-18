@@ -8,11 +8,13 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -25,10 +27,16 @@ class GroupingTest {
     void aPlain() {
     }
 
+    // JUnit 6 quotes text arguments in display names, so the samples use int arguments or leave the String out of
+    // the name to print the same tree on JUnit 5 and 6
     @ParameterizedTest
-    @CsvSource({"1, 2, 3", "2, 3, 6", "49, 51, 100"})
+    @MethodSource("additions")
     void bAdd(int a, int b, int sum) {
         assertEquals(sum, a + b);
+    }
+
+    static Stream<Arguments> additions() {
+        return Stream.of(Arguments.of(1, 2, 3), Arguments.of(2, 3, 6), Arguments.of(49, 51, 100));
     }
 
     @ParameterizedTest(name = "{0} is positive")
@@ -36,7 +44,7 @@ class GroupingTest {
     void cOverloaded(int n) {
     }
 
-    @ParameterizedTest(name = "{0} is not empty")
+    @ParameterizedTest(name = "string {index} is not empty")
     @ValueSource(strings = {"a", "b"})
     void cOverloaded(String s) {
     }
@@ -89,7 +97,7 @@ class GroupingTest {
         void innerPlain() {
         }
 
-        @ParameterizedTest
+        @ParameterizedTest(name = "[{index}] string")
         @ValueSource(strings = {"x", "y"})
         void zInnerParameterizedAtTheEnd(String s) {
             assertEquals("x", s);
