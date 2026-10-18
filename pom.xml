@@ -31,7 +31,7 @@
         <!-- -Dsnapshot.update=true writes the current tree as the new golden file -->
         <snapshot.update>false</snapshot.update>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit-bom.version>5.14.0</junit-bom.version>
+        <junit-bom.version>6.1.3</junit-bom.version>
     </properties>
 
     <dependencyManagement>
