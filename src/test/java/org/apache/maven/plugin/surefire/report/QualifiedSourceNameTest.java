@@ -93,6 +93,31 @@ class QualifiedSourceNameTest {
     }
 
     @Test
+    void printsNestedTreeWhenOnlyTheTopLevelClassHasTestSet() {
+        ConsoleTreeReporter reporter = new ConsoleTreeReporter(logger, ReporterOptions.builder().build());
+        WrappedReportEntry outer = wrap(classEntry("", "Nested Sample"));
+
+        // maven-surefire-plugin 3.6.1 only starts and completes the test set of the top level class,
+        // the tests of the nested classes come with it
+        reporter.testSetStarting(outer);
+        reporter.testSetCompleted(outer, stats(
+                testEntry("", "Nested Sample", "Should pass"),
+                testEntry("$InnerTest", "Inner Test", "Inner test should pass"),
+                testEntry("$InnerTest$InnerInnerTest$InnerInnerInnerTest", "Inner Inner Inner Test", "Deepest should pass")), null);
+
+        assertThat(logger.lines).hasSize(7);
+        assertThat(logger.lines.get(0)).contains("Nested Sample").doesNotContain("Inner");
+        assertThat(logger.lines.get(1)).contains("Should pass");
+        assertThat(logger.lines.get(2)).contains("Inner Test").doesNotContain("Inner Inner");
+        assertThat(logger.lines.get(3)).contains("Inner test should pass");
+        // a nested class without tests of its own is named after its path
+        assertThat(logger.lines.get(4)).contains("InnerInnerTest").doesNotContain("Inner Inner Inner");
+        assertThat(logger.lines.get(5)).contains("Inner Inner Inner Test");
+        assertThat(logger.lines.get(6)).contains("Deepest should pass");
+        assertThat(Node.getRoot().hasBranches()).isFalse();
+    }
+
+    @Test
     void printsSimpleNameOfSkippedClassThatNeverStarted() {
         ConsoleTreeReporter reporter = new ConsoleTreeReporter(logger, ReporterOptions.builder().build());
         WrappedReportEntry outer = wrap(classEntry("", "Disabled Sample"));
@@ -134,6 +159,11 @@ class QualifiedSourceNameTest {
 
     private WrappedReportEntry testEntry(String nestedPath, String displayName) {
         return wrap(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER, null, OUTER + nestedPath,
+                "test", displayName, null, 1, null, Collections.emptyMap()));
+    }
+
+    private WrappedReportEntry testEntry(String nestedPath, String classDisplayName, String displayName) {
+        return wrap(new SimpleReportEntry(RunMode.NORMAL_RUN, 1L, OUTER, classDisplayName, OUTER + nestedPath,
                 "test", displayName, null, 1, null, Collections.emptyMap()));
     }
 

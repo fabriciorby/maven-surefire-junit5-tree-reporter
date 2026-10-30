@@ -1,6 +1,8 @@
 package org.apache.maven.plugin.surefire.report;
 
 import org.apache.maven.surefire.api.report.ReportEntry;
+import org.apache.maven.surefire.api.report.RunMode;
+import org.apache.maven.surefire.api.report.SimpleReportEntry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,11 +51,11 @@ public class TestReportHandler {
         Node classToBeTested = optionalNode.get();
 
         if (testSetStats != null) {
-            // Entries whose node is missing (e.g. nested classes of a @Disabled class, which never
-            // start) are added to the class being completed, so they are still printed.
+            // Entries whose node is missing are added to the class being completed, or to a node built from them
+            Map<Node, String> created = new LinkedHashMap<>();
             testSetStats.getReportEntries()
-                    .forEach(entry -> Node.getBranchNode(node, getTestClassPath(SourceName.of(entry)))
-                            .orElse(classToBeTested).wrappedReportEntries.add(entry));
+                    .forEach(entry -> findOrCreateNode(entry, classToBeTested, created).wrappedReportEntries.add(entry));
+            describeCreatedNodes(created);
         }
 
         classToBeTested.setClassReportEntry((WrappedReportEntry) report);
@@ -66,6 +68,59 @@ public class TestReportHandler {
         } else {
             printTests(treePrinter, classToBeTested);
         }
+    }
+
+    /**
+     * Surefire 3.6.1 stopped sending a test set for each nested class, so the nodes of the nested classes are never
+     * registered and their entries come with the test set of the outer class. The nodes are built from those entries.
+     */
+    private Node findOrCreateNode(ReportEntry entry, Node classToBeTested, Map<Node, String> created) {
+        List<String> path = getTestClassPath(SourceName.of(entry));
+        Optional<Node> existing = Node.getBranchNode(node, path);
+        if (existing.isPresent()) {
+            if (created.containsKey(existing.get()) && !isBlank(entry.getSourceText())) {
+                created.put(existing.get(), entry.getSourceText());
+            }
+            return existing.get();
+        }
+        // An entry without a name stands for a whole class that never started (e.g. nested classes of a @Disabled class)
+        if (entry.getName() == null || path.size() < 2 || !path.get(0).equals(sourceRootName)) {
+            return classToBeTested;
+        }
+        Node leaf = node.addNode(entry);
+        Node current = leaf;
+        for (int i = path.size() - 1; i > 0; i--) {
+            if (current.getClassReportEntry() == null && !created.containsKey(current)) {
+                created.put(current, i == path.size() - 1 && !isBlank(entry.getSourceText())
+                        ? entry.getSourceText() : path.get(i));
+            }
+            current = current.getParent();
+        }
+        return leaf;
+    }
+
+    private void describeCreatedNodes(Map<Node, String> created) {
+        created.forEach((createdNode, name) -> {
+            SimpleReportEntry classEntry = new SimpleReportEntry(
+                    RunMode.NORMAL_RUN, 0L, name, null, null, null);
+            createdNode.setClassReportEntry(new WrappedReportEntry(
+                    classEntry, ReportEntryType.SUCCESS, 0L, elapsedOf(createdNode), null, null));
+        });
+    }
+
+    private static int elapsedOf(Node subtree) {
+        int elapsed = 0;
+        for (WrappedReportEntry entry : subtree.wrappedReportEntries) {
+            elapsed += entry.getElapsed(0);
+        }
+        for (Node branch : subtree.branches) {
+            elapsed += elapsedOf(branch);
+        }
+        return elapsed;
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     List<String> getTestClassPath(String sourceName) {
