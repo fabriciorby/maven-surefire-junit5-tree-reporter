@@ -28,6 +28,7 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
         reporter.setPrintTestCounts(true);
         reporter.setCollapseSuccessfulClasses(true);
         reporter.setHideSuccessfulNestedClasses(true);
+        reporter.setHideSuccessfulParameterizedRuns(true);
         reporter.setSlowTestThreshold("2s");
         reporter.setPrintFailureSummary(true);
         reporter.setMaxFailuresInSummary(7);
@@ -52,6 +53,7 @@ class JUnit5StatelessTestsetInfoTreeReporterTest {
                     .hasFieldOrPropertyWithValue("printTestCounts", true)
                     .hasFieldOrPropertyWithValue("collapseSuccessfulClasses", true)
                     .hasFieldOrPropertyWithValue("hideSuccessfulNestedClasses", true)
+                    .hasFieldOrPropertyWithValue("hideSuccessfulParameterizedRuns", true)
                     .hasFieldOrPropertyWithValue("slowTestThreshold", "2s")
                     .hasFieldOrPropertyWithValue("printFailureSummary", true)
                     .hasFieldOrPropertyWithValue("maxFailuresInSummary", 7)

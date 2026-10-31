@@ -30,6 +30,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
     private boolean printTestCounts;
     private boolean collapseSuccessfulClasses;
     private boolean hideSuccessfulNestedClasses;
+    private boolean hideSuccessfulParameterizedRuns;
     private String slowTestThreshold;
     private boolean printFailureSummary;
     private int maxFailuresInSummary = 50;
@@ -62,6 +63,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
             cls.getMethod("setPrintTestCounts", boolean.class).invoke(clone, isPrintTestCounts());
             cls.getMethod("setCollapseSuccessfulClasses", boolean.class).invoke(clone, isCollapseSuccessfulClasses());
             cls.getMethod("setHideSuccessfulNestedClasses", boolean.class).invoke(clone, isHideSuccessfulNestedClasses());
+            cls.getMethod("setHideSuccessfulParameterizedRuns", boolean.class).invoke(clone, isHideSuccessfulParameterizedRuns());
             cls.getMethod("setSlowTestThreshold", String.class).invoke(clone, getSlowTestThreshold());
             cls.getMethod("setPrintFailureSummary", boolean.class).invoke(clone, isPrintFailureSummary());
             cls.getMethod("setMaxFailuresInSummary", int.class).invoke(clone, getMaxFailuresInSummary());
@@ -136,6 +138,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         return hideSuccessfulNestedClasses;
     }
 
+    public boolean isHideSuccessfulParameterizedRuns() {
+        return hideSuccessfulParameterizedRuns;
+    }
+
     public String getSlowTestThreshold() {
         return slowTestThreshold;
     }
@@ -204,6 +210,10 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
         this.hideSuccessfulNestedClasses = hideSuccessfulNestedClasses;
     }
 
+    public void setHideSuccessfulParameterizedRuns(boolean hideSuccessfulParameterizedRuns) {
+        this.hideSuccessfulParameterizedRuns = hideSuccessfulParameterizedRuns;
+    }
+
     public void setSlowTestThreshold(String slowTestThreshold) {
         // fails the configuration right away when the value is invalid
         ReporterOptions.parseSlowTestThreshold(slowTestThreshold);
@@ -253,6 +263,7 @@ public class JUnit5StatelessTestsetInfoTreeReporter extends JUnit5StatelessTests
                 .printTestCounts(isPrintTestCounts())
                 .collapseSuccessfulClasses(isCollapseSuccessfulClasses())
                 .hideSuccessfulNestedClasses(isHideSuccessfulNestedClasses())
+                .hideSuccessfulParameterizedRuns(isHideSuccessfulParameterizedRuns())
                 .slowTestThreshold(getSlowTestThreshold())
                 .printFailureSummary(isPrintFailureSummary())
                 .maxFailuresInSummary(getMaxFailuresInSummary())

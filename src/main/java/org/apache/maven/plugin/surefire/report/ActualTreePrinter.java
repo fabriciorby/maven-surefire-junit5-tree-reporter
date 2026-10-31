@@ -77,6 +77,7 @@ public class ActualTreePrinter {
         List<Item> items = new ArrayList<>();
         Map<WrappedReportEntry, Item> itemOf = new IdentityHashMap<>();
         Map<String, Item> methods = new HashMap<>();
+        Set<WrappedReportEntry> hidden = Collections.newSetFromMap(new IdentityHashMap<>());
         for (WrappedReportEntry testResult : node.wrappedReportEntries) {
             if (!isVisible(testResult)) {
                 continue;
@@ -88,8 +89,13 @@ public class ActualTreePrinter {
                 items.add(item);
                 if (method != null) methods.put(method, item);
             }
-            item.testResults.add(testResult);
+            item.all.add(testResult);
             itemOf.put(testResult, item);
+            if (method != null && options.isHideSuccessfulParameterizedRuns() && testResult.isSucceeded()) {
+                hidden.add(testResult); // counted on the node of the method, but not printed
+                continue;
+            }
+            item.testResults.add(testResult);
         }
         Set<Item> printed = Collections.newSetFromMap(new IdentityHashMap<>());
         for (WrappedReportEntry testResult : node.wrappedReportEntries) {
@@ -99,8 +105,9 @@ public class ActualTreePrinter {
             } else if (item.method == null) {
                 printTestFormated(getTestPrefix(node, !isLast(items, item)), getTestName(testResult), testResult);
                 printDetails(testResult);
-            } else if (printed.add(item)) {
-                printMethod(node, item, !isLast(items, item));
+            } else {
+                if (printed.add(item)) printMethod(node, item, !isLast(items, item));
+                if (hidden.contains(testResult)) printDetails(testResult);
             }
         }
     }
@@ -110,12 +117,15 @@ public class ActualTreePrinter {
     }
 
     private void printMethod(Node node, Item item, boolean notLast) {
-        println(getTestIndent(node)
-                .a(notLast ? theme.entry() : theme.end())
-                .a(theme.down())
-                .strong(abbreviateName(item.method))
-                .a(" - " + ParameterizedInvocations.elapsedTimeAsString(item.testResults))
-                .toString());
+        MessageBuilder line = getTestIndent(node).a(notLast ? theme.entry() : theme.end());
+        // a method with every invocation hidden has nothing below it, so it is printed like a class without nested ones
+        line.a(item.testResults.isEmpty() ? theme.dash() : theme.down())
+                .strong(abbreviateName(item.method));
+        if (options.isHideSuccessfulParameterizedRuns() && options.isPrintTestCounts()) {
+            String counts = TestCounts.of(item.all).format();
+            if (!counts.isEmpty()) line.a(" " + counts);
+        }
+        println(line.a(" - " + ParameterizedInvocations.elapsedTimeAsString(item.all)).toString());
         for (int i = 0; i < item.testResults.size(); i++) {
             WrappedReportEntry testResult = item.testResults.get(i);
             MessageBuilder prefix = getTestIndent(node)
@@ -129,7 +139,10 @@ public class ActualTreePrinter {
 
     private static final class Item {
         private final String method;
+        /** The invocations that are printed */
         private final List<WrappedReportEntry> testResults = new ArrayList<>();
+        /** Every invocation, also the ones that are hidden */
+        private final List<WrappedReportEntry> all = new ArrayList<>();
 
         private Item(String method) {
             this.method = method;

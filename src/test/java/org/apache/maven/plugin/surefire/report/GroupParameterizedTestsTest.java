@@ -69,6 +69,37 @@ class GroupParameterizedTestsTest {
     }
 
     @Test
+    void hidesTheSuccessfulInvocationsAndCountsThem() {
+        run(ReporterOptions.builder().theme(Theme.UNICODE).printTestCounts(true)
+                        .hideSuccessfulParameterizedRuns(true).build(),
+                test("plain", null, ReportEntryType.SUCCESS, "Plain"),
+                test("add(int)[1]", "[1] 1", ReportEntryType.SUCCESS, null),
+                test("add(int)[2]", "[2] 2", ReportEntryType.FAILURE, null),
+                test("add(int)[3]", "[3] 3", ReportEntryType.SUCCESS, null),
+                test("repeat()[1]", "repeat() repetition 1 of 2", ReportEntryType.SUCCESS, null),
+                test("repeat()[2]", "repeat() repetition 2 of 2", ReportEntryType.SUCCESS, null));
+
+        assertThat(lines()).containsExactly(
+                "── Sample (5 passed, 1 failed)",
+                "   ├─ ✔ Plain",
+                "   ├─ ┬─ add(int) (2 passed, 1 failed)",
+                "   │  └─ ✘ [2] 2",
+                "   └─ ── repeat() (2 passed)");
+    }
+
+    @Test
+    void keepsTheSkippedInvocationsWhenHidingTheSuccessfulOnes() {
+        run(ReporterOptions.builder().theme(Theme.UNICODE).hideSuccessfulParameterizedRuns(true).build(),
+                test("add(int)[1]", "[1] 1", ReportEntryType.SUCCESS, null),
+                test("add(int)[2]", "[2] 2", ReportEntryType.SKIPPED, null));
+
+        assertThat(lines()).containsExactly(
+                "── Sample",
+                "   └─ ┬─ add(int)",
+                "      └─ ↷ [2] 2");
+    }
+
+    @Test
     void doesNotGroupNamesThatOnlyLookLikeAnInvocation() {
         run(ReporterOptions.builder().theme(Theme.UNICODE).build(),
                 test("looksLikeOne", "foo[1]", ReportEntryType.SUCCESS, null),
