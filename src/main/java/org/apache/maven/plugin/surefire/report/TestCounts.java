@@ -18,6 +18,12 @@ final class TestCounts {
         return counts;
     }
 
+    static TestCounts of(List<WrappedReportEntry> entries) {
+        TestCounts counts = new TestCounts();
+        entries.forEach(counts::add);
+        return counts;
+    }
+
     private void add(Node node) {
         node.wrappedReportEntries.forEach(this::add);
         node.branches.forEach(this::add);

@@ -580,6 +580,26 @@ newer always sends it. Up to 3.2.5 it is only sent for methods with parameters, 
 grouped, but a `@RepeatedTest` or `@TestFactory` without parameters is printed as before, one test per invocation.
 With `hideResultsOnSuccess`, a method whose invocations all succeed is hidden.
 
+With `hideSuccessfulParameterizedRuns` the successful invocations are hidden and the method stays, so only the failed
+and skipped ones show. Together with `printTestCounts` the method shows how many there were. A method with only
+successful invocations is printed in one line:
+
+```xml
+<statelessTestsetInfoReporter
+        implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+    <printTestCounts>true</printTestCounts>
+    <hideSuccessfulParameterizedRuns>true</hideSuccessfulParameterizedRuns>
+</statelessTestsetInfoReporter>
+```
+
+```
+┬─ Grouping Sample (4 passed, 1 failed) - 0.2 s
+│  ├─ 🟢 A plain test - 0.001 s
+│  ├─ ┬─ bAdd(int, int, int) (2 passed, 1 failed) - 0.1 s
+│  │  └─ 🔴 [2] 2, 3, 6 - 0.005 s
+│  └─ ── eRepeated() (2 passed) - 0.002 s
+```
+
 </details>
 
 <details>

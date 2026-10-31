@@ -25,6 +25,7 @@ public class ReporterOptions {
     private final boolean printTestCounts;
     private final boolean collapseSuccessfulClasses;
     private final boolean hideSuccessfulNestedClasses;
+    private final boolean hideSuccessfulParameterizedRuns;
     private final long slowTestThresholdMillis;
     private final boolean printFailureSummary;
     private final int maxFailuresInSummary;
@@ -47,6 +48,7 @@ public class ReporterOptions {
         this.printTestCounts = builder.printTestCounts;
         this.collapseSuccessfulClasses = builder.collapseSuccessfulClasses;
         this.hideSuccessfulNestedClasses = builder.hideSuccessfulNestedClasses;
+        this.hideSuccessfulParameterizedRuns = builder.hideSuccessfulParameterizedRuns;
         this.slowTestThresholdMillis = parseSlowTestThreshold(builder.slowTestThreshold);
         this.printFailureSummary = builder.printFailureSummary;
         this.maxFailuresInSummary = builder.maxFailuresInSummary;
@@ -149,6 +151,10 @@ public class ReporterOptions {
         return hideSuccessfulNestedClasses;
     }
 
+    public boolean isHideSuccessfulParameterizedRuns() {
+        return hideSuccessfulParameterizedRuns;
+    }
+
     /**
      * @return the elapsed time, in milliseconds, from which a test is marked as slow, or
      *         {@link #SLOW_TEST_THRESHOLD_DISABLED}
@@ -186,6 +192,7 @@ public class ReporterOptions {
         private boolean printTestCounts;
         private boolean collapseSuccessfulClasses;
         private boolean hideSuccessfulNestedClasses;
+        private boolean hideSuccessfulParameterizedRuns;
         private String slowTestThreshold;
         private boolean printFailureSummary;
         private int maxFailuresInSummary = 50;
@@ -275,6 +282,11 @@ public class ReporterOptions {
 
         public Builder hideSuccessfulNestedClasses(boolean hideSuccessfulNestedClasses) {
             this.hideSuccessfulNestedClasses = hideSuccessfulNestedClasses;
+            return this;
+        }
+
+        public Builder hideSuccessfulParameterizedRuns(boolean hideSuccessfulParameterizedRuns) {
+            this.hideSuccessfulParameterizedRuns = hideSuccessfulParameterizedRuns;
             return this;
         }
 
