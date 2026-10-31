@@ -1,0 +1,23 @@
+┬─ Grouping Sample (20 passed, 2 failed, 1 skipped) - <time>
+│  ├─ ✔ A plain test - <time>
+│  ├─ ┬─ bAdd(int, int, int) (2 passed, 1 failed) - <time>
+│  │  └─ ✘ [2] "2", "3", "6" - <time>
+│  ├─ ── cOverloaded(int) (2 passed) - <time>
+│  ├─ ── cOverloaded(String) (2 passed) - <time>
+│  ├─ ┬─ dDisplayed(int) (1 passed, 1 skipped) - <time>
+│  │  └─ ↷ [2] 2 (Assumption failed: two is skipped) - <time>
+│  ├─ ✔ eRepeated() repetition 1 of 2 - <time>
+│  ├─ ✔ eRepeated() repetition 2 of 2 - <time>
+│  ├─ ── fRepeatedWithInfo(RepetitionInfo) (2 passed) - <time>
+│  ├─ ✔ gFactory() first dynamic test - <time>
+│  ├─ ✔ gFactory() second dynamic test - <time>
+│  ├─ ✔ foo[1] - <time>
+│  └─ ✔ Last plain test - <time>
+└─ ── Inner (4 passed, 1 failed) - <time>
+      ├─ ── innerParameterized(int) (2 passed) - <time>
+      ├─ ✔ Inner plain test - <time>
+      └─ ┬─ zInnerParameterizedAtTheEnd(String) (1 passed, 1 failed) - <time>
+         └─ ✘ [2] "y" - <time>
+── Last Method Sample (4 passed) - <time>
+   ├─ ✔ Only plain test before - <time>
+   └─ ── bParameterizedAtTheEnd(int) (3 passed) - <time>

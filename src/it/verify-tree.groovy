@@ -33,9 +33,11 @@ def junitMajor = junitVersion.tokenize('.')[0]
 def junitGolden = junitMajor == '5' ? null : new File(scenarioDir, golden.name.replace('.txt', "-junit${junitMajor}.txt"))
 if (junitGolden?.exists()) golden = junitGolden
 
-if (Boolean.parseBoolean(snapshotUpdate)) {
+// A scenario that borrows another scenario's golden files only compares, the owner of the files writes them
+if (Boolean.parseBoolean(snapshotUpdate) && !binding.hasVariable('goldenScenario')) {
     // a tree that differs on JUnit 6 goes to the -junit6 file, so the JUnit 5 golden file stays as it is
-    if (junitGolden != null && golden != junitGolden && golden.exists() && golden.getText('UTF-8') != actual) {
+    def junit5Tree = golden.exists() ? golden.getText('UTF-8').replace('\r\n', '\n') : null
+    if (junitGolden != null && golden != junitGolden && junit5Tree != null && junit5Tree != actual) {
         golden = junitGolden
     }
     golden.setText(actual, 'UTF-8')
