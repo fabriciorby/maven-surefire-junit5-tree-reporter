@@ -21,7 +21,7 @@ Configure your POM like the following
         <dependency>
             <groupId>me.fabriciorby</groupId>
             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
     <configuration>
@@ -40,13 +40,19 @@ Configure your POM like the following
 
 | `maven-surefire-plugin` | `maven-surefire-junit5-tree-reporter` |
 |-------------------------|---------------------------------------|
-| `3.6.0` and newer       | `2.0.0` and newer                     |
+| `3.6.1` and newer       | `2.2.0` and newer                     |
+| `3.6.0`                 | `2.0.0` and `2.1.0`                   |
 | `3.5.4` to `3.5.6`      | Not supported                         |
 | `3.5.3` and older       | `1.5.1` or `2.0.0` and newer          |
 
 `maven-surefire-plugin` versions `3.5.4` to `3.5.6` stopped sending the nested class of JUnit5 `@Nested` tests,
 so the tree cannot be built ([apache/maven-surefire#3203](https://github.com/apache/maven-surefire/issues/3203)).
 This was fixed in `3.6.0`.
+
+Since `3.6.1`, `maven-surefire-plugin` only starts a test set for the top level class, and the `@Nested` classes
+arrive inside it. The tree is built from those entries, which needs `2.2.0` or newer. With `2.1.0` and
+`3.6.1` the nested classes are printed flat inside the outer class, so stay on `3.6.0` or older until `2.2.0`
+is released.
 
 ### Maven Failsafe
 
