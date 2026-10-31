@@ -1,0 +1,108 @@
+── Disabled Sample - <time>
+   ├─ ↷ test (whole class disabled) - <time>
+   └─ ↷ InnerTest (whole class disabled) - <time>
+── Parameterized Sample - <time>
+   ├─ ┬─ add(int, int, int) - <time>
+   │  ├─ ✔ "0" + "1" = "1" - <time>
+   │  ├─ ✔ "1" + "2" = "3" - <time>
+   │  └─ ✔ "49" + "51" = "100" - <time>
+   ├─ ✔ Dynamic Add test - <time>
+   └─ ✔ Dynamic Multiply test - <time>
+┬─ Nested Sample - <time>
+│  ├─ ✔ Should pass - <time>
+│  └─ ✔ Should pass again - <time>
+├─ ── First Inner Test - <time>
+│     └─ ✔ First inner test should pass - <time>
+└─ ┬─ Second Inner Test - <time>
+   │  └─ ✔ Second inner test should pass - <time>
+   └─ ┬─ Inner Inner Test - <time>
+      │  └─ ✔ Inner inner test should pass - <time>
+      └─ ── Inner Inner Inner Test - <time>
+            └─ ✔ Inner inner inner test should pass - <time>
+┬─ Results Sample - <time>
+│  ├─ ✔ Should pass - <time>
+│  ├─ ✘ Should fail - <time>
+│  ├─ ✘ Should be an error - <time>
+│  └─ ↷ Should be skipped (for demonstration purposes) - <time>
+└─ ── Inner Results - <time>
+      └─ ✘ Inner test should fail - <time>
+┬─ sample.Par1Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par2Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par3Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par4Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par5Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par6Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par7Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>
+┬─ sample.Par8Test - <time>
+│  ├─ ✔ a - <time>
+│  └─ ✔ b - <time>
+├─ ┬─ Inner - <time>
+│  │  └─ ✔ c - <time>
+│  └─ ── Deeper - <time>
+│        ├─ ✔ d - <time>
+│        └─ ✘ e - <time>
+└─ ── Other - <time>
+      └─ ✔ f - <time>

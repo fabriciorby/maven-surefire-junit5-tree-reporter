@@ -13,6 +13,11 @@ updates:
       day: "monday"
       time: "06:00"
     open-pull-requests-limit: 10
+    ignore:
+      # O reporter compila e testa com JUnit 5 para continuar em Java 8. O JUnit 6 dos testes de integração
+      # (it.junit6.version no pom.xml) continua sendo atualizado pelo junit-platform-launcher do maven-invoker-plugin
+      - dependency-name: "org.junit:junit-bom"
+        update-types: ["version-update:semver-major"]
 
   # Mantém os GitHub Actions atualizados (workflows)
   - package-ecosystem: "github-actions"

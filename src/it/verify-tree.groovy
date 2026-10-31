@@ -1,6 +1,6 @@
 // Shared by every scenario's verify.groovy: compares the tree printed in build.log with the golden file.
 //
-// Variables set by the maven-invoker-plugin: basedir, itSourceDir, surefireVersion, snapshotUpdate.
+// Variables set by the maven-invoker-plugin: basedir, itSourceDir, surefireVersion, junitVersion, snapshotUpdate.
 // A scenario that reuses another scenario's tests sets goldenScenario to compare with that scenario's golden files.
 // A scenario whose classes run in parallel sets sortClassBlocks, so the trees of its top-level classes are compared in
 // name order instead of the order they completed in. Only the UNICODE theme is supported there.
@@ -27,7 +27,19 @@ def scenarioDir = new File(itSourceDir, binding.hasVariable('goldenScenario') ? 
 def golden = new File(scenarioDir, "expected-output-${surefireVersion}.txt")
 if (!golden.exists()) golden = new File(scenarioDir, 'expected-output.txt')
 
-if (Boolean.parseBoolean(snapshotUpdate)) {
+// With JUnit 6 the -junit6 variant of that file wins when it exists, e.g. JUnit 6 quotes the String arguments in the
+// names of parameterized tests. A tree printed the same on JUnit 5 and 6 keeps a single file.
+def junitMajor = junitVersion.tokenize('.')[0]
+def junitGolden = junitMajor == '5' ? null : new File(scenarioDir, golden.name.replace('.txt', "-junit${junitMajor}.txt"))
+if (junitGolden?.exists()) golden = junitGolden
+
+// A scenario that borrows another scenario's golden files only compares, the owner of the files writes them
+if (Boolean.parseBoolean(snapshotUpdate) && !binding.hasVariable('goldenScenario')) {
+    // a tree that differs on JUnit 6 goes to the -junit6 file, so the JUnit 5 golden file stays as it is
+    def junit5Tree = golden.exists() ? golden.getText('UTF-8').replace('\r\n', '\n') : null
+    if (junitGolden != null && golden != junitGolden && junit5Tree != null && junit5Tree != actual) {
+        golden = junitGolden
+    }
     golden.setText(actual, 'UTF-8')
     println "Updated ${golden}"
 }
